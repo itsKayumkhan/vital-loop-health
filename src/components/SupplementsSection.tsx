@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Pill, Shield, Sparkles, Leaf } from 'lucide-react';
+import { ArrowRight, Pill, Shield, Sparkles, Leaf, Zap, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const supplements = [
@@ -26,6 +26,18 @@ const supplements = [
     description: 'Adaptogen blend for stress, sleep, and muscle recovery',
     icon: Pill,
     color: 'from-primary/80 to-secondary/80',
+  },
+  {
+    name: 'Neuro Focus',
+    description: 'Cognitive enhancers for mental clarity and brain performance',
+    icon: Brain,
+    color: 'from-primary to-secondary/70',
+  },
+  {
+    name: 'Metabolic Boost',
+    description: 'Metabolism support for energy production and weight management',
+    icon: Zap,
+    color: 'from-secondary/80 to-primary/80',
   },
 ];
 
