@@ -26,6 +26,10 @@ const differentiators = [
     us: 'Workouts designed for your genetic response',
     them: 'Cookie-cutter exercise programs',
   },
+  {
+    us: 'Fully customized health report guiding your entire journey',
+    them: 'One-size-fits-all PDFs with no actionable steps',
+  },
 ];
 
 const WhyUsSection = () => {
