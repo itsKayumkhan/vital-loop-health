@@ -73,7 +73,7 @@ const HeroSection = () => {
             className="mt-16 flex flex-wrap items-center justify-center gap-8 text-muted-foreground text-sm"
           >
             <div className="flex items-center gap-2">
-              <span className="text-secondary font-bold text-2xl">500+</span>
+              <span className="text-secondary font-bold text-2xl">1,000+</span>
               <span>Clients Optimized</span>
             </div>
             <div className="w-px h-8 bg-border hidden sm:block" />
