@@ -45,7 +45,7 @@ const HeroSection = () => {
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
           >
             The first closed-loop health journey that reads your genetic code, identifies your unique needs, 
-            and delivers personalized nutrition, training, and supplements—all in one platform.
+            and delivers personalized nutrition, coaching, training, and supplements—all in one platform.
           </motion.p>
 
           {/* CTA Buttons */}
