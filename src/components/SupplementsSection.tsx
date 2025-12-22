@@ -100,7 +100,7 @@ const SupplementsSection = () => {
                 <p className="text-xs text-muted-foreground">Manufactured</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-bold text-foreground">Clean</p>
+                <p className="text-2xl font-bold text-foreground">Methylated</p>
                 <p className="text-xs text-muted-foreground">Ingredients</p>
               </div>
             </div>
