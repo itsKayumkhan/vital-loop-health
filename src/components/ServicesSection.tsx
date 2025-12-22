@@ -25,7 +25,7 @@ const services = [
   },
   {
     icon: Brain,
-    title: 'Mental Wellness Coaching',
+    title: 'Health & Mental Wellness Coaching',
     description: 'One-on-one sessions with certified coaches who understand the connection between your genetics and mental well-being.',
     highlight: 'Your Mindset',
   },
