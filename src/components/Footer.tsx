@@ -34,6 +34,7 @@ const Footer = () => {
               <li><a href="#" className="hover:text-secondary transition-colors">Lab Analysis</a></li>
               <li><a href="#" className="hover:text-secondary transition-colors">Nutrition Plans</a></li>
               <li><a href="#" className="hover:text-secondary transition-colors">Personal Training</a></li>
+              <li><a href="#" className="hover:text-secondary transition-colors">Mental Wellness</a></li>
               <li><a href="#" className="hover:text-secondary transition-colors">Supplements</a></li>
             </ul>
           </div>
