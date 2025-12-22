@@ -1,37 +1,11 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Check, Dna, FlaskConical, Users, Dumbbell, Pill, Brain, Sparkles, ArrowRight } from 'lucide-react';
+import { Check, Brain, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-
-const alaCarte = [
-  {
-    name: 'Genetic Blueprint Panel',
-    description: 'Comprehensive DNA analysis revealing your genetic predispositions, mutations, and optimal health pathways.',
-    price: 499,
-    icon: Dna,
-    features: [
-      'Full genetic panel analysis',
-      'Personalized action plan',
-      'Detailed health report',
-      'One-time consultation call',
-    ],
-  },
-  {
-    name: 'Precision Lab Testing',
-    description: 'Advanced biomarker and vitamin deficiency testing to uncover hidden imbalances.',
-    price: 299,
-    icon: FlaskConical,
-    features: [
-      'Complete vitamin panel',
-      'Hormone markers',
-      'Metabolic indicators',
-      'Digital results in 48hrs',
-    ],
-  },
-];
+import TestCatalog from '@/components/TestCatalog';
 
 const subscriptionTiers = [
   {
@@ -269,59 +243,8 @@ const Pricing = () => {
           </div>
         </section>
 
-        {/* A La Carte Section */}
-        <section className="py-16 relative">
-          <div className="container mx-auto px-4 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Discover: A La Carte Testing
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Start your journey with individual tests. Perfect for those who want to explore 
-                their genetic blueprint or identify specific deficiencies.
-              </p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {alaCarte.map((item, index) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="glass-card rounded-2xl p-8 border-secondary/20 hover:border-secondary/40 transition-all duration-300"
-                >
-                  <div className="w-14 h-14 rounded-xl bg-secondary/10 flex items-center justify-center mb-6">
-                    <item.icon className="w-7 h-7 text-secondary" />
-                  </div>
-                  <h3 className="text-2xl font-bold mb-2">{item.name}</h3>
-                  <p className="text-muted-foreground mb-6">{item.description}</p>
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold text-foreground">${item.price}</span>
-                    <span className="text-muted-foreground ml-2">one-time</span>
-                  </div>
-                  <ul className="space-y-3 mb-8">
-                    {item.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-3">
-                        <Check className="w-5 h-5 text-secondary flex-shrink-0" />
-                        <span className="text-sm text-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button variant="heroOutline" className="w-full" size="lg">
-                    Order Now
-                  </Button>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* A La Carte Test Catalog */}
+        <TestCatalog />
 
         {/* Subscription Tiers */}
         <SubscriptionSection />
