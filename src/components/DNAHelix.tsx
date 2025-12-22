@@ -220,7 +220,7 @@ const Scene = () => {
 
 const DNAHelix = () => {
   return (
-    <div className="w-full h-full absolute inset-0 helix-container opacity-60">
+    <div className="w-full h-full absolute inset-0 helix-container">
       <Canvas
         camera={{ position: [0, 0, 12], fov: 40 }}
         gl={{ antialias: true, alpha: true }}
