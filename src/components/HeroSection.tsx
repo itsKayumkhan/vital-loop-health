@@ -38,15 +38,18 @@ const HeroSection = () => {
           </motion.h1>
 
           {/* Subheadline */}
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
+            className="relative max-w-2xl mx-auto mb-10"
           >
-            The first closed-loop health journey that reads your genetic code, identifies your unique needs, 
-            and delivers personalized nutrition, coaching, training, and supplements—all in one platform.
-          </motion.p>
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-md rounded-2xl -m-4" />
+            <p className="relative text-lg md:text-xl text-foreground font-medium max-w-2xl mx-auto leading-relaxed px-6 py-4">
+              The first closed-loop health journey that reads your genetic code, identifies your unique needs, 
+              and delivers personalized nutrition, coaching, training, and supplements—all in one platform.
+            </p>
+          </motion.div>
 
           {/* CTA Buttons */}
           <motion.div
