@@ -44,7 +44,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
           >
-            The first closed-loop health system that reads your genetic code, identifies your unique needs, 
+            The first closed-loop health journey that reads your genetic code, identifies your unique needs, 
             and delivers personalized nutrition, training, and supplements—all in one platform.
           </motion.p>
 
