@@ -115,11 +115,11 @@ const TestCatalog = () => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            A La Carte <span className="text-gradient">Testing</span>
+            Precision <span className="text-gradient">Testing</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Choose individual tests to target specific areas of your health. 
-            Each test includes detailed results and personalized recommendations.
+            Select targeted tests designed to deliver accurate, actionable insights 
+            specific to your health goals. Each test includes detailed results and personalized recommendations.
           </p>
         </motion.div>
 
