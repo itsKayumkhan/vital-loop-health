@@ -44,7 +44,7 @@ const services = [
   {
     icon: Pill,
     title: 'Custom Supplements',
-    description: 'Pharmaceutical-grade supplements formulated specifically to address your unique vitamin and mineral deficiencies.',
+    description: 'Premium-quality supplements formulated specifically to address your unique vitamin and mineral deficiencies.',
     highlight: 'Your Support',
   },
   {

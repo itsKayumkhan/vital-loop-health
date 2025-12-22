@@ -69,7 +69,7 @@ const SupplementsSection = () => {
               is formulated to address the specific deficiencies revealed by your genetic testing and lab work.
             </p>
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-              Each product is pharmaceutical-grade, third-party tested, and designed to work synergistically 
+              Each product is premium-quality, third-party tested, and designed to work synergistically 
               with your personalized health protocol.
             </p>
 
