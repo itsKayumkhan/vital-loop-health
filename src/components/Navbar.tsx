@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import logo from '@/assets/vitalityx-logo.jpg';
 
 const navItems = [
   { name: 'Services', href: '#services' },
   { name: 'Why Us', href: '#why-us' },
-  { name: 'For You', href: '#for-you' },
+  { name: 'Pricing', href: '/pricing', isPage: true },
+  { name: 'Supplements', href: '#supplements' },
   { name: 'Contact', href: '#contact' },
 ];
 
@@ -42,13 +44,23 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-muted-foreground hover:text-foreground transition-colors duration-300 font-medium text-sm tracking-wide"
-              >
-                {item.name}
-              </a>
+              item.isPage ? (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="text-muted-foreground hover:text-foreground transition-colors duration-300 font-medium text-sm tracking-wide"
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-muted-foreground hover:text-foreground transition-colors duration-300 font-medium text-sm tracking-wide"
+                >
+                  {item.name}
+                </a>
+              )
             ))}
           </div>
 
@@ -83,14 +95,25 @@ const Navbar = () => {
           >
             <div className="container mx-auto px-4 py-6 flex flex-col gap-4">
               {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors py-2 font-medium"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </a>
+                item.isPage ? (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="text-muted-foreground hover:text-foreground transition-colors py-2 font-medium"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ) : (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="text-muted-foreground hover:text-foreground transition-colors py-2 font-medium"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </a>
+                )
               ))}
               <div className="flex flex-col gap-3 pt-4 border-t border-border">
                 <Button variant="heroOutline" size="lg" className="w-full">
