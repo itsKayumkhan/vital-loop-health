@@ -50,6 +50,14 @@ const testimonials: Testimonial[] = [
     discovery: "Lactose & Gluten Sensitivity Genes",
     quote: "I spent my twenties with constant bloating and digestive issues. Every elimination diet gave mixed results. VitalityX pinpointed my exact genetic food sensitivities—I carry genes for both lactose intolerance and gluten sensitivity. Their personalized nutrition plan and digestive enzyme protocol changed everything. I can finally enjoy meals without fear.",
     outcome: "Digestive symptoms eliminated"
+  },
+  {
+    name: "Michael Thompson",
+    age: 45,
+    location: "Phoenix, AZ",
+    discovery: "Sleep Regulation Gene Variants",
+    quote: "I've battled insomnia for over a decade, trying every sleep aid on the market. VitalityX revealed I have variants in my CLOCK and PER3 genes that affect my circadian rhythm. Their personalized protocol—specific timing for supplements, light exposure, and meal scheduling—completely rewired my sleep patterns. I now fall asleep naturally and wake up refreshed.",
+    outcome: "Sleep quality improved 200%"
   }
 ];
 
