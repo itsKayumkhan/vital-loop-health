@@ -96,12 +96,8 @@ const subscriptionTiers = [
 const SubscriptionSection = () => {
   const [isAnnual, setIsAnnual] = useState(false);
 
-  const getPrice = (monthlyPrice: number) => {
-    if (isAnnual) {
-      const annualPrice = Math.round(monthlyPrice * 12 * 0.85);
-      return Math.round(annualPrice / 12);
-    }
-    return monthlyPrice;
+  const getAnnualTotal = (monthlyPrice: number) => {
+    return Math.round(monthlyPrice * 12 * 0.85);
   };
 
   return (
@@ -182,11 +178,19 @@ const SubscriptionSection = () => {
                 <p className="text-muted-foreground text-sm">{tier.description}</p>
               </div>
 
-              <div className="text-center mb-8 min-h-[60px]">
-                <span className="text-5xl font-bold text-foreground">${getPrice(tier.monthlyPrice)}</span>
-                <span className="text-muted-foreground">/month</span>
-                {isAnnual && (
-                  <p className="text-secondary text-sm mt-1">billed annually</p>
+              <div className="text-center mb-8 min-h-[80px]">
+                {isAnnual ? (
+                  <>
+                    <span className="text-5xl font-bold text-foreground">${getAnnualTotal(tier.monthlyPrice).toLocaleString()}</span>
+                    <span className="text-muted-foreground">/year</span>
+                    <p className="text-muted-foreground text-sm mt-1 line-through">${(tier.monthlyPrice * 12).toLocaleString()}/year</p>
+                    <p className="text-secondary text-sm font-medium">Save ${((tier.monthlyPrice * 12) - getAnnualTotal(tier.monthlyPrice)).toLocaleString()}</p>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-5xl font-bold text-foreground">${tier.monthlyPrice}</span>
+                    <span className="text-muted-foreground">/month</span>
+                  </>
                 )}
               </div>
 
