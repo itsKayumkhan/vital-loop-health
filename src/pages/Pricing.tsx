@@ -43,7 +43,7 @@ const subscriptionTiers = [
     popular: false,
     features: [
       'Genetic Blueprint Panel (included)',
-      'Quarterly lab testing',
+      'Annual lab testing',
       'Personalized nutrition plan',
       'Access to workout library',
       'Monthly wellness check-in',
