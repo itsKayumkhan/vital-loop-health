@@ -22,7 +22,7 @@ const personas = [
   },
   {
     icon: Zap,
-    title: 'Frustrated Seekers',
+    title: 'Ready for Real Answers',
     description: 'You\'ve seen multiple specialists but still don\'t feel your best. You\'re tired of disconnected advice that doesn\'t consider the whole picture.',
     traits: ['Solution-seeking', 'Holistic-minded', 'Ready for change'],
   },
