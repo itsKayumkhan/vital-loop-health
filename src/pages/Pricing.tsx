@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { Check, Dna, FlaskConical, Users, Dumbbell, Pill, Brain, Sparkles, ArrowRight } from 'lucide-react';
@@ -37,8 +38,7 @@ const subscriptionTiers = [
     name: 'Ignite',
     tagline: 'Spark Your Transformation',
     description: 'Begin your journey with foundational genetic insights and personalized guidance.',
-    price: 149,
-    period: '/month',
+    monthlyPrice: 149,
     icon: Sparkles,
     popular: false,
     features: [
@@ -55,8 +55,7 @@ const subscriptionTiers = [
     name: 'Elevate',
     tagline: 'Rise to Your Potential',
     description: 'Comprehensive support with coaching, training, and custom supplementation.',
-    price: 299,
-    period: '/month',
+    monthlyPrice: 299,
     icon: ArrowRight,
     popular: true,
     features: [
@@ -64,8 +63,9 @@ const subscriptionTiers = [
       'Bi-weekly wellness coaching',
       'Virtual personal training (2x/month)',
       'Custom supplement protocol',
+      '10% discount on supplements',
       'Priority nutritionist access',
-      'Monthly lab monitoring',
+      'Bi-annual lab monitoring',
       'Real-time app analytics',
       'Personalized action plans',
     ],
@@ -74,15 +74,16 @@ const subscriptionTiers = [
     name: 'Transcend',
     tagline: 'Beyond Limits',
     description: 'Elite, white-glove health optimization with unlimited access to our full team.',
-    price: 599,
-    period: '/month',
+    monthlyPrice: 599,
     icon: Brain,
     popular: false,
     features: [
       'Everything in Elevate, plus:',
-      'Unlimited wellness coaching',
+      'Weekly wellness coaching',
       'Weekly personal training',
       'Premium supplement line',
+      '15% discount on supplements',
+      'Quarterly lab monitoring',
       'Mental health support',
       'Dedicated health concierge',
       'Advanced genetic retesting',
@@ -91,6 +92,138 @@ const subscriptionTiers = [
     ],
   },
 ];
+
+const SubscriptionSection = () => {
+  const [isAnnual, setIsAnnual] = useState(false);
+
+  const getPrice = (monthlyPrice: number) => {
+    if (isAnnual) {
+      const annualPrice = Math.round(monthlyPrice * 12 * 0.85);
+      return Math.round(annualPrice / 12);
+    }
+    return monthlyPrice;
+  };
+
+  return (
+    <section className="py-24 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
+      <div className="container mx-auto px-4 lg:px-8 relative">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Commit to <span className="text-gradient">Transformation</span>
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+            Our subscription tiers provide ongoing support, continuous optimization, and everything 
+            you need for lasting health transformation. All plans include detailed reports with 
+            personalized action plans.
+          </p>
+
+          {/* Billing Toggle */}
+          <div className="flex items-center justify-center gap-4">
+            <span className={`font-medium transition-colors ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+              Monthly
+            </span>
+            <button
+              onClick={() => setIsAnnual(!isAnnual)}
+              className={`relative w-16 h-8 rounded-full transition-colors duration-300 ${
+                isAnnual ? 'bg-secondary' : 'bg-muted'
+              }`}
+            >
+              <span
+                className={`absolute top-1 w-6 h-6 rounded-full bg-background shadow-md transition-transform duration-300 ${
+                  isAnnual ? 'translate-x-9' : 'translate-x-1'
+                }`}
+              />
+            </button>
+            <span className={`font-medium transition-colors ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+              Annual
+            </span>
+            {isAnnual && (
+              <span className="bg-secondary/20 text-secondary px-3 py-1 rounded-full text-sm font-semibold">
+                Save 15%
+              </span>
+            )}
+          </div>
+        </motion.div>
+
+        <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
+          {subscriptionTiers.map((tier, index) => (
+            <motion.div
+              key={tier.name}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.15 }}
+              className={`relative rounded-2xl p-8 transition-all duration-300 flex flex-col ${
+                tier.popular
+                  ? 'bg-gradient-to-b from-secondary/20 to-primary/10 border-2 border-secondary shadow-glow'
+                  : 'glass-card border-border/50 hover:border-secondary/30'
+              }`}
+            >
+              {tier.popular && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="bg-secondary text-secondary-foreground px-4 py-1.5 rounded-full text-sm font-semibold">
+                    Most Popular
+                  </span>
+                </div>
+              )}
+
+              <div className="text-center mb-8 min-h-[140px]">
+                <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-4">
+                  <tier.icon className="w-8 h-8 text-secondary" />
+                </div>
+                <h3 className="text-3xl font-bold mb-1">{tier.name}</h3>
+                <p className="text-secondary text-sm font-medium mb-3">{tier.tagline}</p>
+                <p className="text-muted-foreground text-sm">{tier.description}</p>
+              </div>
+
+              <div className="text-center mb-8 min-h-[60px]">
+                <span className="text-5xl font-bold text-foreground">${getPrice(tier.monthlyPrice)}</span>
+                <span className="text-muted-foreground">/month</span>
+                {isAnnual && (
+                  <p className="text-secondary text-sm mt-1">billed annually</p>
+                )}
+              </div>
+
+              <ul className="space-y-3 mb-8 flex-grow">
+                {tier.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-foreground">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Button
+                variant={tier.popular ? 'hero' : 'heroOutline'}
+                className="w-full mt-auto"
+                size="lg"
+              >
+                {tier.popular ? 'Start Your Journey' : 'Choose Plan'}
+              </Button>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Trust note */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center text-muted-foreground text-sm mt-12"
+        >
+          All subscriptions include access to our white-labeled portal with detailed reports and personalized action plans. 
+          Cancel anytime with no hidden fees.
+        </motion.p>
+      </div>
+    </section>
+  );
+};
 
 const Pricing = () => {
   return (
@@ -187,93 +320,7 @@ const Pricing = () => {
         </section>
 
         {/* Subscription Tiers */}
-        <section className="py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
-          <div className="container mx-auto px-4 lg:px-8 relative">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Commit to <span className="text-gradient">Transformation</span>
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Our subscription tiers provide ongoing support, continuous optimization, and everything 
-                you need for lasting health transformation. All plans include detailed reports with 
-                personalized action plans.
-              </p>
-            </motion.div>
-
-            <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {subscriptionTiers.map((tier, index) => (
-                <motion.div
-                  key={tier.name}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.15 }}
-                  className={`relative rounded-2xl p-8 transition-all duration-300 ${
-                    tier.popular
-                      ? 'bg-gradient-to-b from-secondary/20 to-primary/10 border-2 border-secondary shadow-glow'
-                      : 'glass-card border-border/50 hover:border-secondary/30'
-                  }`}
-                >
-                  {tier.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <span className="bg-secondary text-secondary-foreground px-4 py-1.5 rounded-full text-sm font-semibold">
-                        Most Popular
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="text-center mb-8">
-                    <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-4">
-                      <tier.icon className="w-8 h-8 text-secondary" />
-                    </div>
-                    <h3 className="text-3xl font-bold mb-1">{tier.name}</h3>
-                    <p className="text-secondary text-sm font-medium mb-3">{tier.tagline}</p>
-                    <p className="text-muted-foreground text-sm">{tier.description}</p>
-                  </div>
-
-                  <div className="text-center mb-8">
-                    <span className="text-5xl font-bold text-foreground">${tier.price}</span>
-                    <span className="text-muted-foreground">{tier.period}</span>
-                  </div>
-
-                  <ul className="space-y-3 mb-8">
-                    {tier.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    variant={tier.popular ? 'hero' : 'heroOutline'}
-                    className="w-full"
-                    size="lg"
-                  >
-                    {tier.popular ? 'Start Your Journey' : 'Choose Plan'}
-                  </Button>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Trust note */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="text-center text-muted-foreground text-sm mt-12"
-            >
-              All subscriptions include access to our white-labeled portal with detailed reports and personalized action plans. 
-              Cancel anytime with no hidden fees.
-            </motion.p>
-          </div>
-        </section>
+        <SubscriptionSection />
 
         <Footer />
       </main>
