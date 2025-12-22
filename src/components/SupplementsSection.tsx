@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Pill, Shield, Sparkles, Leaf, Zap, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const supplements = [
   {
@@ -42,11 +43,6 @@ const supplements = [
 ];
 
 const SupplementsSection = () => {
-  const handleShopClick = () => {
-    // This will be replaced with actual Shopify store link
-    window.open('https://shop.vitalityxhealth.com', '_blank');
-  };
-
   return (
     <section id="supplements" className="py-24 lg:py-32 relative overflow-hidden">
       {/* Background gradient */}
@@ -78,9 +74,11 @@ const SupplementsSection = () => {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <Button variant="hero" size="lg" onClick={handleShopClick}>
-                Shop Supplements
-                <ArrowRight className="ml-2 w-5 h-5" />
+              <Button variant="hero" size="lg" asChild>
+                <Link to="/supplements">
+                  Shop Supplements
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Link>
               </Button>
               <Button variant="heroOutline" size="lg">
                 View Your Protocol
@@ -117,25 +115,25 @@ const SupplementsSection = () => {
             className="grid grid-cols-2 gap-4"
           >
             {supplements.map((product, index) => (
-              <motion.div
-                key={product.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 + 0.3 }}
-                className="glass-card rounded-2xl p-6 group hover:border-secondary/40 transition-all duration-300 cursor-pointer"
-                onClick={handleShopClick}
-              >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${product.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <product.icon className="w-6 h-6 text-background" />
-                </div>
-                <h3 className="font-bold text-lg mb-2 group-hover:text-secondary transition-colors">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {product.description}
-                </p>
-              </motion.div>
+              <Link to="/supplements" key={product.name}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 + 0.3 }}
+                  className="glass-card rounded-2xl p-6 group hover:border-secondary/40 transition-all duration-300 cursor-pointer"
+                >
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${product.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <product.icon className="w-6 h-6 text-background" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2 group-hover:text-secondary transition-colors">
+                    {product.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {product.description}
+                  </p>
+                </motion.div>
+              </Link>
             ))}
           </motion.div>
         </div>
