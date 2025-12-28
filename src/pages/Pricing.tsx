@@ -211,10 +211,10 @@ const Pricing = () => {
   return (
     <>
       <Helmet>
-        <title>Pricing & Plans | VitalityX Health</title>
+        <title>Health Optimization Programs | VitalityX Health</title>
         <meta
           name="description"
-          content="Choose your path to optimal health. From a la carte genetic testing to comprehensive subscription plans—Ignite, Elevate, or Transcend your wellness journey."
+          content="Discover personalized health optimization programs. From genetic testing to comprehensive wellness memberships—Ignite, Elevate, or Transcend your journey."
         />
         <link rel="canonical" href="https://vitalityxhealth.com/pricing" />
       </Helmet>
