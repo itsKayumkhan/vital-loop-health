@@ -82,7 +82,7 @@ const PricingPreview = () => {
             </Button>
           </Link>
           <p className="text-muted-foreground text-sm mt-4">
-            A la carte testing also available starting at $299
+            Single tests available—begin your journey at your own pace.
           </p>
         </motion.div>
       </div>
