@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import TestCatalog from '@/components/TestCatalog';
+import JourneyPathway from '@/components/JourneyPathway';
 
 const subscriptionTiers = [
   {
@@ -245,17 +246,22 @@ const Pricing = () => {
                 Whether you want to start with a single test or commit to complete transformation, 
                 we have a path designed for your goals.
               </p>
-            </motion.div>
-          </div>
-        </section>
+        </motion.div>
+      </div>
+    </section>
 
-        {/* A La Carte Test Catalog */}
-        <TestCatalog />
+    {/* Journey Pathway - Step 1 & 2 */}
+    <JourneyPathway />
 
-        {/* Subscription Tiers */}
-        <SubscriptionSection />
+    {/* A La Carte Test Catalog */}
+    <TestCatalog />
 
-        <Footer />
+    {/* Subscription Tiers */}
+    <div id="subscriptions">
+      <SubscriptionSection />
+    </div>
+
+    <Footer />
       </main>
     </>
   );
