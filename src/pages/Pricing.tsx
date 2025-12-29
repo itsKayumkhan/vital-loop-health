@@ -197,7 +197,7 @@ const SubscriptionSection = () => {
           viewport={{ once: true }}
           className="text-center text-muted-foreground text-sm mt-12"
         >
-          All subscriptions include access to our white-labeled portal with detailed reports and personalized action plans. 
+          All subscriptions include access to our client portal with detailed reports and personalized action plans. 
           Cancel anytime with no hidden fees.
         </motion.p>
       </div>
