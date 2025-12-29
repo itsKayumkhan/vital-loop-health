@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 const tiers = [
-  { name: 'Ignite', price: 149, tagline: 'Spark Your Transformation' },
+  { name: 'Ignite', price: 129, tagline: 'Spark Your Transformation' },
   { name: 'Elevate', price: 299, tagline: 'Rise to Your Potential', popular: true },
-  { name: 'Transcend', price: 599, tagline: 'Beyond Limits' },
+  { name: 'Transcend', price: 649, tagline: 'Beyond Limits' },
 ];
 
 const PricingPreview = () => {
