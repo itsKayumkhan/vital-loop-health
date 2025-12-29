@@ -30,7 +30,7 @@ const subscriptionTiers = [
     name: 'Elevate',
     tagline: 'Rise to Your Potential',
     description: 'Comprehensive support with coaching, training, and custom supplementation.',
-    monthlyPrice: 249,
+    monthlyPrice: 299,
     icon: ArrowRight,
     popular: true,
     features: [
@@ -50,7 +50,7 @@ const subscriptionTiers = [
     name: 'Transcend',
     tagline: 'Beyond Limits',
     description: 'Elite, white-glove health optimization with unlimited access to our full team.',
-    monthlyPrice: 499,
+    monthlyPrice: 649,
     icon: Brain,
     popular: false,
     features: [
