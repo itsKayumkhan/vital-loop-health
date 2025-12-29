@@ -23,6 +23,7 @@ const subscriptionTiers = [
       'Client portal access',
       'Detailed health reports',
       'Health goal tracking dashboard',
+      '10% off additional genetic & lab panels',
     ],
   },
   {
@@ -42,6 +43,7 @@ const subscriptionTiers = [
       'Bi-annual lab monitoring',
       'Real-time app analytics',
       'Personalized action plans',
+      '15% off additional genetic & lab panels',
     ],
   },
   {
@@ -58,11 +60,11 @@ const subscriptionTiers = [
       'Premium supplement line',
       '15% discount on supplements',
       'Quarterly lab monitoring',
-      'Mental health support',
       'Dedicated health concierge',
       'VIP priority scheduling',
       'Exclusive member events',
       'Concierge appointment scheduling',
+      '20% off additional genetic & lab panels',
     ],
   },
 ];
