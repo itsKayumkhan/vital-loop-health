@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { Target, TrendingUp, Shield, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const personas = [
   {
@@ -98,10 +100,15 @@ const ForYouSection = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-center mt-16"
         >
-          <p className="text-lg text-muted-foreground">
-            <span className="text-foreground font-semibold">Not ready for a full commitment?</span>{' '}
-            Start with just a genetic panel and see what your DNA reveals.
+          <p className="text-lg text-muted-foreground mb-4">
+            <span className="text-foreground font-semibold">Not ready for a full program?</span>{' '}
+            Explore individual genetic and lab panels.
           </p>
+          <Link to="/pricing">
+            <Button variant="outline" size="sm">
+              Browse Test Catalog
+            </Button>
+          </Link>
         </motion.div>
       </div>
     </section>
