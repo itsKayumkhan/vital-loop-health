@@ -81,14 +81,9 @@ const PricingPreview = () => {
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </Link>
-          <p className="text-muted-foreground text-sm mt-6 mb-3">
-            Not ready for a full program? Explore individual genetic and lab panels.
+          <p className="text-muted-foreground text-sm mt-4">
+            A la carte testing also available starting at $299
           </p>
-          <Link to="/pricing">
-            <Button variant="outline" size="sm">
-              Browse Test Catalog
-            </Button>
-          </Link>
         </motion.div>
       </div>
     </section>
