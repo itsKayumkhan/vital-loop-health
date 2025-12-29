@@ -51,7 +51,7 @@ const WhyUsSection = () => {
               Why We're Different
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              The First True{' '}
+              Finally, A True{' '}
               <span className="text-gradient">Closed-Loop</span>{' '}
               Health Blueprint
             </h2>
