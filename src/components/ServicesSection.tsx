@@ -99,7 +99,7 @@ const ServicesSection = () => {
             What We Do
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-            A Complete Journey, Not Just Services
+            A Complete Journey
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Every piece works together. Your genetics inform your nutrition. Your labs guide your supplements. 
