@@ -61,7 +61,7 @@ const WhyUsSection = () => {
             </p>
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
               <strong className="text-foreground">VitalityX is different.</strong> We built a complete ecosystem 
-              where every service is informed by your genetics and every provider has access to your full health picture. 
+              where every service is informed by your genetics and every team member has access to your full health picture. 
               No more guesswork. No more fragmentation.
             </p>
             
