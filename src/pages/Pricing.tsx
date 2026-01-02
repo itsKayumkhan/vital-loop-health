@@ -19,7 +19,6 @@ const membershipTiers = [
     features: [
       'Dedicated Health Architect (your single point of contact)',
       '1x monthly virtual coaching session',
-      'Async messaging support',
       'Baseline + semi-annual lab testing',
       'Wearable data integration (Oura, Whoop, Apple Watch, Garmin)',
       '90-day personalized VitalityX Protocol',
