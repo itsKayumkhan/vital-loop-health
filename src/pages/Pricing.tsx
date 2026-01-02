@@ -26,7 +26,7 @@ const membershipTiers = [
       'Personalized supplement protocol',
       'Full on-demand workout & education library',
       'Client portal with health scorecard',
-      '10% off additional lab panels',
+      '5% off additional lab panels',
       '10% discount on supplements',
     ],
   },
@@ -48,7 +48,7 @@ const membershipTiers = [
       'Monthly virtual personal training session',
       'VO2max-informed programming',
       '15% discount on supplements',
-      '15% off additional lab panels',
+      '10% off additional lab panels',
     ],
   },
   {
@@ -69,7 +69,7 @@ const membershipTiers = [
       'Quarterly deep-dive strategy session',
       'VIP priority scheduling',
       'Exclusive member events',
-      '20% off additional lab panels',
+      '15% off additional lab panels',
     ],
   },
 ];
