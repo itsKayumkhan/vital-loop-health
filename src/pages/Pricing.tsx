@@ -60,7 +60,6 @@ const membershipTiers = [
     popular: false,
     features: [
       'Everything in Elevate, plus:',
-      'Dedicated Senior Health Strategist',
       'Weekly coaching sessions',
       'Weekly personal training',
       'Quarterly lab monitoring (4x per year)',
