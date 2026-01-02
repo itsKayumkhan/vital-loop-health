@@ -10,8 +10,8 @@ const Footer = () => {
           <div className="md:col-span-2">
             <img src={logo} alt="VitalityX Health" className="h-10 w-auto mb-4" />
             <p className="text-muted-foreground max-w-md mb-6">
-              The first closed-loop health and wellness system. Your genetics inform everything. 
-              Your results speak for themselves.
+              Finally, a true closed-loop health journey that reads your genetic code, identifies your unique needs, 
+              and delivers personalized nutrition, coaching, training, and supplements—all in one platform.
             </p>
             <div className="flex items-center gap-6">
               <a href="#" className="text-muted-foreground hover:text-secondary transition-colors">
