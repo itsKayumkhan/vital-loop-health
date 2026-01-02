@@ -15,7 +15,7 @@ const differentiators = [
     them: 'Off-the-shelf vitamins for "general wellness"',
   },
   {
-    us: 'One team that knows your complete health profile',
+    us: 'One team managed by a VitalityX Health Architect that understands your complete health profile',
     them: 'Starting from scratch with every new provider',
   },
   {
