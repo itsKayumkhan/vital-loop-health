@@ -104,7 +104,7 @@ const JourneyPathway = () => {
             </p>
           </motion.div>
 
-          {/* Step 2: Subscriptions */}
+          {/* Step 2: Memberships */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -131,7 +131,7 @@ const JourneyPathway = () => {
                     <span className="text-secondary text-sm font-semibold uppercase tracking-wider">Ongoing Support</span>
                     <h3 className="text-2xl md:text-3xl font-bold mt-1 mb-3">Choose Your Optimization Level</h3>
                     <p className="text-muted-foreground leading-relaxed">
-                      Transform insights into action. Our subscription tiers provide the coaching, monitoring, 
+                      Transform insights into action. Our membership tiers provide the coaching, monitoring, 
                       and accountability you need to achieve lasting results—each one built on the foundation 
                       of your genetic blueprint.
                     </p>
@@ -141,10 +141,10 @@ const JourneyPathway = () => {
                         variant="heroOutline" 
                         size="lg"
                         onClick={() => {
-                          document.getElementById('subscriptions')?.scrollIntoView({ behavior: 'smooth' });
+                          document.getElementById('memberships')?.scrollIntoView({ behavior: 'smooth' });
                         }}
                       >
-                        View Subscription Tiers
+                        View Membership Tiers
                       </Button>
                     </div>
                   </div>
