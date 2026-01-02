@@ -154,7 +154,7 @@ const JourneyPathway = () => {
                 <div className="grid sm:grid-cols-3 gap-4 mt-8 pt-6 border-t border-border/50">
                   <div className="text-center p-4 rounded-lg bg-background/50">
                     <p className="text-foreground font-semibold">Ignite</p>
-                    <p className="text-secondary font-bold">$129/mo</p>
+                    <p className="text-secondary font-bold">$179/mo</p>
                   </div>
                   <div className="text-center p-4 rounded-lg bg-secondary/10 border border-secondary/30">
                     <p className="text-foreground font-semibold">Elevate</p>
