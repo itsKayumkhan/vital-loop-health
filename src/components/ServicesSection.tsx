@@ -25,8 +25,8 @@ const services = [
   },
   {
     icon: Brain,
-    title: 'Health & Mental Wellness Coaching',
-    description: 'One-on-one sessions with certified coaches who understand the connection between your genetics and mental well-being.',
+    title: 'Mental Performance Coaching',
+    description: 'One-on-one sessions with certified coaches who understand the connection between your genetics and cognitive performance.',
     highlight: 'Your Mindset',
   },
   {
