@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import Pricing from "./pages/Pricing";
+import Services from "./pages/Services";
 import Supplements from "./pages/Supplements";
 import NotFound from "./pages/NotFound";
 
@@ -21,6 +22,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/services" element={<Services />} />
             <Route path="/supplements" element={<Supplements />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
