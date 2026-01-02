@@ -154,28 +154,30 @@ const MembershipSection = () => {
                 </div>
               )}
 
-              <div className="text-center mb-8 min-h-[140px]">
+              <div className="text-center mb-6">
                 <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-4">
                   <tier.icon className="w-8 h-8 text-secondary" />
                 </div>
                 <h3 className="text-3xl font-bold mb-1">{tier.name}</h3>
                 <p className="text-secondary text-sm font-medium mb-3">{tier.tagline}</p>
-                <p className="text-muted-foreground text-sm">{tier.description}</p>
+                <p className="text-muted-foreground text-sm min-h-[40px]">{tier.description}</p>
               </div>
 
-              <div className="text-center mb-8 min-h-[80px]">
+              <div className="text-center mb-8 h-[100px] flex flex-col justify-start">
                 {isAnnual ? (
                   <>
-                    <span className="text-5xl font-bold text-foreground">${getAnnualTotal(tier.monthlyPrice).toLocaleString()}</span>
-                    <span className="text-muted-foreground">/year</span>
+                    <div>
+                      <span className="text-5xl font-bold text-foreground">${getAnnualTotal(tier.monthlyPrice).toLocaleString()}</span>
+                      <span className="text-muted-foreground">/year</span>
+                    </div>
                     <p className="text-muted-foreground text-sm mt-1 line-through">${(tier.monthlyPrice * 12).toLocaleString()}/year</p>
                     <p className="text-secondary text-sm font-medium">Save ${((tier.monthlyPrice * 12) - getAnnualTotal(tier.monthlyPrice)).toLocaleString()}</p>
                   </>
                 ) : (
-                  <>
+                  <div>
                     <span className="text-5xl font-bold text-foreground">${tier.monthlyPrice}</span>
                     <span className="text-muted-foreground">/month</span>
-                  </>
+                  </div>
                 )}
               </div>
 
