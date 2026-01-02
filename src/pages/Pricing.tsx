@@ -69,6 +69,7 @@ const membershipTiers = [
       'Quarterly deep-dive strategy session',
       'VIP priority scheduling',
       'Exclusive member events',
+      '20% discount on supplements',
       '15% off additional lab panels',
     ],
   },
