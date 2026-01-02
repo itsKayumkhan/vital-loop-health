@@ -26,8 +26,8 @@ const membershipTiers = [
       'Personalized supplement protocol',
       'Full on-demand workout & education library',
       'Client portal with health scorecard',
-      '5% off additional lab panels',
       '10% discount on supplements',
+      '5% off additional lab panels',
     ],
   },
   {
