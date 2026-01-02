@@ -154,16 +154,18 @@ const MembershipSection = () => {
                 </div>
               )}
 
-              <div className="text-center mb-6">
+              {/* Header - fixed height */}
+              <div className="text-center mb-6 h-[180px]">
                 <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-4">
                   <tier.icon className="w-8 h-8 text-secondary" />
                 </div>
                 <h3 className="text-3xl font-bold mb-1">{tier.name}</h3>
                 <p className="text-secondary text-sm font-medium mb-3">{tier.tagline}</p>
-                <p className="text-muted-foreground text-sm min-h-[40px]">{tier.description}</p>
+                <p className="text-muted-foreground text-sm">{tier.description}</p>
               </div>
 
-              <div className="text-center mb-8 h-[100px] flex flex-col justify-start">
+              {/* Pricing - fixed height */}
+              <div className="text-center mb-8 h-[100px]">
                 {isAnnual ? (
                   <>
                     <div>
@@ -181,7 +183,8 @@ const MembershipSection = () => {
                 )}
               </div>
 
-              <ul className="space-y-3 mb-8 flex-grow">
+              {/* Features - fixed height */}
+              <ul className="space-y-3 mb-8 h-[380px] overflow-y-auto">
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
@@ -190,9 +193,10 @@ const MembershipSection = () => {
                 ))}
               </ul>
 
+              {/* Button - always at bottom */}
               <Button
                 variant={tier.popular ? 'hero' : 'heroOutline'}
-                className="w-full mt-auto"
+                className="w-full"
                 size="lg"
               >
                 {tier.popular ? 'Start Your Journey' : 'Choose Plan'}
