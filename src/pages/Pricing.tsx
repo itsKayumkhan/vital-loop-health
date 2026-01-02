@@ -54,7 +54,7 @@ const membershipTiers = [
   {
     name: 'Transcend',
     tagline: 'Longevity Strategy & Execution',
-    description: 'Elite, white-glove health optimization with your dedicated Senior Health Strategist.',
+    description: 'Elite, white-glove health optimization with precision longevity strategy and execution.',
     monthlyPrice: 649,
     icon: Brain,
     popular: false,
@@ -157,7 +157,7 @@ const MembershipSection = () => {
                 </div>
                 <h3 className="text-3xl font-bold mb-1">{tier.name}</h3>
                 <p className="text-secondary text-sm font-medium mb-3">{tier.tagline}</p>
-                <p className="text-muted-foreground text-sm min-h-[40px]">{tier.description}</p>
+                <p className="text-muted-foreground text-sm min-h-[60px]">{tier.description}</p>
               </div>
 
               <div className="text-center mb-8 h-[100px] flex flex-col justify-start">
