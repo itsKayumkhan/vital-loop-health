@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 import TestCatalog from '@/components/TestCatalog';
 import JourneyPathway from '@/components/JourneyPathway';
 
-const subscriptionTiers = [
+const membershipTiers = [
   {
     name: 'Ignite',
     tagline: 'Spark Your Transformation',
@@ -70,7 +70,7 @@ const subscriptionTiers = [
   },
 ];
 
-const SubscriptionSection = () => {
+const MembershipSection = () => {
   const [isAnnual, setIsAnnual] = useState(false);
 
   const getAnnualTotal = (monthlyPrice: number) => {
@@ -91,7 +91,7 @@ const SubscriptionSection = () => {
             Commit to <span className="text-gradient">Transformation</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            Our subscription tiers provide ongoing support, continuous optimization, and everything 
+            Our membership tiers provide ongoing support, continuous optimization, and everything 
             you need for lasting health transformation. All plans include detailed reports with 
             personalized action plans.
           </p>
@@ -125,7 +125,7 @@ const SubscriptionSection = () => {
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
-          {subscriptionTiers.map((tier, index) => (
+          {membershipTiers.map((tier, index) => (
             <motion.div
               key={tier.name}
               initial={{ opacity: 0, y: 40 }}
@@ -198,7 +198,7 @@ const SubscriptionSection = () => {
           viewport={{ once: true }}
           className="text-center text-muted-foreground text-sm mt-12"
         >
-          All subscriptions include access to our client portal with detailed reports and personalized action plans. 
+          All memberships include access to our client portal with detailed reports and personalized action plans. 
           Cancel anytime with no hidden fees.
         </motion.p>
       </div>
@@ -256,9 +256,9 @@ const Pricing = () => {
     {/* A La Carte Test Catalog */}
     <TestCatalog />
 
-    {/* Subscription Tiers */}
-    <div id="subscriptions">
-      <SubscriptionSection />
+    {/* Membership Tiers */}
+    <div id="memberships">
+      <MembershipSection />
     </div>
 
     <Footer />
