@@ -13,7 +13,7 @@ const membershipTiers = [
     name: 'Ignite',
     tagline: 'Spark Your Transformation',
     description: 'Build your foundation with personalized guidance, nutrition planning, and ongoing support.',
-    monthlyPrice: 129,
+    monthlyPrice: 179,
     icon: Sparkles,
     popular: false,
     features: [
