@@ -61,7 +61,7 @@ const membershipTiers = [
     features: [
       'Everything in Elevate, plus:',
       'Weekly coaching sessions',
-      'Weekly personal training',
+      'Weekly virtual personal training session',
       'Quarterly lab monitoring (4x per year)',
       'Advanced supplementation protocols',
       'Sleep optimization pathway',
