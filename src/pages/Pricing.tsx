@@ -47,8 +47,8 @@ const membershipTiers = [
       'Nutrition coach debrief + action plan',
       'Monthly virtual personal training session',
       'VO2max-informed programming',
-      '15% discount on supplements',
-      '15% off additional lab panels',
+      '20% off additional lab panels',
+      '20% discount on supplements',
     ],
   },
   {
