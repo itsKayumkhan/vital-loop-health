@@ -34,7 +34,7 @@ const membershipTiers = [
     name: 'Elevate',
     tagline: 'Metabolic & Performance Optimization',
     description: 'Accelerate results with deeper optimization, CGM insights, and dedicated performance coaching.',
-    monthlyPrice: 299,
+    monthlyPrice: 339,
     icon: ArrowRight,
     popular: true,
     features: [
