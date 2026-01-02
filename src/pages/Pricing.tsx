@@ -38,6 +38,7 @@ const membershipTiers = [
     popular: true,
     features: [
       'Everything in Ignite, plus:',
+      'Monthly performance coaching consult',
       'Bi-weekly coaching sessions',
       'Priority coaching response times',
       'CGM Sprint Program (2x per year)',
