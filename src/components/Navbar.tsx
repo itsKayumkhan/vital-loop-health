@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import logo from '@/assets/vitalityx-logo.jpg';
 
 const navItems = [
-  { name: 'Services', href: '#services' },
+  { name: 'Services', href: '/services', isPage: true },
   { name: 'Why Us', href: '#why-us' },
   { name: 'Programs', href: '/pricing', isPage: true },
   { name: 'Supplements', href: '#supplements' },
