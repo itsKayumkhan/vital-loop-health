@@ -67,7 +67,6 @@ const membershipTiers = [
       'Sleep optimization pathway',
       'Wearable-based sleep diagnostics',
       'Quarterly deep-dive strategy session',
-      'White-glove coordination of all programs',
       'VIP priority scheduling',
       'Exclusive member events',
       '20% off additional lab panels',
