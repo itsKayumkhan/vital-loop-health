@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Dna, FlaskConical, Activity, Brain, Heart, Leaf, Droplets, Zap } from 'lucide-react';
+import { Dna, FlaskConical, Activity, Brain, Heart, Leaf, Droplets, Zap, Microscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Accordion,
@@ -33,6 +33,19 @@ const testCategories: TestCategory[] = [
       { name: 'Detoxification Genes', description: 'Liver detox pathway genetic variants', price: 249 },
       { name: 'Nutrigenomics Panel', description: 'How your genes respond to nutrients', price: 349 },
       { name: 'Athletic Performance DNA', description: 'Muscle fiber, recovery, and endurance genetics', price: 399 },
+    ],
+  },
+  {
+    id: 'precision-labs',
+    name: 'Precision Labs',
+    icon: Microscope,
+    tests: [
+      { name: 'Core Metabolic & Energy', description: 'Foundational markers for metabolic health and cellular energy production', price: 0 },
+      { name: 'Inflammation & Immunity', description: 'Key inflammatory and immune system biomarkers', price: 0 },
+      { name: 'Micronutrient & Mineral', description: 'Essential vitamins and minerals for optimal function', price: 0 },
+      { name: 'Thyroid Signal', description: 'Complete thyroid function and signaling assessment', price: 0 },
+      { name: 'Lipids & Cardiovascular Baseline', description: 'Advanced lipid analysis and heart health markers', price: 0 },
+      { name: 'Hormonal Signal', description: 'Key hormone levels and endocrine function markers', price: 0 },
     ],
   },
   {
@@ -161,12 +174,20 @@ const TestCatalog = () => {
                           <p className="text-sm text-muted-foreground">{test.description}</p>
                         </div>
                         <div className="flex items-center gap-4">
-                          <span className="text-xl font-bold text-foreground whitespace-nowrap">
-                            ${test.price}
-                          </span>
-                          <Button variant="heroOutline" size="sm">
-                            Order
-                          </Button>
+                          {test.price > 0 ? (
+                            <>
+                              <span className="text-xl font-bold text-foreground whitespace-nowrap">
+                                ${test.price}
+                              </span>
+                              <Button variant="heroOutline" size="sm">
+                                Order
+                              </Button>
+                            </>
+                          ) : (
+                            <Button variant="heroOutline" size="sm">
+                              Learn More
+                            </Button>
+                          )}
                         </div>
                       </div>
                     ))}
