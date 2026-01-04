@@ -423,9 +423,10 @@ const WhyUs = () => {
                     <span className="text-gradient">Trusted By Clients.</span>
                   </h2>
                   <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-                    VitalityX was founded by physicians, geneticists, and performance specialists 
-                    who saw firsthand how fragmented healthcare fails people. Our protocols are 
-                    evidence-based, our team is credentialed, and our results speak for themselves.
+                    VitalityX was founded by health optimization experts who saw firsthand how 
+                    fragmented healthcare fails people. We partner with board-certified physicians, 
+                    certified coaches, and CLIA-certified laboratories to deliver protocols that are 
+                    evidence-based, personalized, and proven to work.
                   </p>
                   <div className="space-y-4">
                     {[
