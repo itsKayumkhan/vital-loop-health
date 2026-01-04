@@ -40,6 +40,7 @@ const testCategories: TestCategory[] = [
     name: 'Precision Labs',
     icon: Microscope,
     tests: [
+      { name: 'Complete Precision Panel', description: 'Comprehensive analysis combining all precision lab markers for total health insight', price: 899 },
       { name: 'Core Metabolic & Energy', description: 'Foundational markers for metabolic health and cellular energy production', price: 199 },
       { name: 'Inflammation & Immunity', description: 'Key inflammatory and immune system biomarkers', price: 179 },
       { name: 'Micronutrient & Mineral', description: 'Essential vitamins and minerals for optimal function', price: 189 },
