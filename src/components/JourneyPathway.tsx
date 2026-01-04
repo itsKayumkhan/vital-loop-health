@@ -158,7 +158,7 @@ const JourneyPathway = () => {
                   </div>
                   <div className="text-center p-4 rounded-lg bg-secondary/10 border border-secondary/30">
                     <p className="text-foreground font-semibold">Elevate</p>
-                    <p className="text-secondary font-bold">$299/mo</p>
+                    <p className="text-secondary font-bold">$339/mo</p>
                   </div>
                   <div className="text-center p-4 rounded-lg bg-background/50">
                     <p className="text-foreground font-semibold">Transcend</p>
