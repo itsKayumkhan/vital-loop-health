@@ -129,7 +129,7 @@ const TestCatalog = () => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Precision <span className="text-gradient">Testing</span>
+            Biomarker <span className="text-gradient">Intelligence</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Select targeted tests designed to deliver accurate, actionable insights 
