@@ -40,12 +40,12 @@ const testCategories: TestCategory[] = [
     name: 'Precision Labs',
     icon: Microscope,
     tests: [
-      { name: 'Core Metabolic & Energy', description: 'Foundational markers for metabolic health and cellular energy production', price: 0 },
-      { name: 'Inflammation & Immunity', description: 'Key inflammatory and immune system biomarkers', price: 0 },
-      { name: 'Micronutrient & Mineral', description: 'Essential vitamins and minerals for optimal function', price: 0 },
-      { name: 'Thyroid Signal', description: 'Complete thyroid function and signaling assessment', price: 0 },
-      { name: 'Lipids & Cardiovascular Baseline', description: 'Advanced lipid analysis and heart health markers', price: 0 },
-      { name: 'Hormonal Signal', description: 'Key hormone levels and endocrine function markers', price: 0 },
+      { name: 'Core Metabolic & Energy', description: 'Foundational markers for metabolic health and cellular energy production', price: 199 },
+      { name: 'Inflammation & Immunity', description: 'Key inflammatory and immune system biomarkers', price: 179 },
+      { name: 'Micronutrient & Mineral', description: 'Essential vitamins and minerals for optimal function', price: 189 },
+      { name: 'Thyroid Signal', description: 'Complete thyroid function and signaling assessment', price: 169 },
+      { name: 'Lipids & Cardiovascular Baseline', description: 'Advanced lipid analysis and heart health markers', price: 199 },
+      { name: 'Hormonal Signal', description: 'Key hormone levels and endocrine function markers', price: 219 },
     ],
   },
   {
