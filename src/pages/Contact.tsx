@@ -97,9 +97,9 @@ const Contact = () => {
       
       {/* Hero Section */}
       <section className="pt-32 pb-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-secondary/10 via-transparent to-transparent" />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl" />
+        {/* Ambient glow effects */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-secondary/8 rounded-full blur-[120px]" />
+        <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px]" />
         
         <div className="container mx-auto px-4 lg:px-8 relative">
           <motion.div
@@ -108,6 +108,18 @@ const Contact = () => {
             transition={{ duration: 0.8 }}
             className="text-center max-w-3xl mx-auto"
           >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-secondary/30 bg-secondary/10 backdrop-blur-sm mb-8"
+            >
+              <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+              <span className="text-secondary text-sm font-medium tracking-wide">
+                GET IN TOUCH
+              </span>
+            </motion.div>
+            
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               Ready to Decode{' '}
               <span className="text-gradient">Your Potential?</span>
@@ -121,8 +133,13 @@ const Contact = () => {
       </section>
 
       {/* Main Content */}
-      <section className="py-16 lg:py-24 relative">
-        <div className="container mx-auto px-4 lg:px-8">
+      <section className="py-16 lg:py-24 relative overflow-hidden">
+        {/* Background elements */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-secondary/5 to-transparent" />
+        <div className="absolute left-0 top-1/4 w-[300px] h-[500px] bg-secondary/5 rounded-full blur-[100px]" />
+        <div className="absolute right-0 bottom-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
+        
+        <div className="container mx-auto px-4 lg:px-8 relative">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 max-w-6xl mx-auto">
             
             {/* Contact Form */}
@@ -130,7 +147,11 @@ const Contact = () => {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="glass-card rounded-2xl p-8 md:p-10"
+              className="relative rounded-2xl p-8 md:p-10 backdrop-blur-xl border border-secondary/20"
+              style={{
+                background: 'linear-gradient(180deg, hsl(200, 60%, 12%, 0.9) 0%, hsl(200, 63%, 8%, 0.95) 100%)',
+                boxShadow: '0 0 60px hsl(151, 44%, 49%, 0.1), inset 0 1px 0 hsl(151, 44%, 49%, 0.1)'
+              }}
             >
               <h2 className="text-2xl md:text-3xl font-bold mb-2">Get In Touch</h2>
               <p className="text-muted-foreground mb-8">
@@ -234,9 +255,16 @@ const Contact = () => {
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="glass-card rounded-2xl p-8"
+                className="relative rounded-2xl p-8 backdrop-blur-xl border border-secondary/20"
+                style={{
+                  background: 'linear-gradient(180deg, hsl(200, 60%, 12%, 0.9) 0%, hsl(200, 63%, 8%, 0.95) 100%)',
+                  boxShadow: '0 0 60px hsl(151, 44%, 49%, 0.1), inset 0 1px 0 hsl(151, 44%, 49%, 0.1)'
+                }}
               >
-                <h3 className="text-xl font-bold mb-6">Contact Information</h3>
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-secondary" />
+                  Contact Information
+                </h3>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {contactInfo.map((info, index) => (
                     <motion.div
@@ -244,7 +272,7 @@ const Contact = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
-                      className="flex items-start gap-4 p-4 rounded-xl bg-background/30 border border-border/30 hover:border-secondary/30 transition-colors"
+                      className="flex items-start gap-4 p-4 rounded-xl bg-secondary/5 border border-secondary/10 hover:border-secondary/30 hover:bg-secondary/10 transition-all duration-300"
                     >
                       <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0">
                         <info.icon className="w-5 h-5 text-secondary" />
@@ -272,7 +300,11 @@ const Contact = () => {
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="glass-card rounded-2xl p-8 flex-1"
+                className="relative rounded-2xl p-8 flex-1 backdrop-blur-xl border border-secondary/20"
+                style={{
+                  background: 'linear-gradient(180deg, hsl(200, 60%, 12%, 0.9) 0%, hsl(200, 63%, 8%, 0.95) 100%)',
+                  boxShadow: '0 0 60px hsl(151, 44%, 49%, 0.1), inset 0 1px 0 hsl(151, 44%, 49%, 0.1)'
+                }}
               >
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center">
@@ -284,8 +316,8 @@ const Contact = () => {
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-background/30 border border-border/30 p-8 text-center min-h-[180px] flex flex-col items-center justify-center">
-                  <Calendar className="w-10 h-10 text-muted-foreground mb-4" />
+                <div className="rounded-xl bg-secondary/5 border border-secondary/10 p-8 text-center min-h-[180px] flex flex-col items-center justify-center">
+                  <Calendar className="w-10 h-10 text-secondary/50 mb-4" />
                   <p className="text-muted-foreground mb-2">Calendar scheduling coming soon</p>
                   <p className="text-sm text-muted-foreground/70">Calendly integration will appear here</p>
                 </div>
@@ -296,7 +328,11 @@ const Contact = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
-                className="glass-card rounded-2xl p-8"
+                className="relative rounded-2xl p-8 backdrop-blur-xl border border-secondary/20"
+                style={{
+                  background: 'linear-gradient(180deg, hsl(200, 60%, 12%, 0.9) 0%, hsl(200, 63%, 8%, 0.95) 100%)',
+                  boxShadow: '0 0 60px hsl(151, 44%, 49%, 0.1), inset 0 1px 0 hsl(151, 44%, 49%, 0.1)'
+                }}
               >
                 <h3 className="text-lg font-bold mb-6 text-secondary">Your Journey Starts With:</h3>
                 <div className="space-y-4">
