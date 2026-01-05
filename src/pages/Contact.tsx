@@ -153,39 +153,53 @@ const Contact = () => {
                 boxShadow: '0 0 60px hsl(151, 44%, 49%, 0.1), inset 0 1px 0 hsl(151, 44%, 49%, 0.1)'
               }}
             >
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">Get In Touch</h2>
-              <p className="text-muted-foreground mb-8">
-                Have questions? Fill out the form and we'll respond within 24 hours.
+              <h2 className="text-2xl font-bold mb-1">Get In Touch</h2>
+              <p className="text-muted-foreground text-sm mb-6">
+                Have questions? We'll respond within 24 hours.
               </p>
 
               {isSubmitted ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="flex flex-col items-center justify-center py-16 text-center"
+                  className="flex flex-col items-center justify-center py-10 text-center"
                 >
-                  <div className="w-20 h-20 rounded-full bg-secondary/20 flex items-center justify-center mb-6">
-                    <CheckCircle className="w-10 h-10 text-secondary" />
+                  <div className="w-16 h-16 rounded-full bg-secondary/20 flex items-center justify-center mb-4">
+                    <CheckCircle className="w-8 h-8 text-secondary" />
                   </div>
-                  <h3 className="text-2xl font-semibold mb-2">Thank You!</h3>
-                  <p className="text-muted-foreground">We'll be in touch soon.</p>
+                  <h3 className="text-xl font-semibold mb-1">Thank You!</h3>
+                  <p className="text-muted-foreground text-sm">We'll be in touch soon.</p>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <Input
-                      name="name"
-                      placeholder="Your Name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      className="pl-12 h-14 bg-background/50 border-border/50 focus:border-secondary text-base"
-                    />
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        name="name"
+                        placeholder="Your Name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        className="pl-10 h-11 bg-background/50 border-border/50 focus:border-secondary"
+                      />
+                    </div>
+
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        name="phone"
+                        type="tel"
+                        placeholder="Phone Number"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className="pl-10 h-11 bg-background/50 border-border/50 focus:border-secondary"
+                      />
+                    </div>
                   </div>
 
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       name="email"
                       type="email"
@@ -193,32 +207,20 @@ const Contact = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="pl-12 h-14 bg-background/50 border-border/50 focus:border-secondary text-base"
+                      className="pl-10 h-11 bg-background/50 border-border/50 focus:border-secondary"
                     />
                   </div>
 
                   <div className="relative">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <Input
-                      name="phone"
-                      type="tel"
-                      placeholder="Phone Number"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="pl-12 h-14 bg-background/50 border-border/50 focus:border-secondary text-base"
-                    />
-                  </div>
-
-                  <div className="relative">
-                    <MessageSquare className="absolute left-4 top-4 w-5 h-5 text-muted-foreground" />
+                    <MessageSquare className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                     <Textarea
                       name="message"
                       placeholder="Tell us about your health goals..."
                       value={formData.message}
                       onChange={handleChange}
                       required
-                      rows={5}
-                      className="pl-12 pt-4 bg-background/50 border-border/50 focus:border-secondary resize-none text-base"
+                      rows={3}
+                      className="pl-10 pt-3 bg-background/50 border-border/50 focus:border-secondary resize-none"
                     />
                   </div>
 
@@ -226,12 +228,12 @@ const Contact = () => {
                     type="submit" 
                     variant="hero" 
                     size="lg" 
-                    className="w-full h-14 text-base"
+                    className="w-full h-11"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
                       <span className="flex items-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -239,7 +241,7 @@ const Contact = () => {
                       </span>
                     ) : (
                       <>
-                        <Send className="mr-2 w-5 h-5" />
+                        <Send className="mr-2 w-4 h-4" />
                         Send Message
                       </>
                     )}
