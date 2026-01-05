@@ -10,7 +10,7 @@ const navItems = [
   { name: 'Why Us', href: '/why-us', isPage: true },
   { name: 'Programs', href: '/pricing', isPage: true },
   { name: 'Supplements', href: '/supplements', isPage: true },
-  { name: 'Contact', href: '#contact' },
+  { name: 'Contact', href: '/contact', isPage: true },
 ];
 
 const Navbar = () => {
