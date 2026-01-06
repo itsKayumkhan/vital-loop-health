@@ -131,7 +131,7 @@ const supplements = [
   },
   {
     id: 'creatine',
-    name: 'CreatiCore',
+    name: 'Creatine',
     sku: '02X193M.090',
     description: 'Pure creatine monohydrate powder for exercise performance, muscle mass, and mental energy.',
     image: creatineImg,
