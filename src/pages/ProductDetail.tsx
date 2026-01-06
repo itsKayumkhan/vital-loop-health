@@ -91,16 +91,18 @@ const ProductDetail = () => {
   const price = variant?.price.amount || product.priceRange.minVariantPrice.amount;
 
   // Shopify CDN supports dynamic resizing via query params (helps prevent blurry upscales)
-  const withWidth = (url: string, width: number) => {
+  // Request high-res images for crisp supplement facts text
+  const withHighRes = (url: string, width: number) => {
     const separator = url.includes('?') ? '&' : '?';
     return `${url}${separator}width=${width}`;
   };
 
   const buildSrcSet = (url: string, widths: number[]) =>
-    widths.map((w) => `${withWidth(url, w)} ${w}w`).join(', ');
+    widths.map((w) => `${withHighRes(url, w)} ${w}w`).join(', ');
 
-  const MAIN_WIDTHS = [640, 960, 1280, 1600, 2048];
-  const THUMB_WIDTHS = [160, 240, 320];
+  // Use higher widths for crisp text rendering on supplement facts labels
+  const MAIN_WIDTHS = [1024, 1600, 2048, 2400, 3000];
+  const THUMB_WIDTHS = [200, 320, 480];
 
   return (
     <>
@@ -131,11 +133,11 @@ const ProductDetail = () => {
               <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-b from-muted/50 to-muted/20 p-8">
                 {selectedImage && (
                   <img
-                    src={withWidth(selectedImage.url, 1600)}
+                    src={withHighRes(selectedImage.url, 2400)}
                     srcSet={buildSrcSet(selectedImage.url, MAIN_WIDTHS)}
                     sizes="(min-width: 1024px) 50vw, 100vw"
                     alt={selectedImage.altText || product.title}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain [image-rendering:_-webkit-optimize-contrast]"
                     loading="eager"
                     decoding="async"
                   />
@@ -156,7 +158,7 @@ const ProductDetail = () => {
                       }`}
                     >
                       <img
-                        src={withWidth(image.url, 240)}
+                        src={withHighRes(image.url, 320)}
                         srcSet={buildSrcSet(image.url, THUMB_WIDTHS)}
                         sizes="80px"
                         alt={image.altText || `${product.title} - Image ${index + 1}`}
