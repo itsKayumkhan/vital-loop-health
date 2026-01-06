@@ -131,28 +131,6 @@ const STOREFRONT_QUERY = `
             name
             values
           }
-          sellingPlanGroups(first: 5) {
-            edges {
-              node {
-                name
-                sellingPlans(first: 5) {
-                  edges {
-                    node {
-                      id
-                      name
-                      priceAdjustments {
-                        adjustmentValue {
-                          ... on SellingPlanPercentagePriceAdjustment {
-                            adjustmentPercentage
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
         }
       }
     }
