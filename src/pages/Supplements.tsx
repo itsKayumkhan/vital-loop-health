@@ -219,7 +219,9 @@ const Supplements = () => {
                                 variant="outline" 
                                 className="absolute top-3 right-3 text-xs bg-background/80 backdrop-blur-sm"
                               >
-                                {product.node.tags[0] || product.node.productType}
+                                {product.node.tags.find(tag => 
+                                  !['Gluten Free', 'Soy Free', 'Vegetarian', 'Men', 'Women'].includes(tag)
+                                ) || product.node.productType}
                               </Badge>
                             </div>
                           </CardHeader>
