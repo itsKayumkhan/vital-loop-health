@@ -143,23 +143,42 @@ const supplements = [
   },
 ];
 
-// Placeholder bundles - will be updated with real pricing
 const comboPacks = [
   {
-    id: 'foundation-bundle',
-    name: 'Foundation Bundle',
-    description: 'Essential daily support with MethylGeniX, OmegaCore, and CelluVive for complete wellness coverage.',
-    includes: ['MethylGeniX (Men or Women)', 'OmegaCore', 'CelluVive'],
+    id: 'foundational-bundle-men',
+    name: 'Foundational Bundle (Men)',
+    description: 'Complete foundation for men\'s health with methylation support, omega-3s, and cellular energy.',
+    includes: ['MethylGeniX Men', 'OmegaCore', 'CelluCore'],
     icon: Package,
     featured: true,
+    price: 239.00,
   },
   {
-    id: 'performance-bundle',
-    name: 'Performance Bundle',
-    description: 'Optimize energy and recovery with Creatine, CelluCore, and CardioGeniX for peak performance.',
-    includes: ['Creatine', 'CelluCore', 'CardioGeniX'],
+    id: 'foundational-bundle-women',
+    name: 'Foundational Bundle (Women)',
+    description: 'Complete foundation for women\'s health with methylation support, omega-3s, and cellular energy.',
+    includes: ['MethylGeniX Women', 'OmegaCore', 'CelluCore'],
+    icon: Package,
+    featured: true,
+    price: 239.00,
+  },
+  {
+    id: 'longevity-bundle',
+    name: 'Longevity Bundle',
+    description: 'Advanced anti-aging support with NAD+ precursors, gut health, and cognitive enhancement.',
+    includes: ['NADiGenix / CelluVive+', 'GutGeniX', 'NeuroSync'],
     icon: Package,
     featured: false,
+    price: 217.00,
+  },
+  {
+    id: 'metabolic-bundle',
+    name: 'Metabolic Bundle',
+    description: 'Optimize metabolic health with blood sugar support, cardiovascular function, and omega-3s.',
+    includes: ['GlucoSync+', 'CardiaGeniX', 'OmegaCore'],
+    icon: Package,
+    featured: false,
+    price: 189.00,
   },
 ];
 
@@ -247,13 +266,13 @@ const Supplements = () => {
                         </ul>
                       </div>
                       <div className="flex items-baseline gap-3">
-                        <span className="text-xl font-medium text-muted-foreground">Pricing coming soon</span>
+                        <span className="text-3xl font-bold text-secondary">${pack.price.toFixed(2)}</span>
                       </div>
                     </CardContent>
                     <CardFooter>
-                      <Button className="w-full" size="lg" disabled>
+                      <Button className="w-full" size="lg">
                         <ShoppingCart className="w-4 h-4 mr-2" />
-                        Coming Soon
+                        Add Bundle to Cart
                       </Button>
                     </CardFooter>
                   </Card>
