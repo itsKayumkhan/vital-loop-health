@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, ShoppingCart, Sparkles, Shield, Leaf, Pill, Brain, Zap, Package } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,83 +8,146 @@ import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
+// Product images
+import glucosyncImg from '@/assets/products/glucosync.jpg';
+import celluviveImg from '@/assets/products/celluvive.jpg';
+import neurosyncImg from '@/assets/products/neurosync.jpg';
+import cellucoreImg from '@/assets/products/cellucore.jpg';
+import omegacoreImg from '@/assets/products/omegacore.jpg';
+import cardiogenixImg from '@/assets/products/cardiogenix.jpg';
+import methylgenixWomenImg from '@/assets/products/methylgenix-women.jpg';
+import methylgenixMenImg from '@/assets/products/methylgenix-men.jpg';
+import gutgenixImg from '@/assets/products/gutgenix.jpg';
+import creatineImg from '@/assets/products/creatine.jpg';
+
 const supplements = [
   {
-    id: 1,
-    name: 'Vitamin D3 + K2',
-    description: 'Optimal bone health and immune support with enhanced absorption',
-    icon: Sparkles,
-    benefits: ['Bone density', 'Immune function', 'Mood support'],
-    price: 49.99,
+    id: 'glucosync',
+    name: 'GlucoSync',
+    sku: '02X1262.060',
+    description: 'A dietary supplement to support proper glucose metabolism with ChromeMate chromium and botanical extracts.',
+    image: glucosyncImg,
+    benefits: ['Glucose metabolism', 'Insulin sensitivity', 'Blood sugar support'],
+    form: '60 Capsules',
+    category: 'Metabolic',
+    tags: ['Vegetarian', 'Gluten Free'],
+  },
+  {
+    id: 'celluvive',
+    name: 'CelluVive',
+    sku: '02X143N.060',
+    description: 'NAD+ Blend and Glutathione formula to support healthy aging and cellular energy production.',
+    image: celluviveImg,
+    benefits: ['Healthy aging', 'Cellular energy', 'NAD+ support'],
+    form: '60 Capsules',
+    category: 'Longevity',
+    tags: ['Vegetarian', 'Gluten Free', 'Soy Free'],
+  },
+  {
+    id: 'neurosync',
+    name: 'NeuroSync',
+    sku: '02X1415.120',
+    description: 'Neurological support formula with DMG, L-Carnosine, and methylated B vitamins for brain health.',
+    image: neurosyncImg,
+    benefits: ['Neurological support', 'Speech & language', 'Cognitive function'],
+    form: '120 Capsules',
+    category: 'Brain',
+    tags: ['Vegetarian', 'Gluten Free'],
+  },
+  {
+    id: 'cellucore',
+    name: 'CelluCore',
+    sku: '02X1541.030',
+    description: 'D-Ribose powder to support cellular energy production, cardiac function, and exercise recovery.',
+    image: cellucoreImg,
+    benefits: ['Cellular energy', 'Heart health', 'Exercise recovery'],
+    form: '30 Servings (150g)',
+    category: 'Energy',
+    tags: ['Vegetarian', 'Gluten Free'],
+  },
+  {
+    id: 'omegacore',
+    name: 'OmegaCore',
+    sku: '02X1367.090',
+    description: 'High-potency omega-3 fatty acids from fish oil for cardiovascular, skin, and hair health.',
+    image: omegacoreImg,
+    benefits: ['Heart health', 'Skin & hair', 'Brain function'],
+    form: '90 Softgels',
     category: 'Essential',
+    tags: ['Gluten Free'],
   },
   {
-    id: 2,
-    name: 'Omega-3 Complex',
-    description: 'High-potency fish oil for heart, brain, and joint health',
-    icon: Shield,
-    benefits: ['Heart health', 'Brain function', 'Joint support'],
-    price: 54.99,
-    category: 'Essential',
+    id: 'cardiogenix',
+    name: 'CardioGeniX',
+    sku: '02X148F.090',
+    description: 'Comprehensive cardiovascular support with CoQ10, L-Carnitine, and methylated B vitamins for heart and vessel health.',
+    image: cardiogenixImg,
+    benefits: ['Heart health', 'Homocysteine support', 'Vessel health'],
+    form: '90 Capsules',
+    category: 'Heart',
+    tags: ['Vegetarian', 'Gluten Free'],
   },
   {
-    id: 3,
-    name: 'Methylated B-Complex',
-    description: 'Active B vitamins for energy, metabolism, and nervous system',
-    icon: Leaf,
-    benefits: ['Energy production', 'Stress response', 'Cellular health'],
-    price: 44.99,
-    category: 'Essential',
+    id: 'methylgenix-women',
+    name: 'MethylGeniX Women',
+    sku: '02X120J.090',
+    description: 'Complete multivitamin for women with methylated B vitamins and essential minerals for optimal health.',
+    image: methylgenixWomenImg,
+    benefits: ['Daily nutrition', 'Methylation support', 'Energy'],
+    form: '90 Capsules',
+    category: 'Multivitamin',
+    tags: ['Vegetarian', 'Gluten Free'],
   },
   {
-    id: 4,
-    name: 'Adaptogen Stack',
-    description: 'Premium blend for stress resilience and recovery',
-    icon: Pill,
-    benefits: ['Stress management', 'Sleep quality', 'Recovery'],
-    price: 59.99,
+    id: 'methylgenix-men',
+    name: 'MethylGeniX Men',
+    sku: '02X121J.090',
+    description: 'Complete multivitamin for men with methylated B vitamins and essential minerals for optimal health.',
+    image: methylgenixMenImg,
+    benefits: ['Daily nutrition', 'Methylation support', 'Energy'],
+    form: '90 Capsules',
+    category: 'Multivitamin',
+    tags: ['Vegetarian', 'Gluten Free'],
+  },
+  {
+    id: 'gutgenix',
+    name: 'GutGeniX',
+    sku: '02X1479.030',
+    description: 'Gastrointestinal support formula with PepZin GI for digestive health and gut lining integrity.',
+    image: gutgenixImg,
+    benefits: ['Digestive health', 'Gut lining', 'GI comfort'],
+    form: '30 Capsules',
+    category: 'Digestive',
+    tags: ['Vegetarian', 'Gluten Free'],
+  },
+  {
+    id: 'creatine',
+    name: 'Creatine',
+    sku: '02X193M.090',
+    description: 'Pure creatine monohydrate powder for exercise performance, muscle mass, and mental energy.',
+    image: creatineImg,
+    benefits: ['Exercise performance', 'Muscle support', 'Mental energy'],
+    form: '90 Servings (450g)',
     category: 'Performance',
-  },
-  {
-    id: 5,
-    name: 'Neuro Focus',
-    description: 'Cognitive enhancers for mental clarity and brain performance',
-    icon: Brain,
-    benefits: ['Mental clarity', 'Focus', 'Memory support'],
-    price: 64.99,
-    category: 'Performance',
-  },
-  {
-    id: 6,
-    name: 'Metabolic Boost',
-    description: 'Metabolism support for energy production and weight management',
-    icon: Zap,
-    benefits: ['Metabolism', 'Energy', 'Body composition'],
-    price: 54.99,
-    category: 'Performance',
+    tags: ['Vegetarian'],
   },
 ];
 
+// Placeholder bundles - will be updated with real pricing
 const comboPacks = [
   {
-    id: 7,
-    name: 'Essential Foundation Pack',
-    description: 'Complete daily essentials: D3+K2, Omega-3, and B-Complex for total wellness coverage',
-    includes: ['Vitamin D3 + K2', 'Omega-3 Complex', 'Methylated B-Complex'],
-    originalPrice: 149.97,
-    price: 129.99,
-    savings: 19.98,
+    id: 'foundation-bundle',
+    name: 'Foundation Bundle',
+    description: 'Essential daily support with MethylGeniX, OmegaCore, and CelluVive for complete wellness coverage.',
+    includes: ['MethylGeniX (Men or Women)', 'OmegaCore', 'CelluVive'],
     icon: Package,
     featured: true,
   },
   {
-    id: 8,
-    name: 'Performance Stack',
-    description: 'Optimize mind and body: Neuro Focus, Adaptogen Stack, and Metabolic Boost for peak performance',
-    includes: ['Neuro Focus', 'Adaptogen Stack', 'Metabolic Boost'],
-    originalPrice: 179.97,
-    price: 149.99,
-    savings: 29.98,
+    id: 'performance-bundle',
+    name: 'Performance Bundle',
+    description: 'Optimize energy and recovery with Creatine, CelluCore, and CardioGeniX for peak performance.',
+    includes: ['Creatine', 'CelluCore', 'CardioGeniX'],
     icon: Package,
     featured: false,
   },
@@ -174,11 +237,7 @@ const Supplements = () => {
                         </ul>
                       </div>
                       <div className="flex items-baseline gap-3">
-                        <span className="text-3xl font-bold">${pack.price}</span>
-                        <span className="text-muted-foreground line-through">${pack.originalPrice}</span>
-                        <Badge variant="secondary" className="bg-green-500/20 text-green-400 border-green-500/30">
-                          Save ${pack.savings.toFixed(2)}
-                        </Badge>
+                        <span className="text-xl font-medium text-muted-foreground">Pricing coming soon</span>
                       </div>
                     </CardContent>
                     <CardFooter>
@@ -203,44 +262,61 @@ const Supplements = () => {
             <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
               Individual Supplements
             </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {supplements.map((supplement, index) => (
                 <motion.div
                   key={supplement.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
                 >
-                  <Card className="h-full glass-card hover:border-secondary/40 transition-all duration-300">
-                    <CardHeader>
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
-                          <supplement.icon className="w-6 h-6 text-secondary" />
-                        </div>
-                        <Badge variant="outline" className="text-xs">
+                  <Card className="h-full glass-card hover:border-secondary/40 transition-all duration-300 group">
+                    <CardHeader className="p-0">
+                      <div className="relative overflow-hidden rounded-t-lg bg-gradient-to-b from-muted/50 to-muted/20">
+                        <img 
+                          src={supplement.image} 
+                          alt={supplement.name}
+                          className="w-full h-48 object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <Badge 
+                          variant="outline" 
+                          className="absolute top-3 right-3 text-xs bg-background/80 backdrop-blur-sm"
+                        >
                           {supplement.category}
                         </Badge>
                       </div>
-                      <CardTitle className="text-xl">{supplement.name}</CardTitle>
-                      <CardDescription>{supplement.description}</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-2 mb-4">
+                    <CardContent className="pt-4">
+                      <CardTitle className="text-lg mb-1">{supplement.name}</CardTitle>
+                      <p className="text-xs text-muted-foreground mb-2">{supplement.form}</p>
+                      <CardDescription className="text-sm line-clamp-2 mb-3">
+                        {supplement.description}
+                      </CardDescription>
+                      <div className="flex flex-wrap gap-1.5 mb-3">
                         {supplement.benefits.map((benefit) => (
                           <span
                             key={benefit}
-                            className="px-2 py-1 text-xs rounded-full bg-muted text-muted-foreground"
+                            className="px-2 py-0.5 text-xs rounded-full bg-secondary/10 text-secondary border border-secondary/20"
                           >
                             {benefit}
                           </span>
                         ))}
                       </div>
-                      <p className="text-2xl font-bold">${supplement.price}</p>
+                      <div className="flex flex-wrap gap-1">
+                        {supplement.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-1.5 py-0.5 text-[10px] rounded bg-muted text-muted-foreground"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
                     </CardContent>
-                    <CardFooter>
-                      <Button variant="outline" className="w-full" disabled>
-                        <ShoppingCart className="w-4 h-4 mr-2" />
+                    <CardFooter className="pt-0">
+                      <Button variant="outline" className="w-full" size="sm" disabled>
+                        <ShoppingCart className="w-3.5 h-3.5 mr-2" />
                         Coming Soon
                       </Button>
                     </CardFooter>
