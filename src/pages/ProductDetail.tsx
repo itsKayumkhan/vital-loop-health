@@ -16,6 +16,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<ShopifyProduct['node'] | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const addItem = useCartStore((state) => state.addItem);
 
   useEffect(() => {
@@ -84,7 +85,8 @@ const ProductDetail = () => {
     );
   }
 
-  const mainImage = product.images.edges[0]?.node;
+  const images = product.images.edges.map(edge => edge.node);
+  const selectedImage = images[selectedImageIndex] || images[0];
   const variant = product.variants.edges[0]?.node;
   const price = variant?.price.amount || product.priceRange.minVariantPrice.amount;
 
@@ -106,21 +108,46 @@ const ProductDetail = () => {
           </Link>
 
           <div className="grid lg:grid-cols-2 gap-12">
-            {/* Product Image */}
+            {/* Product Images */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
+              className="space-y-4"
             >
+              {/* Main Image */}
               <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-b from-muted/50 to-muted/20 p-8">
-                {mainImage && (
+                {selectedImage && (
                   <img
-                    src={mainImage.url}
-                    alt={mainImage.altText || product.title}
+                    src={selectedImage.url}
+                    alt={selectedImage.altText || product.title}
                     className="w-full h-full object-contain"
                   />
                 )}
               </div>
+              
+              {/* Thumbnail Gallery */}
+              {images.length > 1 && (
+                <div className="flex gap-3 overflow-x-auto pb-2">
+                  {images.map((image, index) => (
+                    <button
+                      key={image.url}
+                      onClick={() => setSelectedImageIndex(index)}
+                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                        selectedImageIndex === index 
+                          ? 'border-secondary ring-2 ring-secondary/30' 
+                          : 'border-border hover:border-secondary/50'
+                      }`}
+                    >
+                      <img
+                        src={image.url}
+                        alt={image.altText || `${product.title} - Image ${index + 1}`}
+                        className="w-full h-full object-contain bg-muted/30 p-1"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </motion.div>
 
             {/* Product Info */}
