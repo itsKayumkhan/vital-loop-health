@@ -219,7 +219,7 @@ const Supplements = () => {
                                 variant="outline" 
                                 className="absolute top-3 right-3 text-xs bg-background/80 backdrop-blur-sm"
                               >
-                                {product.node.productType}
+                                {product.node.tags[0] || product.node.productType}
                               </Badge>
                             </div>
                           </CardHeader>
