@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, ShoppingCart, Package, Eye, Loader2 } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Package, Eye, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -55,6 +55,16 @@ const Supplements = () => {
 
   const isBestValue = (product: ShopifyProduct) => {
     return product.node.tags.some(tag => tag.toLowerCase().includes('best value'));
+  };
+
+  const getSubscriptionDiscount = (product: ShopifyProduct): number => {
+    const sellingPlan = product.node.sellingPlanGroups?.edges?.[0]?.node?.sellingPlans?.edges?.[0]?.node;
+    if (!sellingPlan) return 0;
+    return sellingPlan.priceAdjustments?.[0]?.adjustmentValue?.adjustmentPercentage || 0;
+  };
+
+  const hasSubscription = (product: ShopifyProduct): boolean => {
+    return (product.node.sellingPlanGroups?.edges?.length || 0) > 0;
   };
 
   return (
@@ -123,11 +133,17 @@ const Supplements = () => {
                         transition={{ duration: 0.5, delay: index * 0.1 }}
                       >
                         <Card className="h-full glass-card border-secondary/30 hover:border-secondary/60 transition-all duration-300 relative overflow-hidden">
-                          {isBestValue(product) && (
-                            <div className="absolute top-4 right-4 z-10">
+                          <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 items-end">
+                            {isBestValue(product) && (
                               <Badge className="bg-secondary text-secondary-foreground">Best Value</Badge>
-                            </div>
-                          )}
+                            )}
+                            {hasSubscription(product) && (
+                              <Badge className="bg-green-500/20 text-green-600 border border-green-500/30 hover:bg-green-500/20">
+                                <RefreshCw className="w-3 h-3 mr-1" />
+                                Save {getSubscriptionDiscount(product)}%
+                              </Badge>
+                            )}
+                          </div>
                           <div className="relative overflow-hidden h-96 bg-white rounded-t-lg">
                             {product.node.images.edges[0]?.node && (
                               <img 
@@ -215,14 +231,22 @@ const Supplements = () => {
                                   className="w-full h-48 object-contain p-4 group-hover:scale-105 transition-transform duration-300"
                                 />
                               )}
-                              <Badge 
-                                variant="outline" 
-                                className="absolute top-3 right-3 text-xs bg-background/80 backdrop-blur-sm"
-                              >
-                                {product.node.tags.find(tag => 
-                                  !['Gluten Free', 'Soy Free', 'Vegetarian', 'Men', 'Women'].includes(tag)
-                                ) || product.node.productType}
-                              </Badge>
+                              <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-end">
+                                <Badge 
+                                  variant="outline" 
+                                  className="text-xs bg-background/80 backdrop-blur-sm"
+                                >
+                                  {product.node.tags.find(tag => 
+                                    !['Gluten Free', 'Soy Free', 'Vegetarian', 'Men', 'Women'].includes(tag)
+                                  ) || product.node.productType}
+                                </Badge>
+                                {hasSubscription(product) && (
+                                  <Badge className="bg-green-500/20 text-green-600 border border-green-500/30 hover:bg-green-500/20 text-xs">
+                                    <RefreshCw className="w-3 h-3 mr-1" />
+                                    Save {getSubscriptionDiscount(product)}%
+                                  </Badge>
+                                )}
+                              </div>
                             </div>
                           </CardHeader>
                           <CardContent className="pt-4">
