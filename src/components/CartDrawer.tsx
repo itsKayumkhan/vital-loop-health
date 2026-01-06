@@ -9,7 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, RefreshCw } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 
@@ -79,7 +79,7 @@ export const CartDrawer = () => {
               <div className="flex-1 overflow-y-auto pr-2 min-h-0">
                 <div className="space-y-4">
                   {items.map((item) => (
-                    <div key={item.variantId} className="flex gap-4 p-3 rounded-lg bg-muted/30 border border-border/50">
+                    <div key={`${item.variantId}-${item.sellingPlanId || 'one-time'}`} className="flex gap-4 p-3 rounded-lg bg-muted/30 border border-border/50">
                       <div className="w-16 h-16 bg-background rounded-md overflow-hidden flex-shrink-0">
                         {item.product.node.images?.edges?.[0]?.node && (
                           <img
@@ -95,8 +95,17 @@ export const CartDrawer = () => {
                         {item.variantTitle !== 'Default Title' && (
                           <p className="text-xs text-muted-foreground">{item.variantTitle}</p>
                         )}
+                        {item.sellingPlanName && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <RefreshCw className="w-3 h-3 text-green-600" />
+                            <span className="text-xs text-green-600 font-medium">
+                              {item.sellingPlanName}
+                            </span>
+                          </div>
+                        )}
                         <p className="font-semibold text-secondary mt-1">
                           ${parseFloat(item.price.amount).toFixed(2)}
+                          {item.sellingPlanId && <span className="text-xs font-normal text-muted-foreground">/mo</span>}
                         </p>
                       </div>
                       
