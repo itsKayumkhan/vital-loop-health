@@ -31,6 +31,7 @@ const supplements = [
     form: '60 Capsules',
     category: 'Metabolic',
     tags: ['Vegetarian', 'Gluten Free'],
+    price: 56.00,
   },
   {
     id: 'celluvive',
@@ -42,6 +43,7 @@ const supplements = [
     form: '60 Capsules',
     category: 'Longevity',
     tags: ['Vegetarian', 'Gluten Free', 'Soy Free'],
+    price: 62.00,
   },
   {
     id: 'neurosync',
@@ -53,6 +55,7 @@ const supplements = [
     form: '120 Capsules',
     category: 'Brain',
     tags: ['Vegetarian', 'Gluten Free'],
+    price: 67.00,
   },
   {
     id: 'cellucore',
@@ -64,6 +67,7 @@ const supplements = [
     form: '30 Servings (150g)',
     category: 'Energy',
     tags: ['Vegetarian', 'Gluten Free'],
+    price: 79.00,
   },
   {
     id: 'omegacore',
@@ -75,6 +79,7 @@ const supplements = [
     form: '90 Softgels',
     category: 'Essential',
     tags: ['Gluten Free'],
+    price: 46.00,
   },
   {
     id: 'cardiogenix',
@@ -86,6 +91,7 @@ const supplements = [
     form: '90 Capsules',
     category: 'Heart',
     tags: ['Vegetarian', 'Gluten Free'],
+    price: 66.00,
   },
   {
     id: 'methylgenix-women',
@@ -97,6 +103,7 @@ const supplements = [
     form: '90 Capsules',
     category: 'Multivitamin',
     tags: ['Vegetarian', 'Gluten Free'],
+    price: 60.00,
   },
   {
     id: 'methylgenix-men',
@@ -108,6 +115,7 @@ const supplements = [
     form: '90 Capsules',
     category: 'Multivitamin',
     tags: ['Vegetarian', 'Gluten Free'],
+    price: 61.00,
   },
   {
     id: 'gutgenix',
@@ -119,10 +127,11 @@ const supplements = [
     form: '30 Capsules',
     category: 'Digestive',
     tags: ['Vegetarian', 'Gluten Free'],
+    price: 78.00,
   },
   {
     id: 'creatine',
-    name: 'Creatine',
+    name: 'CreatiCore',
     sku: '02X193M.090',
     description: 'Pure creatine monohydrate powder for exercise performance, muscle mass, and mental energy.',
     image: creatineImg,
@@ -130,6 +139,7 @@ const supplements = [
     form: '90 Servings (450g)',
     category: 'Performance',
     tags: ['Vegetarian'],
+    price: 53.00,
   },
 ];
 
@@ -303,6 +313,7 @@ const Supplements = () => {
                           </span>
                         ))}
                       </div>
+                      <p className="text-xl font-bold text-secondary mb-2">${supplement.price.toFixed(2)}</p>
                       <div className="flex flex-wrap gap-1">
                         {supplement.tags.map((tag) => (
                           <span
@@ -315,9 +326,9 @@ const Supplements = () => {
                       </div>
                     </CardContent>
                     <CardFooter className="pt-0">
-                      <Button variant="outline" className="w-full" size="sm" disabled>
+                      <Button variant="outline" className="w-full" size="sm">
                         <ShoppingCart className="w-3.5 h-3.5 mr-2" />
-                        Coming Soon
+                        Add to Cart
                       </Button>
                     </CardFooter>
                   </Card>
