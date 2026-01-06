@@ -181,41 +181,6 @@ const PRODUCT_BY_HANDLE_QUERY = `
         name
         values
       }
-      sellingPlanGroups(first: 5) {
-        edges {
-          node {
-            name
-            sellingPlans(first: 10) {
-              edges {
-                node {
-                  id
-                  name
-                  description
-                  priceAdjustments {
-                    adjustmentValue {
-                      ... on SellingPlanPercentagePriceAdjustment {
-                        adjustmentPercentage
-                      }
-                      ... on SellingPlanFixedAmountPriceAdjustment {
-                        adjustmentAmount {
-                          amount
-                          currencyCode
-                        }
-                      }
-                    }
-                  }
-                  deliveryPolicy {
-                    ... on SellingPlanRecurringDeliveryPolicy {
-                      interval
-                      intervalCount
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   }
 `;

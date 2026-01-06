@@ -2,14 +2,13 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, ShoppingCart, Loader2, Package, X, ZoomIn, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Loader2, Package, X, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
+
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { fetchProductByHandle, ShopifyProduct, SellingPlan } from '@/lib/shopify';
+import { fetchProductByHandle, ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 
@@ -141,8 +140,6 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [purchaseType, setPurchaseType] = useState<'one-time' | 'subscribe'>('one-time');
-  const [selectedSellingPlan, setSelectedSellingPlan] = useState<SellingPlan | null>(null);
   const addItem = useCartStore((state) => state.addItem);
 
   useEffect(() => {
@@ -160,59 +157,24 @@ const ProductDetail = () => {
     loadProduct();
   }, [handle]);
 
-  // Set default selling plan when product loads
-  useEffect(() => {
-    if (product?.sellingPlanGroups?.edges?.[0]?.node?.sellingPlans?.edges?.[0]?.node) {
-      setSelectedSellingPlan(product.sellingPlanGroups.edges[0].node.sellingPlans.edges[0].node);
-    }
-  }, [product]);
-
   const handleAddToCart = () => {
     if (!product) return;
     const variant = product.variants.edges[0]?.node;
     if (!variant) return;
-
-    const isSubscription = purchaseType === 'subscribe' && selectedSellingPlan;
-    const discountPercent = isSubscription ? getDiscountPercentage(selectedSellingPlan) : 0;
-    const originalPrice = parseFloat(variant.price.amount);
-    const finalPrice = isSubscription ? originalPrice * (1 - discountPercent / 100) : originalPrice;
 
     addItem({
       product: { node: product },
       variantId: variant.id,
       variantTitle: variant.title,
       price: {
-        amount: finalPrice.toFixed(2),
+        amount: variant.price.amount,
         currencyCode: variant.price.currencyCode,
       },
       quantity,
       selectedOptions: variant.selectedOptions || [],
-      sellingPlanId: isSubscription ? selectedSellingPlan.id : undefined,
-      sellingPlanName: isSubscription ? selectedSellingPlan.name : undefined,
     });
 
-    toast.success(
-      isSubscription 
-        ? `${product.title} subscription added to cart` 
-        : `${product.title} added to cart`,
-      { position: 'top-center' }
-    );
-  };
-
-  const getDiscountPercentage = (plan: SellingPlan | null): number => {
-    if (!plan) return 0;
-    const adjustment = plan.priceAdjustments?.[0]?.adjustmentValue;
-    if (adjustment?.adjustmentPercentage) {
-      return adjustment.adjustmentPercentage;
-    }
-    return 0;
-  };
-
-  const getSellingPlans = (): SellingPlan[] => {
-    if (!product?.sellingPlanGroups?.edges) return [];
-    return product.sellingPlanGroups.edges.flatMap(
-      group => group.node.sellingPlans.edges.map(edge => edge.node)
-    );
+    toast.success(`${product.title} added to cart`, { position: 'top-center' });
   };
 
   // Lightbox navigation
@@ -412,93 +374,12 @@ const ProductDetail = () => {
                 ))}
               </div>
 
-              {/* Subscribe & Save Option */}
-              {getSellingPlans().length > 0 && (
-                <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
-                  <RadioGroup 
-                    value={purchaseType} 
-                    onValueChange={(value) => setPurchaseType(value as 'one-time' | 'subscribe')}
-                    className="space-y-3"
-                  >
-                    {/* One-time purchase */}
-                    <div className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all cursor-pointer ${
-                      purchaseType === 'one-time' 
-                        ? 'border-secondary bg-secondary/5' 
-                        : 'border-transparent hover:border-border'
-                    }`}>
-                      <RadioGroupItem value="one-time" id="one-time" />
-                      <Label htmlFor="one-time" className="flex-1 cursor-pointer">
-                        <div className="flex justify-between items-center">
-                          <span className="font-medium">One-time purchase</span>
-                          <span className="font-bold">${parseFloat(price).toFixed(2)}</span>
-                        </div>
-                      </Label>
-                    </div>
-
-                    {/* Subscribe & Save */}
-                    <div className={`p-3 rounded-lg border-2 transition-all cursor-pointer ${
-                      purchaseType === 'subscribe' 
-                        ? 'border-secondary bg-secondary/5' 
-                        : 'border-transparent hover:border-border'
-                    }`}>
-                      <div className="flex items-center gap-3">
-                        <RadioGroupItem value="subscribe" id="subscribe" />
-                        <Label htmlFor="subscribe" className="flex-1 cursor-pointer">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <RefreshCw className="w-4 h-4 text-secondary" />
-                              <span className="font-medium">Subscribe & Save</span>
-                              <Badge className="bg-green-500/20 text-green-600 border-green-500/30 hover:bg-green-500/20">
-                                {getDiscountPercentage(selectedSellingPlan)}% OFF
-                              </Badge>
-                            </div>
-                            <div className="text-right">
-                              <span className="font-bold text-secondary">
-                                ${(parseFloat(price) * (1 - getDiscountPercentage(selectedSellingPlan) / 100)).toFixed(2)}
-                              </span>
-                              <span className="text-xs text-muted-foreground line-through ml-2">
-                                ${parseFloat(price).toFixed(2)}
-                              </span>
-                            </div>
-                          </div>
-                        </Label>
-                      </div>
-                      
-                      {/* Selling Plan Selection */}
-                      {purchaseType === 'subscribe' && getSellingPlans().length > 1 && (
-                        <div className="mt-3 ml-7 space-y-2">
-                          {getSellingPlans().map((plan) => (
-                            <button
-                              key={plan.id}
-                              onClick={() => setSelectedSellingPlan(plan)}
-                              className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all ${
-                                selectedSellingPlan?.id === plan.id
-                                  ? 'bg-secondary/20 text-secondary font-medium'
-                                  : 'hover:bg-muted'
-                              }`}
-                            >
-                              {plan.name}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                      
-                      <p className="text-xs text-muted-foreground mt-2 ml-7">
-                        Cancel anytime • Free shipping on subscriptions
-                      </p>
-                    </div>
-                  </RadioGroup>
-                </div>
-              )}
-
-              {/* Price (only show if no selling plans) */}
-              {getSellingPlans().length === 0 && (
-                <div className="mb-8">
-                  <span className="text-4xl font-bold text-secondary">
-                    ${parseFloat(price).toFixed(2)}
-                  </span>
-                </div>
-              )}
+              {/* Price */}
+              <div className="mb-8">
+                <span className="text-4xl font-bold text-secondary">
+                  ${parseFloat(price).toFixed(2)}
+                </span>
+              </div>
 
               {/* Quantity */}
               <div className="flex items-center gap-4 mb-6">
@@ -527,10 +408,7 @@ const ProductDetail = () => {
                 onClick={handleAddToCart}
               >
                 <ShoppingCart className="w-5 h-5 mr-2" />
-                {purchaseType === 'subscribe' && selectedSellingPlan
-                  ? `Subscribe - $${((parseFloat(price) * (1 - getDiscountPercentage(selectedSellingPlan) / 100)) * quantity).toFixed(2)}/mo`
-                  : `Add to Cart - $${(parseFloat(price) * quantity).toFixed(2)}`
-                }
+                Add to Cart - ${(parseFloat(price) * quantity).toFixed(2)}
               </Button>
 
               {/* Trust Badges */}
