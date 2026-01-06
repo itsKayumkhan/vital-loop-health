@@ -58,8 +58,14 @@ const getImageKind = (image: ShopifyImageNode) => {
   if (/_l[-_.]/.test(filename) || alt.includes('left')) return 'left';
   if (/_r[-_.]/.test(filename) || alt.includes('right')) return 'right';
 
-  // Fallback: keep truly unique images (by normalized filename)
-  return `other:${normalizeShopifyImageUrl(image.url)}`;
+  // Check for "-front", "-left", "-right", "-back" patterns in filename
+  if (filename.includes('-front') || filename.includes('_front')) return 'front';
+  if (filename.includes('-left') || filename.includes('_left')) return 'left';
+  if (filename.includes('-right') || filename.includes('_right')) return 'right';
+  if (filename.includes('-back') || filename.includes('_back')) return 'back';
+
+  // Main product image (no suffix) - treat as "main" view
+  return 'main';
 };
 
 const scoreImage = (kind: string, image: ShopifyImageNode) => {
