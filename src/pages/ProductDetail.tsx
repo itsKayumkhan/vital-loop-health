@@ -118,7 +118,12 @@ const ProductDetail = () => {
     );
   }
 
-  const images = product.images.edges.map((edge) => edge.node);
+  // Deduplicate images by URL to avoid showing the same image multiple times
+  const images = product.images.edges
+    .map((edge) => edge.node)
+    .filter((image, index, self) => 
+      self.findIndex((img) => img.url === image.url) === index
+    );
   const selectedImage = images[selectedImageIndex] || images[0];
   const variant = product.variants.edges[0]?.node;
   const price = variant?.price.amount || product.priceRange.minVariantPrice.amount;
