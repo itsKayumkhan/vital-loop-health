@@ -128,7 +128,7 @@ const Supplements = () => {
                               <Badge className="bg-secondary text-secondary-foreground">Best Value</Badge>
                             </div>
                           )}
-                          <div className="relative overflow-hidden h-64 bg-white rounded-t-lg">
+                          <div className="relative overflow-hidden h-80 bg-white rounded-t-lg">
                             {product.node.images.edges[0]?.node && (
                               <img 
                                 src={product.node.images.edges[0].node.url} 
