@@ -88,19 +88,46 @@ const scoreImage = (kind: string, image: ShopifyImageNode) => {
 
 const dedupeShopifyImages = (edges: ShopifyProduct['node']['images']['edges']): ShopifyImageNode[] => {
   const nodes = edges.map((e) => e.node);
+
   const candidates = nodes.map((node, index) => {
     const kind = getImageKind(node);
     return { node, index, kind, score: scoreImage(kind, node) };
   });
 
-  const bestByKind = new Map<string, (typeof candidates)[number]>();
-  for (const c of candidates) {
+  // If Shopify has both a "main" image (no suffix) and an explicit front image,
+  // the main is almost always a duplicate front view. Prefer the explicit front.
+  const hasFront = candidates.some((c) => c.kind === 'front');
+  const filtered = hasFront ? candidates.filter((c) => c.kind !== 'main') : candidates;
+
+  const bestByKind = new Map<string, (typeof filtered)[number]>();
+  for (const c of filtered) {
     const current = bestByKind.get(c.kind);
-    if (!current || c.score > current.score) bestByKind.set(c.kind, c);
+    if (!current || c.score > current.score || (c.score === current.score && c.index < current.index)) {
+      bestByKind.set(c.kind, c);
+    }
   }
 
-  return candidates
-    .filter((c) => bestByKind.get(c.kind)?.index === c.index)
+  // Details pages should show 4 images: front, left, right, facts (when available).
+  const preferredOrder = ['front', 'left', 'right', 'facts'];
+  const picked: (typeof filtered)[number][] = [];
+
+  for (const kind of preferredOrder) {
+    const best = bestByKind.get(kind);
+    if (best) picked.push(best);
+  }
+
+  // Fill remaining slots (up to 4) with any other unique images in original order.
+  const pickedIndexes = new Set(picked.map((p) => p.index));
+  for (const c of filtered.sort((a, b) => a.index - b.index)) {
+    if (picked.length >= 4) break;
+    if (!pickedIndexes.has(c.index)) {
+      picked.push(c);
+      pickedIndexes.add(c.index);
+    }
+  }
+
+  return picked
+    .slice(0, 4)
     .sort((a, b) => a.index - b.index)
     .map((c) => c.node);
 };
