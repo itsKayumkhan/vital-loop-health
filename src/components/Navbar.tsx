@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { CartDrawer } from '@/components/CartDrawer';
 import logo from '@/assets/vitalityx-logo.jpg';
 
 const navItems = [
@@ -66,6 +67,7 @@ const Navbar = () => {
 
           {/* CTA Button */}
           <div className="hidden md:flex items-center gap-4">
+            <CartDrawer />
             <Button variant="heroOutline" size="sm">
               Client Portal
             </Button>
@@ -116,6 +118,9 @@ const Navbar = () => {
                 )
               ))}
               <div className="flex flex-col gap-3 pt-4 border-t border-border">
+                <div className="flex justify-center">
+                  <CartDrawer />
+                </div>
                 <Button variant="heroOutline" size="lg" className="w-full">
                   Client Portal
                 </Button>

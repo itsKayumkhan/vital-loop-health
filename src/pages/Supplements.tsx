@@ -1,63 +1,62 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, ShoppingCart, Package, Eye } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Package, Eye, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { supplements } from '@/data/supplements';
-
-import bundleFoundationalMen from '@/assets/products/bundle-foundational-men.jpg';
-import bundleFoundationalWomen from '@/assets/products/bundle-foundational-women.jpg';
-import bundleLongevity from '@/assets/products/bundle-longevity.jpg';
-import bundleMetabolic from '@/assets/products/bundle-metabolic.jpg';
-
-const comboPacks = [
-  {
-    id: 'foundational-bundle-men',
-    name: 'Foundational Bundle (Men)',
-    description: 'Complete foundation for men\'s health with methylation support, omega-3s, and cellular energy.',
-    includes: ['MethylGeniX Men', 'OmegaCore', 'CelluCore'],
-    icon: Package,
-    featured: true,
-    price: 239.00,
-    image: bundleFoundationalMen,
-  },
-  {
-    id: 'foundational-bundle-women',
-    name: 'Foundational Bundle (Women)',
-    description: 'Complete foundation for women\'s health with methylation support, omega-3s, and cellular energy.',
-    includes: ['MethylGeniX Women', 'OmegaCore', 'CelluCore'],
-    icon: Package,
-    featured: true,
-    price: 239.00,
-    image: bundleFoundationalWomen,
-  },
-  {
-    id: 'longevity-bundle',
-    name: 'Longevity Bundle',
-    description: 'Advanced anti-aging support with NAD+ precursors, gut health, and cognitive enhancement.',
-    includes: ['NADiGenix / CelluVive+', 'GutGeniX', 'NeuroSync'],
-    icon: Package,
-    featured: false,
-    price: 217.00,
-    image: bundleLongevity,
-  },
-  {
-    id: 'metabolic-bundle',
-    name: 'Metabolic Bundle',
-    description: 'Optimize metabolic health with blood sugar support, cardiovascular function, and omega-3s.',
-    includes: ['GlucoSync+', 'CardiaGeniX', 'OmegaCore'],
-    icon: Package,
-    featured: false,
-    price: 189.00,
-    image: bundleMetabolic,
-  },
-];
+import { fetchProducts, ShopifyProduct } from '@/lib/shopify';
+import { useCartStore } from '@/stores/cartStore';
+import { toast } from 'sonner';
 
 const Supplements = () => {
+  const [products, setProducts] = useState<ShopifyProduct[]>([]);
+  const [bundles, setBundles] = useState<ShopifyProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+  const addItem = useCartStore((state) => state.addItem);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const allProducts = await fetchProducts(50);
+        const bundleProducts = allProducts.filter(p => p.node.productType === 'Bundle');
+        const supplementProducts = allProducts.filter(p => p.node.productType === 'Supplement');
+        setBundles(bundleProducts);
+        setProducts(supplementProducts);
+      } catch (error) {
+        console.error('Failed to load products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProducts();
+  }, []);
+
+  const handleAddToCart = (product: ShopifyProduct) => {
+    const variant = product.node.variants.edges[0]?.node;
+    if (!variant) return;
+
+    addItem({
+      product,
+      variantId: variant.id,
+      variantTitle: variant.title,
+      price: variant.price,
+      quantity: 1,
+      selectedOptions: variant.selectedOptions || [],
+    });
+
+    toast.success(`${product.node.title} added to cart`, {
+      position: 'top-center',
+    });
+  };
+
+  const isBestValue = (product: ShopifyProduct) => {
+    return product.node.tags.some(tag => tag.toLowerCase().includes('best value'));
+  };
+
   return (
     <>
       <Helmet>
@@ -95,152 +94,180 @@ const Supplements = () => {
             </p>
           </motion.div>
 
-          {/* Combo Packs Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-16"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
-              Value Bundles
-            </h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              {comboPacks.map((pack, index) => (
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-secondary" />
+              <span className="ml-3 text-muted-foreground">Loading products...</span>
+            </div>
+          ) : (
+            <>
+              {/* Bundles Section */}
+              {bundles.length > 0 && (
                 <motion.div
-                  key={pack.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.6 }}
+                  className="mb-16"
                 >
-                  <Card className="h-full glass-card border-secondary/30 hover:border-secondary/60 transition-all duration-300 relative overflow-hidden">
-                    {pack.featured && (
-                      <div className="absolute top-4 right-4 z-10">
-                        <Badge className="bg-secondary text-secondary-foreground">Best Value</Badge>
-                      </div>
-                    )}
-                    <div className="relative overflow-hidden h-48">
-                      <img 
-                        src={pack.image} 
-                        alt={pack.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-                    </div>
-                    <CardHeader className="pt-4">
-                      <CardTitle className="text-2xl">{pack.name}</CardTitle>
-                      <CardDescription className="text-base">{pack.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3 mb-6">
-                        <p className="text-sm font-medium text-muted-foreground">Includes:</p>
-                        <ul className="space-y-2">
-                          {pack.includes.map((item) => (
-                            <li key={item} className="flex items-center gap-2 text-sm">
-                              <div className="w-1.5 h-1.5 rounded-full bg-secondary" />
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="flex items-baseline gap-3">
-                        <span className="text-3xl font-bold text-secondary">${pack.price.toFixed(2)}</span>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button className="w-full" size="lg">
-                        <ShoppingCart className="w-4 h-4 mr-2" />
-                        Add Bundle to Cart
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
+                    Value Bundles
+                  </h2>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {bundles.map((product, index) => (
+                      <motion.div
+                        key={product.node.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                      >
+                        <Card className="h-full glass-card border-secondary/30 hover:border-secondary/60 transition-all duration-300 relative overflow-hidden">
+                          {isBestValue(product) && (
+                            <div className="absolute top-4 right-4 z-10">
+                              <Badge className="bg-secondary text-secondary-foreground">Best Value</Badge>
+                            </div>
+                          )}
+                          <div className="relative overflow-hidden h-48">
+                            {product.node.images.edges[0]?.node && (
+                              <img 
+                                src={product.node.images.edges[0].node.url} 
+                                alt={product.node.images.edges[0].node.altText || product.node.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+                          </div>
+                          <CardHeader className="pt-4">
+                            <CardTitle className="text-2xl">{product.node.title}</CardTitle>
+                            <CardDescription className="text-base line-clamp-2">{product.node.description}</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="flex items-baseline gap-3 mb-4">
+                              <span className="text-3xl font-bold text-secondary">
+                                ${parseFloat(product.node.priceRange.minVariantPrice.amount).toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {product.node.tags.slice(0, 3).map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="px-2 py-0.5 text-xs rounded-full bg-secondary/10 text-secondary border border-secondary/20"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          </CardContent>
+                          <CardFooter className="flex gap-2">
+                            <Link to={`/product/${product.node.handle}`} className="flex-1">
+                              <Button variant="outline" className="w-full">
+                                <Eye className="w-4 h-4 mr-2" />
+                                Details
+                              </Button>
+                            </Link>
+                            <Button 
+                              className="flex-1 bg-secondary hover:bg-secondary/90"
+                              onClick={() => handleAddToCart(product)}
+                            >
+                              <ShoppingCart className="w-4 h-4 mr-2" />
+                              Add to Cart
+                            </Button>
+                          </CardFooter>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
                 </motion.div>
-              ))}
-            </div>
-          </motion.div>
+              )}
 
-          {/* Individual Supplements */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
-              Individual Supplements
-            </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {supplements.map((supplement, index) => (
-                <motion.div
-                  key={supplement.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.05 }}
-                >
-                  <Card className="h-full glass-card hover:border-secondary/40 transition-all duration-300 group">
-                    <CardHeader className="p-0">
-                      <div className="relative overflow-hidden rounded-t-lg bg-gradient-to-b from-muted/50 to-muted/20">
-                        <img 
-                          src={supplement.image} 
-                          alt={supplement.name}
-                          className="w-full h-48 object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-                        />
-                        <Badge 
-                          variant="outline" 
-                          className="absolute top-3 right-3 text-xs bg-background/80 backdrop-blur-sm"
-                        >
-                          {supplement.category}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-4">
-                      <CardTitle className="text-lg mb-1">{supplement.name}</CardTitle>
-                      <p className="text-xs text-muted-foreground mb-2">{supplement.form}</p>
-                      <CardDescription className="text-sm line-clamp-2 mb-3">
-                        {supplement.description}
-                      </CardDescription>
-                      <div className="flex flex-wrap gap-1.5 mb-3">
-                        {supplement.benefits.map((benefit) => (
-                          <span
-                            key={benefit}
-                            className="px-2 py-0.5 text-xs rounded-full bg-secondary/10 text-secondary border border-secondary/20"
-                          >
-                            {benefit}
-                          </span>
-                        ))}
-                      </div>
-                      <p className="text-xl font-bold text-secondary mb-2">${supplement.price.toFixed(2)}</p>
-                      <div className="flex flex-wrap gap-1">
-                        {supplement.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-1.5 py-0.5 text-[10px] rounded bg-muted text-muted-foreground"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </CardContent>
-                    <CardFooter className="pt-0 flex gap-2">
-                      <Link to={`/supplements/${supplement.id}`} className="flex-1">
-                        <Button variant="ghost" className="w-full" size="sm">
-                          <Eye className="w-3.5 h-3.5 mr-2" />
-                          Details
-                        </Button>
-                      </Link>
-                      <Button variant="outline" className="flex-1" size="sm">
-                        <ShoppingCart className="w-3.5 h-3.5 mr-2" />
-                        Add
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+              {/* Individual Supplements */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
+                  Individual Supplements
+                </h2>
+                {products.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground">No products found</p>
+                  </div>
+                ) : (
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {products.map((product, index) => (
+                      <motion.div
+                        key={product.node.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: index * 0.05 }}
+                      >
+                        <Card className="h-full glass-card hover:border-secondary/40 transition-all duration-300 group">
+                          <CardHeader className="p-0">
+                            <div className="relative overflow-hidden rounded-t-lg bg-gradient-to-b from-muted/50 to-muted/20">
+                              {product.node.images.edges[0]?.node && (
+                                <img 
+                                  src={product.node.images.edges[0].node.url} 
+                                  alt={product.node.images.edges[0].node.altText || product.node.title}
+                                  className="w-full h-48 object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                                />
+                              )}
+                              <Badge 
+                                variant="outline" 
+                                className="absolute top-3 right-3 text-xs bg-background/80 backdrop-blur-sm"
+                              >
+                                {product.node.productType}
+                              </Badge>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="pt-4">
+                            <CardTitle className="text-lg mb-1">{product.node.title}</CardTitle>
+                            <CardDescription className="text-sm line-clamp-2 mb-3">
+                              {product.node.description}
+                            </CardDescription>
+                            <div className="flex flex-wrap gap-1.5 mb-3">
+                              {product.node.tags.slice(0, 3).map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="px-2 py-0.5 text-xs rounded-full bg-secondary/10 text-secondary border border-secondary/20"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                            <p className="text-xl font-bold text-secondary">
+                              ${parseFloat(product.node.priceRange.minVariantPrice.amount).toFixed(2)}
+                            </p>
+                          </CardContent>
+                          <CardFooter className="pt-0 flex gap-2">
+                            <Link to={`/product/${product.node.handle}`} className="flex-1">
+                              <Button variant="ghost" className="w-full" size="sm">
+                                <Eye className="w-3.5 h-3.5 mr-2" />
+                                Details
+                              </Button>
+                            </Link>
+                            <Button 
+                              variant="outline" 
+                              className="flex-1" 
+                              size="sm"
+                              onClick={() => handleAddToCart(product)}
+                            >
+                              <ShoppingCart className="w-3.5 h-3.5 mr-2" />
+                              Add
+                            </Button>
+                          </CardFooter>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            </>
+          )}
 
           {/* CTA Section */}
           <motion.div
