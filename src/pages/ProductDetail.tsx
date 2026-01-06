@@ -11,6 +11,94 @@ import { fetchProductByHandle, ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 
+type ShopifyImageNode = ShopifyProduct['node']['images']['edges'][number]['node'];
+
+const normalizeShopifyImageUrl = (url: string) => {
+  // Shopify images can be duplicated with only a "version" suffix change
+  // (e.g. Bottle_02X1415.120_F-2.jpg vs Bottle_02X1415.120_F-3.jpg)
+  // or with different query params (?v=...). Normalize to a stable key.
+  try {
+    const u = new URL(url);
+    const filename = u.pathname.split('/').pop() ?? u.pathname;
+
+    const cleanedFilename = filename
+      .replace(/-\d+(?=\.[a-z0-9]+$)/i, '') // strip -2, -3, etc.
+      .replace(/_\d+(?=\.[a-z0-9]+$)/i, ''); // strip _1, _2, etc.
+
+    return cleanedFilename.toLowerCase();
+  } catch {
+    const withoutQuery = url.split('?')[0];
+    const filename = withoutQuery.split('/').pop() ?? withoutQuery;
+    return filename
+      .replace(/-\d+(?=\.[a-z0-9]+$)/i, '')
+      .replace(/_\d+(?=\.[a-z0-9]+$)/i, '')
+      .toLowerCase();
+  }
+};
+
+const getFilenameFromUrl = (url: string) => {
+  try {
+    const u = new URL(url);
+    return u.pathname.split('/').pop() ?? u.pathname;
+  } catch {
+    return url.split('?')[0].split('/').pop() ?? url;
+  }
+};
+
+const getImageKind = (image: ShopifyImageNode) => {
+  const filename = getFilenameFromUrl(image.url).toLowerCase();
+  const alt = (image.altText ?? '').toLowerCase();
+
+  // Treat "facts" as its own kind (often duplicated as both a clean PNG and a photo)
+  if (filename.includes('facts') || alt.includes('facts')) return 'facts';
+
+  // Bottle view suffixes from your uploads (F/L/R/B)
+  if (/_f[-_.]/.test(filename) || alt.includes('front')) return 'front';
+  if (/_b[-_.]/.test(filename) || alt.includes('back')) return 'back';
+  if (/_l[-_.]/.test(filename) || alt.includes('left')) return 'left';
+  if (/_r[-_.]/.test(filename) || alt.includes('right')) return 'right';
+
+  // Fallback: keep truly unique images (by normalized filename)
+  return `other:${normalizeShopifyImageUrl(image.url)}`;
+};
+
+const scoreImage = (kind: string, image: ShopifyImageNode) => {
+  const filename = getFilenameFromUrl(image.url).toLowerCase();
+  const ext = filename.split('.').pop() ?? '';
+  const isBottle = filename.includes('bottle_');
+
+  if (kind === 'facts') {
+    // Prefer clean, readable facts images
+    return (ext === 'png' ? 30 : 0) + (filename.includes('facts') ? 10 : 0);
+  }
+
+  if (kind === 'front' || kind === 'back' || kind === 'left' || kind === 'right') {
+    // Prefer the Bottle_* images you uploaded over older generic product shots
+    return (isBottle ? 20 : 0) + (ext === 'png' ? 5 : 0);
+  }
+
+  return 0;
+};
+
+const dedupeShopifyImages = (edges: ShopifyProduct['node']['images']['edges']): ShopifyImageNode[] => {
+  const nodes = edges.map((e) => e.node);
+  const candidates = nodes.map((node, index) => {
+    const kind = getImageKind(node);
+    return { node, index, kind, score: scoreImage(kind, node) };
+  });
+
+  const bestByKind = new Map<string, (typeof candidates)[number]>();
+  for (const c of candidates) {
+    const current = bestByKind.get(c.kind);
+    if (!current || c.score > current.score) bestByKind.set(c.kind, c);
+  }
+
+  return candidates
+    .filter((c) => bestByKind.get(c.kind)?.index === c.index)
+    .sort((a, b) => a.index - b.index)
+    .map((c) => c.node);
+};
+
 const ProductDetail = () => {
   const { handle } = useParams<{ handle: string }>();
   const [product, setProduct] = useState<ShopifyProduct['node'] | null>(null);
@@ -64,13 +152,15 @@ const ProductDetail = () => {
 
   const goToPrevImage = useCallback(() => {
     if (!product) return;
-    const images = product.images.edges;
+    const images = dedupeShopifyImages(product.images.edges);
+    if (images.length === 0) return;
     setSelectedImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   }, [product]);
 
   const goToNextImage = useCallback(() => {
     if (!product) return;
-    const images = product.images.edges;
+    const images = dedupeShopifyImages(product.images.edges);
+    if (images.length === 0) return;
     setSelectedImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   }, [product]);
 
@@ -85,6 +175,14 @@ const ProductDetail = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [lightboxOpen, goToPrevImage, goToNextImage]);
+
+  // Keep selected index in-bounds after deduping (or when product changes)
+  useEffect(() => {
+    if (!product) return;
+    const uniqueCount = dedupeShopifyImages(product.images.edges).length;
+    if (uniqueCount === 0) return;
+    if (selectedImageIndex >= uniqueCount) setSelectedImageIndex(0);
+  }, [product, selectedImageIndex]);
 
   if (loading) {
     return (
@@ -118,12 +216,7 @@ const ProductDetail = () => {
     );
   }
 
-  // Deduplicate images by URL to avoid showing the same image multiple times
-  const images = product.images.edges
-    .map((edge) => edge.node)
-    .filter((image, index, self) => 
-      self.findIndex((img) => img.url === image.url) === index
-    );
+  const images = dedupeShopifyImages(product.images.edges);
   const selectedImage = images[selectedImageIndex] || images[0];
   const variant = product.variants.edges[0]?.node;
   const price = variant?.price.amount || product.priceRange.minVariantPrice.amount;
