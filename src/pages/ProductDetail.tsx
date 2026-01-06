@@ -85,10 +85,22 @@ const ProductDetail = () => {
     );
   }
 
-  const images = product.images.edges.map(edge => edge.node);
+  const images = product.images.edges.map((edge) => edge.node);
   const selectedImage = images[selectedImageIndex] || images[0];
   const variant = product.variants.edges[0]?.node;
   const price = variant?.price.amount || product.priceRange.minVariantPrice.amount;
+
+  // Shopify CDN supports dynamic resizing via query params (helps prevent blurry upscales)
+  const withWidth = (url: string, width: number) => {
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}width=${width}`;
+  };
+
+  const buildSrcSet = (url: string, widths: number[]) =>
+    widths.map((w) => `${withWidth(url, w)} ${w}w`).join(', ');
+
+  const MAIN_WIDTHS = [640, 960, 1280, 1600, 2048];
+  const THUMB_WIDTHS = [160, 240, 320];
 
   return (
     <>
@@ -119,13 +131,17 @@ const ProductDetail = () => {
               <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-b from-muted/50 to-muted/20 p-8">
                 {selectedImage && (
                   <img
-                    src={selectedImage.url}
+                    src={withWidth(selectedImage.url, 1600)}
+                    srcSet={buildSrcSet(selectedImage.url, MAIN_WIDTHS)}
+                    sizes="(min-width: 1024px) 50vw, 100vw"
                     alt={selectedImage.altText || product.title}
                     className="w-full h-full object-contain"
+                    loading="eager"
+                    decoding="async"
                   />
                 )}
               </div>
-              
+
               {/* Thumbnail Gallery */}
               {images.length > 1 && (
                 <div className="flex gap-3 overflow-x-auto pb-2">
@@ -134,15 +150,19 @@ const ProductDetail = () => {
                       key={image.url}
                       onClick={() => setSelectedImageIndex(index)}
                       className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                        selectedImageIndex === index 
-                          ? 'border-secondary ring-2 ring-secondary/30' 
+                        selectedImageIndex === index
+                          ? 'border-secondary ring-2 ring-secondary/30'
                           : 'border-border hover:border-secondary/50'
                       }`}
                     >
                       <img
-                        src={image.url}
+                        src={withWidth(image.url, 240)}
+                        srcSet={buildSrcSet(image.url, THUMB_WIDTHS)}
+                        sizes="80px"
                         alt={image.altText || `${product.title} - Image ${index + 1}`}
                         className="w-full h-full object-contain bg-muted/30 p-1"
+                        loading="lazy"
+                        decoding="async"
                       />
                     </button>
                   ))}
