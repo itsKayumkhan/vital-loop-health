@@ -15,6 +15,8 @@ export interface CartItem {
     name: string;
     value: string;
   }>;
+  sellingPlanId?: string;
+  sellingPlanName?: string;
 }
 
 interface CartStore {
@@ -42,12 +44,16 @@ export const useCartStore = create<CartStore>()(
 
       addItem: (item) => {
         const { items } = get();
-        const existingItem = items.find(i => i.variantId === item.variantId);
+        // Items with different selling plans should be separate cart entries
+        const existingItem = items.find(i => 
+          i.variantId === item.variantId && 
+          i.sellingPlanId === item.sellingPlanId
+        );
         
         if (existingItem) {
           set({
             items: items.map(i =>
-              i.variantId === item.variantId
+              (i.variantId === item.variantId && i.sellingPlanId === item.sellingPlanId)
                 ? { ...i, quantity: i.quantity + item.quantity }
                 : i
             )
@@ -92,6 +98,7 @@ export const useCartStore = create<CartStore>()(
             items.map(item => ({
               variantId: item.variantId,
               quantity: item.quantity,
+              sellingPlanId: item.sellingPlanId,
             }))
           );
           set({ checkoutUrl });

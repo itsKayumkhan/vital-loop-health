@@ -6,6 +6,34 @@ const SHOPIFY_STORE_PERMANENT_DOMAIN = 'myhtgi-y6.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = '7b746063c706c8370945351b987b0388';
 
+export interface SellingPlan {
+  id: string;
+  name: string;
+  description: string | null;
+  priceAdjustments: Array<{
+    adjustmentValue: {
+      adjustmentPercentage?: number;
+      adjustmentAmount?: {
+        amount: string;
+        currencyCode: string;
+      };
+    };
+  }>;
+  deliveryPolicy: {
+    interval: string;
+    intervalCount: number;
+  };
+}
+
+export interface SellingPlanGroup {
+  name: string;
+  sellingPlans: {
+    edges: Array<{
+      node: SellingPlan;
+    }>;
+  };
+}
+
 export interface ShopifyProduct {
   node: {
     id: string;
@@ -49,6 +77,11 @@ export interface ShopifyProduct {
     }>;
     tags: string[];
     productType: string;
+    sellingPlanGroups?: {
+      edges: Array<{
+        node: SellingPlanGroup;
+      }>;
+    };
   };
 }
 
@@ -148,6 +181,41 @@ const PRODUCT_BY_HANDLE_QUERY = `
         name
         values
       }
+      sellingPlanGroups(first: 5) {
+        edges {
+          node {
+            name
+            sellingPlans(first: 10) {
+              edges {
+                node {
+                  id
+                  name
+                  description
+                  priceAdjustments {
+                    adjustmentValue {
+                      ... on SellingPlanPercentagePriceAdjustment {
+                        adjustmentPercentage
+                      }
+                      ... on SellingPlanFixedAmountPriceAdjustment {
+                        adjustmentAmount {
+                          amount
+                          currencyCode
+                        }
+                      }
+                    }
+                  }
+                  deliveryPolicy {
+                    ... on SellingPlanRecurringDeliveryPolicy {
+                      interval
+                      intervalCount
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 `;
@@ -170,6 +238,12 @@ const CART_CREATE_MUTATION = `
             node {
               id
               quantity
+              sellingPlanAllocation {
+                sellingPlan {
+                  id
+                  name
+                }
+              }
               merchandise {
                 ... on ProductVariant {
                   id
@@ -245,10 +319,11 @@ export async function fetchProductByHandle(handle: string): Promise<ShopifyProdu
 }
 
 // Create checkout
-export async function createStorefrontCheckout(items: Array<{ variantId: string; quantity: number }>): Promise<string> {
+export async function createStorefrontCheckout(items: Array<{ variantId: string; quantity: number; sellingPlanId?: string }>): Promise<string> {
   const lines = items.map(item => ({
     quantity: item.quantity,
     merchandiseId: item.variantId,
+    ...(item.sellingPlanId && { sellingPlanId: item.sellingPlanId }),
   }));
 
   const cartData = await storefrontApiRequest(CART_CREATE_MUTATION, {
