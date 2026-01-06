@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, ShoppingCart, Loader2, Package } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Loader2, Package, X, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Navbar from '@/components/Navbar';
@@ -17,6 +17,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
 
   useEffect(() => {
@@ -52,6 +53,38 @@ const ProductDetail = () => {
       position: 'top-center',
     });
   };
+
+  // Lightbox navigation
+  const openLightbox = (index: number) => {
+    setSelectedImageIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => setLightboxOpen(false);
+
+  const goToPrevImage = useCallback(() => {
+    if (!product) return;
+    const images = product.images.edges;
+    setSelectedImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  }, [product]);
+
+  const goToNextImage = useCallback(() => {
+    if (!product) return;
+    const images = product.images.edges;
+    setSelectedImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  }, [product]);
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') goToPrevImage();
+      if (e.key === 'ArrowRight') goToNextImage();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxOpen, goToPrevImage, goToNextImage]);
 
   if (loading) {
     return (
@@ -129,8 +162,12 @@ const ProductDetail = () => {
               transition={{ duration: 0.6 }}
               className="space-y-4"
             >
-              {/* Main Image */}
-              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-b from-muted/50 to-muted/20 p-8">
+              {/* Main Image - Clickable for Lightbox */}
+              <button
+                onClick={() => openLightbox(selectedImageIndex)}
+                className="relative aspect-square w-full rounded-2xl overflow-hidden bg-gradient-to-b from-muted/50 to-muted/20 p-8 cursor-zoom-in group"
+                aria-label="Click to zoom image"
+              >
                 {selectedImage && (
                   <img
                     src={withHighRes(selectedImage.url, 2400)}
@@ -142,7 +179,10 @@ const ProductDetail = () => {
                     decoding="async"
                   />
                 )}
-              </div>
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                  <ZoomIn className="w-10 h-10 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+                </div>
+              </button>
 
               {/* Thumbnail Gallery */}
               {images.length > 1 && (
@@ -259,6 +299,102 @@ const ProductDetail = () => {
           </div>
         </div>
       </main>
+
+      {/* Lightbox Modal */}
+      <AnimatePresence>
+        {lightboxOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+            onClick={closeLightbox}
+          >
+            {/* Close Button */}
+            <button
+              onClick={closeLightbox}
+              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+              aria-label="Close lightbox"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+
+            {/* Navigation Arrows */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToPrevImage();
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-8 h-8 text-white" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToNextImage();
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-8 h-8 text-white" />
+                </button>
+              </>
+            )}
+
+            {/* Main Image */}
+            <motion.div
+              key={selectedImageIndex}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={withHighRes(selectedImage.url, 3000)}
+                alt={selectedImage.altText || product.title}
+                className="max-w-full max-h-[90vh] object-contain [image-rendering:_-webkit-optimize-contrast]"
+              />
+            </motion.div>
+
+            {/* Thumbnail Strip */}
+            {images.length > 1 && (
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 p-2 rounded-lg bg-black/50 backdrop-blur-sm">
+                {images.map((image, index) => (
+                  <button
+                    key={image.url}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedImageIndex(index);
+                    }}
+                    className={`w-14 h-14 rounded-md overflow-hidden border-2 transition-all ${
+                      selectedImageIndex === index
+                        ? 'border-secondary ring-2 ring-secondary/50'
+                        : 'border-transparent hover:border-white/50'
+                    }`}
+                  >
+                    <img
+                      src={withHighRes(image.url, 160)}
+                      alt={image.altText || `${product.title} - Image ${index + 1}`}
+                      className="w-full h-full object-contain bg-white/10 p-0.5"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Image Counter */}
+            <div className="absolute top-4 left-4 text-white/80 text-sm font-medium">
+              {selectedImageIndex + 1} / {images.length}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </>
