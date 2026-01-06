@@ -9,6 +9,10 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { supplements } from '@/data/supplements';
 
+import bundleFoundationalMen from '@/assets/products/bundle-foundational-men.jpg';
+import bundleFoundationalWomen from '@/assets/products/bundle-foundational-women.jpg';
+import bundleLongevity from '@/assets/products/bundle-longevity.jpg';
+import bundleMetabolic from '@/assets/products/bundle-metabolic.jpg';
 
 const comboPacks = [
   {
@@ -19,6 +23,7 @@ const comboPacks = [
     icon: Package,
     featured: true,
     price: 239.00,
+    image: bundleFoundationalMen,
   },
   {
     id: 'foundational-bundle-women',
@@ -28,6 +33,7 @@ const comboPacks = [
     icon: Package,
     featured: true,
     price: 239.00,
+    image: bundleFoundationalWomen,
   },
   {
     id: 'longevity-bundle',
@@ -37,6 +43,7 @@ const comboPacks = [
     icon: Package,
     featured: false,
     price: 217.00,
+    image: bundleLongevity,
   },
   {
     id: 'metabolic-bundle',
@@ -46,6 +53,7 @@ const comboPacks = [
     icon: Package,
     featured: false,
     price: 189.00,
+    image: bundleMetabolic,
   },
 ];
 
@@ -109,14 +117,19 @@ const Supplements = () => {
                 >
                   <Card className="h-full glass-card border-secondary/30 hover:border-secondary/60 transition-all duration-300 relative overflow-hidden">
                     {pack.featured && (
-                      <div className="absolute top-4 right-4">
+                      <div className="absolute top-4 right-4 z-10">
                         <Badge className="bg-secondary text-secondary-foreground">Best Value</Badge>
                       </div>
                     )}
-                    <CardHeader>
-                      <div className="w-14 h-14 rounded-2xl bg-secondary/20 flex items-center justify-center mb-4">
-                        <pack.icon className="w-7 h-7 text-secondary" />
-                      </div>
+                    <div className="relative overflow-hidden h-48">
+                      <img 
+                        src={pack.image} 
+                        alt={pack.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+                    </div>
+                    <CardHeader className="pt-4">
                       <CardTitle className="text-2xl">{pack.name}</CardTitle>
                       <CardDescription className="text-base">{pack.description}</CardDescription>
                     </CardHeader>
