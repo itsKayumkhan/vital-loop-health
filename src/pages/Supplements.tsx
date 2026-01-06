@@ -251,13 +251,12 @@ const Supplements = () => {
                               </Button>
                             </Link>
                             <Button 
-                              variant="outline" 
-                              className="flex-1" 
+                              className="flex-1 bg-secondary hover:bg-secondary/90" 
                               size="sm"
                               onClick={() => handleAddToCart(product)}
                             >
                               <ShoppingCart className="w-3.5 h-3.5 mr-2" />
-                              Add
+                              Add to Cart
                             </Button>
                           </CardFooter>
                         </Card>
