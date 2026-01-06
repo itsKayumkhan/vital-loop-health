@@ -1,0 +1,322 @@
+import glucosyncImg from '@/assets/products/glucosync.jpg';
+import celluviveImg from '@/assets/products/celluvive.jpg';
+import neurosyncImg from '@/assets/products/neurosync.jpg';
+import cellucoreImg from '@/assets/products/cellucore.jpg';
+import omegacoreImg from '@/assets/products/omegacore.jpg';
+import cardiogenixImg from '@/assets/products/cardiogenix.jpg';
+import methylgenixWomenImg from '@/assets/products/methylgenix-women.jpg';
+import methylgenixMenImg from '@/assets/products/methylgenix-men.jpg';
+import gutgenixImg from '@/assets/products/gutgenix.jpg';
+import creatineImg from '@/assets/products/creatine.jpg';
+
+export interface Ingredient {
+  name: string;
+  amount: string;
+  dailyValue?: string;
+}
+
+export interface Supplement {
+  id: string;
+  name: string;
+  sku: string;
+  description: string;
+  fullDescription: string;
+  image: string;
+  benefits: string[];
+  form: string;
+  category: string;
+  tags: string[];
+  price: number;
+  servingSize: string;
+  servingsPerContainer: number;
+  ingredients: Ingredient[];
+  otherIngredients: string[];
+  suggestedUse: string;
+  warnings: string[];
+}
+
+export const supplements: Supplement[] = [
+  {
+    id: 'glucosync',
+    name: 'GlucoSync',
+    sku: '02X1262.060',
+    description: 'A dietary supplement to support proper glucose metabolism with ChromeMate chromium and botanical extracts.',
+    fullDescription: 'GlucoSync is a comprehensive formula designed to support healthy glucose metabolism and insulin sensitivity. Featuring ChromeMate® chromium polynicotinate, a patented form of chromium with superior bioavailability, combined with powerful botanical extracts including Gymnema sylvestre, Bitter Melon, and Banaba Leaf. This synergistic blend helps maintain blood sugar levels already within the normal range.',
+    image: glucosyncImg,
+    benefits: ['Glucose metabolism', 'Insulin sensitivity', 'Blood sugar support'],
+    form: '60 Capsules',
+    category: 'Metabolic',
+    tags: ['Vegetarian', 'Gluten Free'],
+    price: 56.00,
+    servingSize: '2 capsules',
+    servingsPerContainer: 30,
+    ingredients: [
+      { name: 'Chromium (as ChromeMate® Chromium Polynicotinate)', amount: '400 mcg', dailyValue: '1143%' },
+      { name: 'Gymnema Sylvestre Leaf Extract (75% gymnemic acids)', amount: '400 mg', dailyValue: '*' },
+      { name: 'Bitter Melon Fruit Extract (10:1)', amount: '200 mg', dailyValue: '*' },
+      { name: 'Banaba Leaf Extract (2% corosolic acid)', amount: '100 mg', dailyValue: '*' },
+      { name: 'Alpha Lipoic Acid', amount: '100 mg', dailyValue: '*' },
+      { name: 'Cinnamon Bark Extract (10:1)', amount: '100 mg', dailyValue: '*' },
+      { name: 'Vanadium (as Vanadyl Sulfate)', amount: '100 mcg', dailyValue: '*' },
+    ],
+    otherIngredients: ['Vegetable Cellulose (capsule)', 'Microcrystalline Cellulose', 'Magnesium Stearate', 'Silicon Dioxide'],
+    suggestedUse: 'Take 2 capsules daily with a meal, or as directed by your healthcare practitioner.',
+    warnings: ['Consult your healthcare practitioner before use if pregnant, nursing, or taking medications.', 'Keep out of reach of children.', 'Store in a cool, dry place.'],
+  },
+  {
+    id: 'celluvive',
+    name: 'CelluVive',
+    sku: '02X143N.060',
+    description: 'NAD+ Blend and Glutathione formula to support healthy aging and cellular energy production.',
+    fullDescription: 'CelluVive is an advanced cellular longevity formula combining NAD+ precursors with reduced glutathione for comprehensive anti-aging support. Nicotinamide Riboside (NR) and Nicotinamide Mononucleotide (NMN) work synergistically to boost NAD+ levels, supporting cellular energy production, DNA repair, and mitochondrial function. Enhanced with Setria® glutathione for powerful antioxidant protection.',
+    image: celluviveImg,
+    benefits: ['Healthy aging', 'Cellular energy', 'NAD+ support'],
+    form: '60 Capsules',
+    category: 'Longevity',
+    tags: ['Vegetarian', 'Gluten Free', 'Soy Free'],
+    price: 62.00,
+    servingSize: '2 capsules',
+    servingsPerContainer: 30,
+    ingredients: [
+      { name: 'Nicotinamide Riboside (NR)', amount: '300 mg', dailyValue: '*' },
+      { name: 'Nicotinamide Mononucleotide (NMN)', amount: '150 mg', dailyValue: '*' },
+      { name: 'Setria® Glutathione (reduced)', amount: '200 mg', dailyValue: '*' },
+      { name: 'Trans-Resveratrol (from Japanese Knotweed)', amount: '150 mg', dailyValue: '*' },
+      { name: 'Pterostilbene', amount: '50 mg', dailyValue: '*' },
+      { name: 'Vitamin B3 (as Niacinamide)', amount: '50 mg', dailyValue: '313%' },
+    ],
+    otherIngredients: ['Vegetable Cellulose (capsule)', 'Rice Flour', 'Magnesium Stearate'],
+    suggestedUse: 'Take 2 capsules daily, preferably in the morning with or without food.',
+    warnings: ['Consult your healthcare practitioner before use if pregnant, nursing, or taking medications.', 'Keep out of reach of children.'],
+  },
+  {
+    id: 'neurosync',
+    name: 'NeuroSync',
+    sku: '02X1415.120',
+    description: 'Neurological support formula with DMG, L-Carnosine, and methylated B vitamins for brain health.',
+    fullDescription: 'NeuroSync is a comprehensive neurological support formula designed to enhance cognitive function, support speech and language development, and promote overall brain health. Featuring DMG (Dimethylglycine) for methylation support, L-Carnosine for neuroprotection, and a full spectrum of methylated B vitamins for optimal neurotransmitter synthesis. Ideal for supporting focus, memory, and mental clarity.',
+    image: neurosyncImg,
+    benefits: ['Neurological support', 'Speech & language', 'Cognitive function'],
+    form: '120 Capsules',
+    category: 'Brain',
+    tags: ['Vegetarian', 'Gluten Free'],
+    price: 67.00,
+    servingSize: '4 capsules',
+    servingsPerContainer: 30,
+    ingredients: [
+      { name: 'DMG (Dimethylglycine)', amount: '500 mg', dailyValue: '*' },
+      { name: 'L-Carnosine', amount: '400 mg', dailyValue: '*' },
+      { name: 'Phosphatidylserine (from Sunflower)', amount: '100 mg', dailyValue: '*' },
+      { name: 'Vitamin B6 (as Pyridoxal-5-Phosphate)', amount: '25 mg', dailyValue: '1471%' },
+      { name: 'Vitamin B12 (as Methylcobalamin)', amount: '1000 mcg', dailyValue: '41667%' },
+      { name: 'Folate (as L-5-Methyltetrahydrofolate)', amount: '800 mcg DFE', dailyValue: '200%' },
+      { name: 'Acetyl-L-Carnitine', amount: '250 mg', dailyValue: '*' },
+      { name: 'Alpha-GPC (L-Alpha Glycerylphosphorylcholine)', amount: '150 mg', dailyValue: '*' },
+    ],
+    otherIngredients: ['Vegetable Cellulose (capsule)', 'Microcrystalline Cellulose', 'Magnesium Stearate', 'Silicon Dioxide'],
+    suggestedUse: 'Take 4 capsules daily with food, or as directed by your healthcare practitioner. May be divided into 2 doses.',
+    warnings: ['Consult your healthcare practitioner before use if pregnant, nursing, taking medications, or have a medical condition.', 'Keep out of reach of children.'],
+  },
+  {
+    id: 'cellucore',
+    name: 'CelluCore',
+    sku: '02X1541.030',
+    description: 'D-Ribose powder to support cellular energy production, cardiac function, and exercise recovery.',
+    fullDescription: 'CelluCore features pure D-Ribose, a naturally occurring five-carbon sugar that plays a vital role in ATP (adenosine triphosphate) synthesis. As the fundamental energy currency of cells, ATP is essential for muscle function, cardiac health, and exercise recovery. D-Ribose helps replenish depleted ATP stores, making it ideal for athletes, those with cardiac concerns, or anyone seeking enhanced cellular energy.',
+    image: cellucoreImg,
+    benefits: ['Cellular energy', 'Heart health', 'Exercise recovery'],
+    form: '30 Servings (150g)',
+    category: 'Energy',
+    tags: ['Vegetarian', 'Gluten Free'],
+    price: 79.00,
+    servingSize: '5 grams (approximately 1 scoop)',
+    servingsPerContainer: 30,
+    ingredients: [
+      { name: 'D-Ribose (Bioenergy Ribose®)', amount: '5000 mg', dailyValue: '*' },
+    ],
+    otherIngredients: ['None'],
+    suggestedUse: 'Mix 1 scoop (5g) with water, juice, or your favorite beverage 1-3 times daily, or as directed by your healthcare practitioner. Best taken before and after exercise.',
+    warnings: ['Consult your healthcare practitioner before use if pregnant, nursing, diabetic, or taking medications.', 'May lower blood sugar levels.', 'Keep out of reach of children.'],
+  },
+  {
+    id: 'omegacore',
+    name: 'OmegaCore',
+    sku: '02X1367.090',
+    description: 'High-potency omega-3 fatty acids from fish oil for cardiovascular, skin, and hair health.',
+    fullDescription: 'OmegaCore delivers pharmaceutical-grade, molecularly distilled omega-3 fatty acids in their natural triglyceride form for superior absorption. Each softgel provides a concentrated dose of EPA and DHA, the essential fatty acids crucial for cardiovascular health, brain function, joint comfort, and healthy skin and hair. Sourced from wild-caught, sustainable fish and tested for purity and potency.',
+    image: omegacoreImg,
+    benefits: ['Heart health', 'Skin & hair', 'Brain function'],
+    form: '90 Softgels',
+    category: 'Essential',
+    tags: ['Gluten Free'],
+    price: 46.00,
+    servingSize: '2 softgels',
+    servingsPerContainer: 45,
+    ingredients: [
+      { name: 'Fish Oil Concentrate (from Anchovy, Sardine, Mackerel)', amount: '2000 mg', dailyValue: '*' },
+      { name: 'Total Omega-3 Fatty Acids', amount: '1200 mg', dailyValue: '*' },
+      { name: 'EPA (Eicosapentaenoic Acid)', amount: '720 mg', dailyValue: '*' },
+      { name: 'DHA (Docosahexaenoic Acid)', amount: '480 mg', dailyValue: '*' },
+      { name: 'Vitamin E (as d-Alpha Tocopherol)', amount: '10 IU', dailyValue: '67%' },
+    ],
+    otherIngredients: ['Softgel Capsule (gelatin, glycerin, purified water)', 'Natural Lemon Flavor'],
+    suggestedUse: 'Take 2 softgels daily with a meal, or as directed by your healthcare practitioner.',
+    warnings: ['Consult your healthcare practitioner before use if pregnant, nursing, taking blood thinners, or have a fish allergy.', 'Keep out of reach of children.', 'Refrigerate after opening.'],
+  },
+  {
+    id: 'cardiogenix',
+    name: 'CardioGeniX',
+    sku: '02X148F.090',
+    description: 'Comprehensive cardiovascular support with CoQ10, L-Carnitine, and methylated B vitamins for heart and vessel health.',
+    fullDescription: 'CardioGeniX is a comprehensive cardiovascular support formula combining CoQ10, L-Carnitine, and methylated B vitamins to support heart health, homocysteine metabolism, and vascular function. Ubiquinol CoQ10 provides the active, reduced form for maximum bioavailability, while L-Carnitine supports energy production in heart muscle. Methylated folate and B12 help maintain healthy homocysteine levels.',
+    image: cardiogenixImg,
+    benefits: ['Heart health', 'Homocysteine support', 'Vessel health'],
+    form: '90 Capsules',
+    category: 'Heart',
+    tags: ['Vegetarian', 'Gluten Free'],
+    price: 66.00,
+    servingSize: '3 capsules',
+    servingsPerContainer: 30,
+    ingredients: [
+      { name: 'Ubiquinol (CoQ10, Kaneka QH®)', amount: '100 mg', dailyValue: '*' },
+      { name: 'L-Carnitine (as L-Carnitine L-Tartrate)', amount: '500 mg', dailyValue: '*' },
+      { name: 'Magnesium (as Magnesium Glycinate)', amount: '100 mg', dailyValue: '24%' },
+      { name: 'Vitamin B6 (as Pyridoxal-5-Phosphate)', amount: '25 mg', dailyValue: '1471%' },
+      { name: 'Vitamin B12 (as Methylcobalamin)', amount: '1000 mcg', dailyValue: '41667%' },
+      { name: 'Folate (as L-5-Methyltetrahydrofolate)', amount: '800 mcg DFE', dailyValue: '200%' },
+      { name: 'Hawthorn Berry Extract (1.8% vitexin)', amount: '150 mg', dailyValue: '*' },
+      { name: 'Taurine', amount: '250 mg', dailyValue: '*' },
+    ],
+    otherIngredients: ['Vegetable Cellulose (capsule)', 'Microcrystalline Cellulose', 'Magnesium Stearate', 'Silicon Dioxide'],
+    suggestedUse: 'Take 3 capsules daily with food, or as directed by your healthcare practitioner.',
+    warnings: ['Consult your healthcare practitioner before use if pregnant, nursing, taking medications (especially blood thinners or blood pressure medications), or have a heart condition.', 'Keep out of reach of children.'],
+  },
+  {
+    id: 'methylgenix-women',
+    name: 'MethylGeniX Women',
+    sku: '02X120J.090',
+    description: 'Complete multivitamin for women with methylated B vitamins and essential minerals for optimal health.',
+    fullDescription: 'MethylGeniX Women is a comprehensive, high-potency multivitamin specifically formulated for women\'s unique nutritional needs. Features methylated B vitamins (methylfolate, methylcobalamin, P5P) for optimal methylation support, chelated minerals for superior absorption, and targeted nutrients for hormone balance, bone health, and energy production. Iron-free formula suitable for post-menopausal women.',
+    image: methylgenixWomenImg,
+    benefits: ['Daily nutrition', 'Methylation support', 'Energy'],
+    form: '90 Capsules',
+    category: 'Multivitamin',
+    tags: ['Vegetarian', 'Gluten Free'],
+    price: 60.00,
+    servingSize: '3 capsules',
+    servingsPerContainer: 30,
+    ingredients: [
+      { name: 'Vitamin A (as Beta-Carotene)', amount: '5000 IU', dailyValue: '100%' },
+      { name: 'Vitamin C (as Ascorbic Acid)', amount: '250 mg', dailyValue: '278%' },
+      { name: 'Vitamin D3 (as Cholecalciferol)', amount: '2000 IU', dailyValue: '250%' },
+      { name: 'Vitamin E (as d-Alpha Tocopheryl Succinate)', amount: '100 IU', dailyValue: '333%' },
+      { name: 'Vitamin K2 (as MK-7)', amount: '100 mcg', dailyValue: '83%' },
+      { name: 'Thiamin (as Thiamine HCl)', amount: '25 mg', dailyValue: '1667%' },
+      { name: 'Riboflavin (as Riboflavin-5-Phosphate)', amount: '25 mg', dailyValue: '1471%' },
+      { name: 'Niacin (as Niacinamide)', amount: '50 mg', dailyValue: '250%' },
+      { name: 'Vitamin B6 (as Pyridoxal-5-Phosphate)', amount: '25 mg', dailyValue: '1471%' },
+      { name: 'Folate (as L-5-Methyltetrahydrofolate)', amount: '800 mcg DFE', dailyValue: '200%' },
+      { name: 'Vitamin B12 (as Methylcobalamin)', amount: '1000 mcg', dailyValue: '41667%' },
+      { name: 'Biotin', amount: '500 mcg', dailyValue: '1667%' },
+      { name: 'Pantothenic Acid (as Calcium D-Pantothenate)', amount: '50 mg', dailyValue: '500%' },
+      { name: 'Calcium (as Calcium Citrate)', amount: '100 mg', dailyValue: '8%' },
+      { name: 'Magnesium (as Magnesium Glycinate)', amount: '100 mg', dailyValue: '24%' },
+      { name: 'Zinc (as Zinc Picolinate)', amount: '15 mg', dailyValue: '100%' },
+      { name: 'Selenium (as Selenomethionine)', amount: '100 mcg', dailyValue: '143%' },
+      { name: 'Chromium (as Chromium Polynicotinate)', amount: '200 mcg', dailyValue: '571%' },
+    ],
+    otherIngredients: ['Vegetable Cellulose (capsule)', 'Microcrystalline Cellulose', 'Magnesium Stearate', 'Silicon Dioxide'],
+    suggestedUse: 'Take 3 capsules daily with a meal, or as directed by your healthcare practitioner.',
+    warnings: ['Consult your healthcare practitioner before use if pregnant, nursing, or taking medications.', 'Keep out of reach of children.'],
+  },
+  {
+    id: 'methylgenix-men',
+    name: 'MethylGeniX Men',
+    sku: '02X121J.090',
+    description: 'Complete multivitamin for men with methylated B vitamins and essential minerals for optimal health.',
+    fullDescription: 'MethylGeniX Men is a comprehensive, high-potency multivitamin specifically formulated for men\'s unique nutritional needs. Features methylated B vitamins (methylfolate, methylcobalamin, P5P) for optimal methylation support, chelated minerals for superior absorption, and targeted nutrients for prostate health, cardiovascular function, and energy production. Iron-free formula designed for adult men.',
+    image: methylgenixMenImg,
+    benefits: ['Daily nutrition', 'Methylation support', 'Energy'],
+    form: '90 Capsules',
+    category: 'Multivitamin',
+    tags: ['Vegetarian', 'Gluten Free'],
+    price: 61.00,
+    servingSize: '3 capsules',
+    servingsPerContainer: 30,
+    ingredients: [
+      { name: 'Vitamin A (as Beta-Carotene)', amount: '5000 IU', dailyValue: '100%' },
+      { name: 'Vitamin C (as Ascorbic Acid)', amount: '250 mg', dailyValue: '278%' },
+      { name: 'Vitamin D3 (as Cholecalciferol)', amount: '2000 IU', dailyValue: '250%' },
+      { name: 'Vitamin E (as d-Alpha Tocopheryl Succinate)', amount: '100 IU', dailyValue: '333%' },
+      { name: 'Vitamin K2 (as MK-7)', amount: '100 mcg', dailyValue: '83%' },
+      { name: 'Thiamin (as Thiamine HCl)', amount: '25 mg', dailyValue: '1667%' },
+      { name: 'Riboflavin (as Riboflavin-5-Phosphate)', amount: '25 mg', dailyValue: '1471%' },
+      { name: 'Niacin (as Niacinamide)', amount: '50 mg', dailyValue: '250%' },
+      { name: 'Vitamin B6 (as Pyridoxal-5-Phosphate)', amount: '25 mg', dailyValue: '1471%' },
+      { name: 'Folate (as L-5-Methyltetrahydrofolate)', amount: '800 mcg DFE', dailyValue: '200%' },
+      { name: 'Vitamin B12 (as Methylcobalamin)', amount: '1000 mcg', dailyValue: '41667%' },
+      { name: 'Biotin', amount: '500 mcg', dailyValue: '1667%' },
+      { name: 'Pantothenic Acid (as Calcium D-Pantothenate)', amount: '50 mg', dailyValue: '500%' },
+      { name: 'Calcium (as Calcium Citrate)', amount: '100 mg', dailyValue: '8%' },
+      { name: 'Magnesium (as Magnesium Glycinate)', amount: '100 mg', dailyValue: '24%' },
+      { name: 'Zinc (as Zinc Picolinate)', amount: '30 mg', dailyValue: '200%' },
+      { name: 'Selenium (as Selenomethionine)', amount: '200 mcg', dailyValue: '286%' },
+      { name: 'Chromium (as Chromium Polynicotinate)', amount: '200 mcg', dailyValue: '571%' },
+      { name: 'Lycopene', amount: '10 mg', dailyValue: '*' },
+    ],
+    otherIngredients: ['Vegetable Cellulose (capsule)', 'Microcrystalline Cellulose', 'Magnesium Stearate', 'Silicon Dioxide'],
+    suggestedUse: 'Take 3 capsules daily with a meal, or as directed by your healthcare practitioner.',
+    warnings: ['Consult your healthcare practitioner before use if taking medications.', 'Keep out of reach of children.'],
+  },
+  {
+    id: 'gutgenix',
+    name: 'GutGeniX',
+    sku: '02X1479.030',
+    description: 'Gastrointestinal support formula with PepZin GI for digestive health and gut lining integrity.',
+    fullDescription: 'GutGeniX is a targeted gastrointestinal support formula featuring PepZin GI®, a patented zinc-carnosine complex clinically shown to support stomach lining integrity and digestive comfort. Enhanced with DGL (deglycyrrhizinated licorice), slippery elm, and marshmallow root for comprehensive gut mucosal support. Ideal for those seeking digestive comfort and gut health optimization.',
+    image: gutgenixImg,
+    benefits: ['Digestive health', 'Gut lining', 'GI comfort'],
+    form: '30 Capsules',
+    category: 'Digestive',
+    tags: ['Vegetarian', 'Gluten Free'],
+    price: 78.00,
+    servingSize: '1 capsule',
+    servingsPerContainer: 30,
+    ingredients: [
+      { name: 'Zinc (as PepZin GI® Zinc-L-Carnosine)', amount: '16 mg', dailyValue: '107%' },
+      { name: 'L-Carnosine (as PepZin GI® Zinc-L-Carnosine)', amount: '75 mg', dailyValue: '*' },
+      { name: 'DGL (Deglycyrrhizinated Licorice Root Extract)', amount: '200 mg', dailyValue: '*' },
+      { name: 'Slippery Elm Bark Extract (10:1)', amount: '100 mg', dailyValue: '*' },
+      { name: 'Marshmallow Root Extract (10:1)', amount: '75 mg', dailyValue: '*' },
+      { name: 'Aloe Vera Leaf Extract (200:1)', amount: '50 mg', dailyValue: '*' },
+    ],
+    otherIngredients: ['Vegetable Cellulose (capsule)', 'Rice Flour', 'Magnesium Stearate'],
+    suggestedUse: 'Take 1 capsule twice daily between meals, or as directed by your healthcare practitioner.',
+    warnings: ['Consult your healthcare practitioner before use if pregnant, nursing, or have a medical condition.', 'Keep out of reach of children.'],
+  },
+  {
+    id: 'creatine',
+    name: 'Creatine',
+    sku: '02X193M.090',
+    description: 'Pure creatine monohydrate powder for exercise performance, muscle mass, and mental energy.',
+    fullDescription: 'Our Creatine features Creapure®, the purest creatine monohydrate available, manufactured in Germany using a patented process that ensures maximum purity and effectiveness. Creatine is one of the most researched sports nutrition supplements, proven to increase strength, power output, and lean muscle mass. Also supports cognitive function and mental energy during demanding tasks.',
+    image: creatineImg,
+    benefits: ['Exercise performance', 'Muscle support', 'Mental energy'],
+    form: '90 Servings (450g)',
+    category: 'Performance',
+    tags: ['Vegetarian'],
+    price: 53.00,
+    servingSize: '5 grams (approximately 1 scoop)',
+    servingsPerContainer: 90,
+    ingredients: [
+      { name: 'Creatine Monohydrate (Creapure®)', amount: '5000 mg', dailyValue: '*' },
+    ],
+    otherIngredients: ['None'],
+    suggestedUse: 'Loading Phase (first 5-7 days): Take 1 scoop (5g) 4 times daily. Maintenance Phase: Take 1 scoop (5g) once daily. Mix with water, juice, or your post-workout shake. Best taken with carbohydrates for enhanced uptake.',
+    warnings: ['Consult your healthcare practitioner before use if pregnant, nursing, or have kidney disease.', 'Drink plenty of water while using this product.', 'Keep out of reach of children.'],
+  },
+];
+
+export const getSupplementById = (id: string): Supplement | undefined => {
+  return supplements.find(s => s.id === id);
+};

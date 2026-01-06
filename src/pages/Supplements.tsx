@@ -1,147 +1,14 @@
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, ShoppingCart, Package } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Package, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { supplements } from '@/data/supplements';
 
-// Product images
-import glucosyncImg from '@/assets/products/glucosync.jpg';
-import celluviveImg from '@/assets/products/celluvive.jpg';
-import neurosyncImg from '@/assets/products/neurosync.jpg';
-import cellucoreImg from '@/assets/products/cellucore.jpg';
-import omegacoreImg from '@/assets/products/omegacore.jpg';
-import cardiogenixImg from '@/assets/products/cardiogenix.jpg';
-import methylgenixWomenImg from '@/assets/products/methylgenix-women.jpg';
-import methylgenixMenImg from '@/assets/products/methylgenix-men.jpg';
-import gutgenixImg from '@/assets/products/gutgenix.jpg';
-import creatineImg from '@/assets/products/creatine.jpg';
-
-const supplements = [
-  {
-    id: 'glucosync',
-    name: 'GlucoSync',
-    sku: '02X1262.060',
-    description: 'A dietary supplement to support proper glucose metabolism with ChromeMate chromium and botanical extracts.',
-    image: glucosyncImg,
-    benefits: ['Glucose metabolism', 'Insulin sensitivity', 'Blood sugar support'],
-    form: '60 Capsules',
-    category: 'Metabolic',
-    tags: ['Vegetarian', 'Gluten Free'],
-    price: 56.00,
-  },
-  {
-    id: 'celluvive',
-    name: 'CelluVive',
-    sku: '02X143N.060',
-    description: 'NAD+ Blend and Glutathione formula to support healthy aging and cellular energy production.',
-    image: celluviveImg,
-    benefits: ['Healthy aging', 'Cellular energy', 'NAD+ support'],
-    form: '60 Capsules',
-    category: 'Longevity',
-    tags: ['Vegetarian', 'Gluten Free', 'Soy Free'],
-    price: 62.00,
-  },
-  {
-    id: 'neurosync',
-    name: 'NeuroSync',
-    sku: '02X1415.120',
-    description: 'Neurological support formula with DMG, L-Carnosine, and methylated B vitamins for brain health.',
-    image: neurosyncImg,
-    benefits: ['Neurological support', 'Speech & language', 'Cognitive function'],
-    form: '120 Capsules',
-    category: 'Brain',
-    tags: ['Vegetarian', 'Gluten Free'],
-    price: 67.00,
-  },
-  {
-    id: 'cellucore',
-    name: 'CelluCore',
-    sku: '02X1541.030',
-    description: 'D-Ribose powder to support cellular energy production, cardiac function, and exercise recovery.',
-    image: cellucoreImg,
-    benefits: ['Cellular energy', 'Heart health', 'Exercise recovery'],
-    form: '30 Servings (150g)',
-    category: 'Energy',
-    tags: ['Vegetarian', 'Gluten Free'],
-    price: 79.00,
-  },
-  {
-    id: 'omegacore',
-    name: 'OmegaCore',
-    sku: '02X1367.090',
-    description: 'High-potency omega-3 fatty acids from fish oil for cardiovascular, skin, and hair health.',
-    image: omegacoreImg,
-    benefits: ['Heart health', 'Skin & hair', 'Brain function'],
-    form: '90 Softgels',
-    category: 'Essential',
-    tags: ['Gluten Free'],
-    price: 46.00,
-  },
-  {
-    id: 'cardiogenix',
-    name: 'CardioGeniX',
-    sku: '02X148F.090',
-    description: 'Comprehensive cardiovascular support with CoQ10, L-Carnitine, and methylated B vitamins for heart and vessel health.',
-    image: cardiogenixImg,
-    benefits: ['Heart health', 'Homocysteine support', 'Vessel health'],
-    form: '90 Capsules',
-    category: 'Heart',
-    tags: ['Vegetarian', 'Gluten Free'],
-    price: 66.00,
-  },
-  {
-    id: 'methylgenix-women',
-    name: 'MethylGeniX Women',
-    sku: '02X120J.090',
-    description: 'Complete multivitamin for women with methylated B vitamins and essential minerals for optimal health.',
-    image: methylgenixWomenImg,
-    benefits: ['Daily nutrition', 'Methylation support', 'Energy'],
-    form: '90 Capsules',
-    category: 'Multivitamin',
-    tags: ['Vegetarian', 'Gluten Free'],
-    price: 60.00,
-  },
-  {
-    id: 'methylgenix-men',
-    name: 'MethylGeniX Men',
-    sku: '02X121J.090',
-    description: 'Complete multivitamin for men with methylated B vitamins and essential minerals for optimal health.',
-    image: methylgenixMenImg,
-    benefits: ['Daily nutrition', 'Methylation support', 'Energy'],
-    form: '90 Capsules',
-    category: 'Multivitamin',
-    tags: ['Vegetarian', 'Gluten Free'],
-    price: 61.00,
-  },
-  {
-    id: 'gutgenix',
-    name: 'GutGeniX',
-    sku: '02X1479.030',
-    description: 'Gastrointestinal support formula with PepZin GI for digestive health and gut lining integrity.',
-    image: gutgenixImg,
-    benefits: ['Digestive health', 'Gut lining', 'GI comfort'],
-    form: '30 Capsules',
-    category: 'Digestive',
-    tags: ['Vegetarian', 'Gluten Free'],
-    price: 78.00,
-  },
-  {
-    id: 'creatine',
-    name: 'Creatine',
-    sku: '02X193M.090',
-    description: 'Pure creatine monohydrate powder for exercise performance, muscle mass, and mental energy.',
-    image: creatineImg,
-    benefits: ['Exercise performance', 'Muscle support', 'Mental energy'],
-    form: '90 Servings (450g)',
-    category: 'Performance',
-    tags: ['Vegetarian'],
-    price: 53.00,
-  },
-];
 
 const comboPacks = [
   {
@@ -344,10 +211,16 @@ const Supplements = () => {
                         ))}
                       </div>
                     </CardContent>
-                    <CardFooter className="pt-0">
-                      <Button variant="outline" className="w-full" size="sm">
+                    <CardFooter className="pt-0 flex gap-2">
+                      <Link to={`/supplements/${supplement.id}`} className="flex-1">
+                        <Button variant="ghost" className="w-full" size="sm">
+                          <Eye className="w-3.5 h-3.5 mr-2" />
+                          Details
+                        </Button>
+                      </Link>
+                      <Button variant="outline" className="flex-1" size="sm">
                         <ShoppingCart className="w-3.5 h-3.5 mr-2" />
-                        Add to Cart
+                        Add
                       </Button>
                     </CardFooter>
                   </Card>
