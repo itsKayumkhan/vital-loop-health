@@ -128,12 +128,12 @@ const Supplements = () => {
                               <Badge className="bg-secondary text-secondary-foreground">Best Value</Badge>
                             </div>
                           )}
-                          <div className="relative overflow-hidden h-48 bg-white rounded-t-lg">
+                          <div className="relative overflow-hidden h-64 bg-white rounded-t-lg">
                             {product.node.images.edges[0]?.node && (
                               <img 
                                 src={product.node.images.edges[0].node.url} 
                                 alt={product.node.images.edges[0].node.altText || product.node.title}
-                                className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-300"
                               />
                             )}
                           </div>
