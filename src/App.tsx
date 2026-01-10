@@ -11,6 +11,7 @@ import Supplements from "./pages/Supplements";
 import ProductDetail from "./pages/ProductDetail";
 import WhyUs from "./pages/WhyUs";
 import Contact from "./pages/Contact";
+import CGMIntakeForm from "./pages/CGMIntakeForm";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/product/:handle" element={<ProductDetail />} />
             <Route path="/why-us" element={<WhyUs />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/cgm-intake" element={<CGMIntakeForm />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

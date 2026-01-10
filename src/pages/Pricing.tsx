@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare } from 'lucide-react';
+import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import TestCatalog from '@/components/TestCatalog';
@@ -128,11 +129,15 @@ const CGMProtocolInfo = () => {
                 ))}
               </div>
 
-              <div className="mt-4 pt-3 border-t border-secondary/10">
+              <div className="mt-4 pt-3 border-t border-secondary/10 space-y-3">
                 <p className="text-xs text-muted-foreground text-center">
                   <span className="text-secondary font-medium">What you receive:</span> CGM sensor kit, mobile app access, meal logging templates, 
                   personalized glucose report, and 1:1 nutrition coach session
                 </p>
+                <Link to="/cgm-intake" className="flex items-center justify-center gap-2 text-xs text-secondary hover:text-secondary/80 font-medium transition-colors">
+                  <FileText className="w-3.5 h-3.5" />
+                  Download CGM Intake Form
+                </Link>
               </div>
             </div>
           </motion.div>
