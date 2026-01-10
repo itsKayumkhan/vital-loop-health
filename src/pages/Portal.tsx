@@ -13,7 +13,8 @@ import {
   CheckCircle2,
   AlertCircle,
   LogOut,
-  User
+  User,
+  Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -105,6 +106,14 @@ const Portal = () => {
               </motion.div>
 
               <div className="flex gap-3">
+                {role === 'admin' && (
+                  <Button variant="outline" asChild>
+                    <Link to="/portal/admin">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Admin Panel
+                    </Link>
+                  </Button>
+                )}
                 {isStaff && (
                   <Button variant="outline" asChild>
                     <Link to="/portal/manage">
