@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { motion } from 'framer-motion';
-import { Check, Brain, Sparkles, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -74,6 +74,73 @@ const membershipTiers = [
     ],
   },
 ];
+
+const CGMProtocolInfo = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const cgmSteps = [
+    { icon: Smartphone, title: 'Device Shipped', desc: 'CGM sensor shipped directly to your door with easy setup guide' },
+    { icon: Activity, title: 'Days 1-14', desc: 'Wear sensor continuously while logging meals, sleep, and activities' },
+    { icon: Utensils, title: 'Real-Time Insights', desc: 'See how foods, stress, and exercise impact your glucose in real-time' },
+    { icon: TrendingUp, title: 'Data Analysis', desc: 'Your Health Architect analyzes patterns and glucose variability' },
+    { icon: MessageSquare, title: 'Coach Debrief', desc: 'Nutrition coach session with personalized metabolic action plan' },
+  ];
+
+  return (
+    <div className="mt-4 border-t border-secondary/20 pt-4">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center gap-2 text-secondary text-sm font-medium hover:text-secondary/80 transition-colors w-full justify-center"
+      >
+        <Activity className="w-4 h-4" />
+        CGM Protocol Details
+        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+      </button>
+      
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-4 bg-secondary/5 rounded-xl p-4 space-y-3">
+              <h4 className="text-sm font-semibold text-foreground text-center">
+                14-Day CGM Sprint (2x/year)
+              </h4>
+              <p className="text-xs text-muted-foreground text-center mb-4">
+                Unlock your metabolic fingerprint with continuous glucose monitoring
+              </p>
+              
+              <div className="space-y-3">
+                {cgmSteps.map((step, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                      <step.icon className="w-3.5 h-3.5 text-secondary" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-foreground">{step.title}</p>
+                      <p className="text-xs text-muted-foreground">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-secondary/10">
+                <p className="text-xs text-muted-foreground text-center">
+                  <span className="text-secondary font-medium">What you receive:</span> CGM sensor kit, mobile app access, meal logging templates, 
+                  personalized glucose report, and 1:1 nutrition coach session
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const MembershipSection = () => {
   const [isAnnual, setIsAnnual] = useState(false);
@@ -186,6 +253,8 @@ const MembershipSection = () => {
                   </li>
                 ))}
               </ul>
+
+              {tier.name === 'Elevate' && <CGMProtocolInfo />}
 
               <Button
                 variant={tier.popular ? 'hero' : 'heroOutline'}
