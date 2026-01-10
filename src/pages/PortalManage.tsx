@@ -121,7 +121,7 @@ const PortalManage = () => {
     return coachForms.find(f => f.specialty === specialty);
   };
 
-  const updateStatus = async (submissionId: string, newStatus: string) => {
+  const updateStatus = async (submissionId: string, newStatus: FormStatus) => {
     setUpdating(true);
     
     const { error } = await supabase
@@ -395,7 +395,7 @@ const PortalManage = () => {
                           </Button>
                           <Select
                             value={sub.status}
-                            onValueChange={(value) => updateStatus(sub.id, value)}
+                            onValueChange={(value) => updateStatus(sub.id, value as FormStatus)}
                             disabled={updating}
                           >
                             <SelectTrigger className="w-36">
