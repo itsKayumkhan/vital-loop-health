@@ -14,16 +14,167 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      coach_intake_forms: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          created_at: string
+          form_data: Json
+          id: string
+          notes: string | null
+          reviewed_at: string | null
+          specialty: Database["public"]["Enums"]["coach_specialty"]
+          status: Database["public"]["Enums"]["form_status"]
+          submitted_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          form_data?: Json
+          id?: string
+          notes?: string | null
+          reviewed_at?: string | null
+          specialty: Database["public"]["Enums"]["coach_specialty"]
+          status?: Database["public"]["Enums"]["form_status"]
+          submitted_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          form_data?: Json
+          id?: string
+          notes?: string | null
+          reviewed_at?: string | null
+          specialty?: Database["public"]["Enums"]["coach_specialty"]
+          status?: Database["public"]["Enums"]["form_status"]
+          submitted_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      form_activity_log: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          form_id: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          form_id: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          form_id?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_activity_log_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "coach_intake_forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "health_architect" | "coach" | "client"
+      coach_specialty:
+        | "nutrition"
+        | "performance"
+        | "wellness_recovery"
+        | "mental_performance"
+      form_status:
+        | "pending"
+        | "in_review"
+        | "assigned"
+        | "completed"
+        | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +301,21 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "health_architect", "coach", "client"],
+      coach_specialty: [
+        "nutrition",
+        "performance",
+        "wellness_recovery",
+        "mental_performance",
+      ],
+      form_status: [
+        "pending",
+        "in_review",
+        "assigned",
+        "completed",
+        "archived",
+      ],
+    },
   },
 } as const
