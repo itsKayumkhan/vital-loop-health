@@ -205,7 +205,7 @@ const Supplements = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: index * 0.05 }}
                       >
-                        <Card className="h-full glass-card hover:border-secondary/40 transition-all duration-300 group">
+                        <Card className="h-full glass-card hover:border-secondary/40 transition-all duration-300 group flex flex-col">
                           <CardHeader className="p-0">
                             <div className="relative overflow-hidden rounded-t-lg bg-gradient-to-b from-muted/50 to-muted/20">
                               {product.node.images.edges[0]?.node && (
@@ -225,12 +225,12 @@ const Supplements = () => {
                               </Badge>
                             </div>
                           </CardHeader>
-                          <CardContent className="pt-4">
+                          <CardContent className="pt-4 flex-1 flex flex-col">
                             <CardTitle className="text-lg mb-1">{product.node.title}</CardTitle>
                             <CardDescription className="text-sm line-clamp-2 mb-3">
                               {product.node.description}
                             </CardDescription>
-                            <div className="flex flex-wrap gap-1.5 mb-3">
+                            <div className="flex flex-wrap gap-1.5 mb-3 min-h-[26px]">
                               {product.node.tags.slice(0, 3).map((tag) => (
                                 <span
                                   key={tag}
@@ -240,7 +240,7 @@ const Supplements = () => {
                                 </span>
                               ))}
                             </div>
-                            <p className="text-xl font-bold text-secondary">
+                            <p className="text-xl font-bold text-secondary mt-auto">
                               ${parseFloat(product.node.priceRange.minVariantPrice.amount).toFixed(2)}
                             </p>
                           </CardContent>
