@@ -1,4 +1,4 @@
-import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity } from 'lucide-react';
+import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
@@ -21,6 +21,7 @@ const navItems = [
   { id: 'documents', label: 'Documents', icon: FileText },
   { id: 'campaigns', label: 'Marketing', icon: Megaphone },
   { id: 'activity-log', label: 'Activity Log', icon: Activity },
+  { id: 'role-management', label: 'Role Management', icon: UserCog },
 ];
 
 const roleLabels: Record<string, string> = {

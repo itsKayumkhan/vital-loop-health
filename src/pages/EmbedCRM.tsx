@@ -11,6 +11,7 @@ import { DocumentsList } from '@/components/crm/DocumentsList';
 import { CampaignsList } from '@/components/crm/CampaignsList';
 import { IntakeFormsList } from '@/components/crm/IntakeFormsList';
 import { ActivityLogList } from '@/components/crm/ActivityLogList';
+import { RoleManagement } from '@/components/crm/RoleManagement';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +40,7 @@ export default function EmbedCRM() {
         documents: { action: 'view_documents', resourceType: 'document' },
         campaigns: { action: 'view_campaigns', resourceType: 'campaign' },
         'activity-log': { action: 'view_activity_log', resourceType: 'activity_log' },
+        'role-management': { action: 'view_clients', resourceType: 'client' },
       };
       
       const mapping = actionMap[activeTab];
@@ -49,12 +51,12 @@ export default function EmbedCRM() {
         });
       }
     }
-  }, [activeTab, user, isStaff]);
+  }, [activeTab, user, isStaff, logActivity]);
 
   // Determine which tabs the user can access based on role
   const getAccessibleTabs = () => {
     if (role === 'admin') {
-      return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'activity-log'];
+      return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'activity-log', 'role-management'];
     }
     if (role === 'health_architect') {
       return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns'];
@@ -192,6 +194,8 @@ export default function EmbedCRM() {
         return <CampaignsList />;
       case 'activity-log':
         return <ActivityLogList />;
+      case 'role-management':
+        return <RoleManagement />;
       default:
         return <CRMDashboard />;
     }

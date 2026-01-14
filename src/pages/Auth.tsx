@@ -32,22 +32,38 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, role, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = (location.state as { from?: string })?.from || '/portal';
+  const from = (location.state as { from?: string })?.from;
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  // Redirect based on role after login
   useEffect(() => {
-    if (user) {
-      navigate(from, { replace: true });
+    if (user && !authLoading && role) {
+      // If there's a specific "from" location, respect it
+      if (from) {
+        navigate(from, { replace: true });
+        return;
+      }
+      
+      // Otherwise, redirect based on role
+      const roleRedirects: Record<string, string> = {
+        admin: '/crm',
+        health_architect: '/crm',
+        coach: '/crm',
+        client: '/portal',
+      };
+      
+      const destination = roleRedirects[role] || '/portal';
+      navigate(destination, { replace: true });
     }
-  }, [user, navigate, from]);
+  }, [user, role, authLoading, navigate, from]);
 
   const validate = () => {
     setErrors({});
