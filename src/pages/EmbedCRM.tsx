@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useCRMActivityLog } from '@/hooks/useCRMActivityLog';
 import { CRMSidebar } from '@/components/crm/CRMSidebar';
 import { CRMDashboard } from '@/components/crm/CRMDashboard';
 import { ClientsList } from '@/components/crm/ClientsList';
@@ -9,6 +10,7 @@ import { PurchasesList } from '@/components/crm/PurchasesList';
 import { DocumentsList } from '@/components/crm/DocumentsList';
 import { CampaignsList } from '@/components/crm/CampaignsList';
 import { IntakeFormsList } from '@/components/crm/IntakeFormsList';
+import { ActivityLogList } from '@/components/crm/ActivityLogList';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,15 +20,43 @@ import { toast } from 'sonner';
 
 export default function EmbedCRM() {
   const { user, loading, isStaff, role, signIn } = useAuth();
+  const { logActivity } = useCRMActivityLog();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSigningIn, setIsSigningIn] = useState(false);
 
+  // Log activity when tab changes
+  useEffect(() => {
+    if (user && isStaff) {
+      const actionMap: Record<string, { action: any; resourceType: any }> = {
+        dashboard: { action: 'view_dashboard', resourceType: 'dashboard' },
+        clients: { action: 'view_clients', resourceType: 'client' },
+        'intake-forms': { action: 'view_intake_forms', resourceType: 'intake_form' },
+        memberships: { action: 'view_memberships', resourceType: 'membership' },
+        purchases: { action: 'view_purchases', resourceType: 'purchase' },
+        documents: { action: 'view_documents', resourceType: 'document' },
+        campaigns: { action: 'view_campaigns', resourceType: 'campaign' },
+        'activity-log': { action: 'view_activity_log', resourceType: 'activity_log' },
+      };
+      
+      const mapping = actionMap[activeTab];
+      if (mapping) {
+        logActivity({
+          action: mapping.action,
+          resourceType: mapping.resourceType,
+        });
+      }
+    }
+  }, [activeTab, user, isStaff]);
+
   // Determine which tabs the user can access based on role
   const getAccessibleTabs = () => {
-    if (role === 'admin' || role === 'health_architect') {
+    if (role === 'admin') {
+      return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'activity-log'];
+    }
+    if (role === 'health_architect') {
       return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns'];
     }
     if (role === 'coach') {
@@ -48,6 +78,11 @@ export default function EmbedCRM() {
       toast.error('Sign in failed', { description: error.message });
     } else {
       toast.success('Welcome back!');
+      // Log login activity
+      logActivity({
+        action: 'login',
+        resourceType: 'session',
+      });
     }
     
     setIsSigningIn(false);
@@ -155,6 +190,8 @@ export default function EmbedCRM() {
         return <DocumentsList />;
       case 'campaigns':
         return <CampaignsList />;
+      case 'activity-log':
+        return <ActivityLogList />;
       default:
         return <CRMDashboard />;
     }
