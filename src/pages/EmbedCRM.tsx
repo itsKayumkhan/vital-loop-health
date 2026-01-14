@@ -36,6 +36,7 @@ export default function EmbedCRM() {
     if (user && isStaff) {
       const actionMap: Record<string, { action: any; resourceType: any }> = {
         dashboard: { action: 'view_dashboard', resourceType: 'dashboard' },
+        'coach-view': { action: 'view_dashboard', resourceType: 'dashboard' },
         clients: { action: 'view_clients', resourceType: 'client' },
         'intake-forms': { action: 'view_intake_forms', resourceType: 'intake_form' },
         memberships: { action: 'view_memberships', resourceType: 'membership' },
@@ -60,7 +61,7 @@ export default function EmbedCRM() {
   // Determine which tabs the user can access based on role
   const getAccessibleTabs = () => {
     if (role === 'admin') {
-      return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'coach-performance', 'satisfaction-surveys', 'activity-log', 'role-management'];
+      return ['dashboard', 'coach-view', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'coach-performance', 'satisfaction-surveys', 'activity-log', 'role-management'];
     }
     if (role === 'health_architect') {
       return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'satisfaction-surveys'];
@@ -185,6 +186,9 @@ export default function EmbedCRM() {
       case 'dashboard':
         // Show coach-specific dashboard for coaches
         return role === 'coach' ? <CoachDashboard /> : <CRMDashboard />;
+      case 'coach-view':
+        // Allow admins to view the coach dashboard
+        return <CoachDashboard />;
       case 'clients':
         return <ClientsList />;
       case 'intake-forms':
