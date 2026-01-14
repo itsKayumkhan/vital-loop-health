@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Users, Crown, ShoppingCart, TrendingUp, UserPlus, DollarSign } from 'lucide-react';
+import { Users, Crown, TrendingUp, UserPlus, DollarSign, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCRMClients, useCRMMemberships, useCRMPurchases } from '@/hooks/useCRM';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -21,7 +21,35 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, eachWeekOfInterval, eachDayOfInterval, parseISO, isWithinInterval, differenceInDays } from 'date-fns';
-import { DateRangeFilter, DateRange } from './DateRangeFilter';
+import { DateRangeFilter, DateRange, ComparisonRange } from './DateRangeFilter';
+import { cn } from '@/lib/utils';
+
+type ChangeIndicatorProps = {
+  current: number;
+  previous: number;
+  format?: 'number' | 'currency' | 'percent';
+};
+
+function ChangeIndicator({ current, previous, format: formatType = 'number' }: ChangeIndicatorProps) {
+  if (previous === 0) return null;
+  
+  const change = ((current - previous) / previous) * 100;
+  const isPositive = change > 0;
+  const isNeutral = change === 0;
+  
+  return (
+    <div className={cn(
+      "flex items-center gap-1 text-xs font-medium",
+      isPositive && "text-green-600",
+      !isPositive && !isNeutral && "text-red-600",
+      isNeutral && "text-muted-foreground"
+    )}>
+      {isPositive ? <ArrowUp className="h-3 w-3" /> : isNeutral ? <Minus className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+      <span>{Math.abs(change).toFixed(1)}%</span>
+      <span className="text-muted-foreground">vs prev</span>
+    </div>
+  );
+}
 
 export function CRMDashboard() {
   const { clients, loading: clientsLoading } = useCRMClients();
@@ -35,6 +63,10 @@ export function CRMDashboard() {
     from: subMonths(new Date(), 6),
     to: new Date(),
   }));
+
+  // Comparison state
+  const [comparisonEnabled, setComparisonEnabled] = useState(false);
+  const [comparisonRange, setComparisonRange] = useState<ComparisonRange>(null);
 
   // Filter clients, memberships, and purchases by date range
   const filteredClients = useMemo(() => {
@@ -51,6 +83,23 @@ export function CRMDashboard() {
     });
   }, [purchases, dateRange]);
 
+  // Comparison filtered data
+  const comparisonClients = useMemo(() => {
+    if (!comparisonRange) return [];
+    return clients.filter(c => {
+      const createdAt = parseISO(c.created_at);
+      return isWithinInterval(createdAt, { start: comparisonRange.from, end: comparisonRange.to });
+    });
+  }, [clients, comparisonRange]);
+
+  const comparisonPurchases = useMemo(() => {
+    if (!comparisonRange) return [];
+    return purchases.filter(p => {
+      const purchaseDate = parseISO(p.purchased_at);
+      return isWithinInterval(purchaseDate, { start: comparisonRange.from, end: comparisonRange.to });
+    });
+  }, [purchases, comparisonRange]);
+
   const stats = useMemo(() => ({
     totalClients: clients.length,
     activeMembers: memberships.filter(m => m.status === 'active').length,
@@ -60,12 +109,16 @@ export function CRMDashboard() {
     vipCount: clients.filter(c => c.marketing_status === 'vip').length,
   }), [clients, memberships, filteredClients, filteredPurchases]);
 
+  const comparisonStats = useMemo(() => ({
+    totalRevenue: comparisonPurchases.reduce((sum, p) => sum + Number(p.amount), 0),
+    newClientsInRange: comparisonClients.length,
+  }), [comparisonClients, comparisonPurchases]);
+
   // Determine the right interval granularity based on date range
   const getIntervalData = useMemo(() => {
     const daysDiff = differenceInDays(dateRange.to, dateRange.from);
     
     if (daysDiff <= 14) {
-      // Daily granularity for short ranges
       return {
         intervals: eachDayOfInterval({ start: dateRange.from, end: dateRange.to }),
         formatStr: 'MMM d',
@@ -73,7 +126,6 @@ export function CRMDashboard() {
         getEnd: (date: Date) => new Date(date.setHours(23, 59, 59, 999)),
       };
     } else if (daysDiff <= 90) {
-      // Weekly granularity for medium ranges
       return {
         intervals: eachWeekOfInterval({ start: dateRange.from, end: dateRange.to }),
         formatStr: 'MMM d',
@@ -81,7 +133,6 @@ export function CRMDashboard() {
         getEnd: (date: Date) => new Date(date.getTime() + 6 * 24 * 60 * 60 * 1000),
       };
     } else {
-      // Monthly granularity for long ranges
       return {
         intervals: eachMonthOfInterval({ start: startOfMonth(dateRange.from), end: startOfMonth(dateRange.to) }),
         formatStr: 'MMM yyyy',
@@ -91,11 +142,41 @@ export function CRMDashboard() {
     }
   }, [dateRange]);
 
+  // Get comparison interval data
+  const getComparisonIntervalData = useMemo(() => {
+    if (!comparisonRange) return null;
+    
+    const daysDiff = differenceInDays(comparisonRange.to, comparisonRange.from);
+    
+    if (daysDiff <= 14) {
+      return {
+        intervals: eachDayOfInterval({ start: comparisonRange.from, end: comparisonRange.to }),
+        formatStr: 'MMM d',
+        getStart: (date: Date) => new Date(date.setHours(0, 0, 0, 0)),
+        getEnd: (date: Date) => new Date(date.setHours(23, 59, 59, 999)),
+      };
+    } else if (daysDiff <= 90) {
+      return {
+        intervals: eachWeekOfInterval({ start: comparisonRange.from, end: comparisonRange.to }),
+        formatStr: 'MMM d',
+        getStart: (date: Date) => date,
+        getEnd: (date: Date) => new Date(date.getTime() + 6 * 24 * 60 * 60 * 1000),
+      };
+    } else {
+      return {
+        intervals: eachMonthOfInterval({ start: startOfMonth(comparisonRange.from), end: startOfMonth(comparisonRange.to) }),
+        formatStr: 'MMM yyyy',
+        getStart: startOfMonth,
+        getEnd: endOfMonth,
+      };
+    }
+  }, [comparisonRange]);
+
   // Generate client growth data based on date range
   const clientGrowthData = useMemo(() => {
     const { intervals, formatStr, getStart, getEnd } = getIntervalData;
     
-    return intervals.map(interval => {
+    const mainData = intervals.map((interval, index) => {
       const intervalStart = getStart(new Date(interval));
       const intervalEnd = getEnd(new Date(interval));
       
@@ -108,20 +189,51 @@ export function CRMDashboard() {
         const createdAt = parseISO(c.created_at);
         return createdAt <= intervalEnd;
       }).length;
-      
-      return {
+
+      const result: Record<string, string | number> = {
         period: format(interval, formatStr),
+        index,
         newClients,
         totalClients: cumulativeClients,
       };
+
+      return result;
     });
-  }, [clients, getIntervalData]);
+
+    // Add comparison data if enabled
+    if (comparisonEnabled && getComparisonIntervalData) {
+      const { intervals: compIntervals, getStart: compGetStart, getEnd: compGetEnd } = getComparisonIntervalData;
+      
+      mainData.forEach((item, index) => {
+        if (index < compIntervals.length) {
+          const compInterval = compIntervals[index];
+          const compIntervalStart = compGetStart(new Date(compInterval));
+          const compIntervalEnd = compGetEnd(new Date(compInterval));
+          
+          const compNewClients = clients.filter(c => {
+            const createdAt = parseISO(c.created_at);
+            return isWithinInterval(createdAt, { start: compIntervalStart, end: compIntervalEnd });
+          }).length;
+          
+          const compCumulativeClients = clients.filter(c => {
+            const createdAt = parseISO(c.created_at);
+            return createdAt <= compIntervalEnd;
+          }).length;
+
+          item.prevNewClients = compNewClients;
+          item.prevTotalClients = compCumulativeClients;
+        }
+      });
+    }
+    
+    return mainData;
+  }, [clients, getIntervalData, comparisonEnabled, getComparisonIntervalData]);
 
   // Generate revenue trend data based on date range
   const revenueData = useMemo(() => {
     const { intervals, formatStr, getStart, getEnd } = getIntervalData;
     
-    return intervals.map(interval => {
+    const mainData = intervals.map((interval, index) => {
       const intervalStart = getStart(new Date(interval));
       const intervalEnd = getEnd(new Date(interval));
       
@@ -132,13 +244,39 @@ export function CRMDashboard() {
         })
         .reduce((sum, p) => sum + Number(p.amount), 0);
       
-      return {
+      const result: Record<string, string | number> = {
         period: format(interval, formatStr),
+        index,
         revenue: periodRevenue,
       };
-    });
-  }, [purchases, getIntervalData]);
 
+      return result;
+    });
+
+    // Add comparison data if enabled
+    if (comparisonEnabled && getComparisonIntervalData) {
+      const { intervals: compIntervals, getStart: compGetStart, getEnd: compGetEnd } = getComparisonIntervalData;
+      
+      mainData.forEach((item, index) => {
+        if (index < compIntervals.length) {
+          const compInterval = compIntervals[index];
+          const compIntervalStart = compGetStart(new Date(compInterval));
+          const compIntervalEnd = compGetEnd(new Date(compInterval));
+          
+          const compPeriodRevenue = purchases
+            .filter(p => {
+              const purchaseDate = parseISO(p.purchased_at);
+              return isWithinInterval(purchaseDate, { start: compIntervalStart, end: compIntervalEnd });
+            })
+            .reduce((sum, p) => sum + Number(p.amount), 0);
+
+          item.prevRevenue = compPeriodRevenue;
+        }
+      });
+    }
+    
+    return mainData;
+  }, [purchases, getIntervalData, comparisonEnabled, getComparisonIntervalData]);
 
   // Membership tier distribution
   const membershipTierData = useMemo(() => {
@@ -231,12 +369,19 @@ export function CRMDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground">Overview of your client management system</p>
         </div>
-        <DateRangeFilter dateRange={dateRange} onDateRangeChange={setDateRange} />
+        <DateRangeFilter 
+          dateRange={dateRange} 
+          onDateRangeChange={setDateRange}
+          comparisonRange={comparisonRange}
+          onComparisonRangeChange={setComparisonRange}
+          comparisonEnabled={comparisonEnabled}
+          onComparisonEnabledChange={setComparisonEnabled}
+        />
       </div>
 
       {/* Stats Grid */}
@@ -268,9 +413,16 @@ export function CRMDashboard() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Total Revenue</p>
                 <p className="text-3xl font-bold">${stats.totalRevenue.toLocaleString()}</p>
+                {comparisonEnabled && (
+                  <ChangeIndicator 
+                    current={stats.totalRevenue} 
+                    previous={comparisonStats.totalRevenue} 
+                    format="currency"
+                  />
+                )}
               </div>
               <DollarSign className="h-10 w-10 text-green-500 opacity-50" />
             </div>
@@ -280,9 +432,15 @@ export function CRMDashboard() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">New in Range</p>
                 <p className="text-3xl font-bold">{stats.newClientsInRange}</p>
+                {comparisonEnabled && (
+                  <ChangeIndicator 
+                    current={stats.newClientsInRange} 
+                    previous={comparisonStats.newClientsInRange} 
+                  />
+                )}
               </div>
               <UserPlus className="h-10 w-10 text-blue-500 opacity-50" />
             </div>
@@ -298,6 +456,7 @@ export function CRMDashboard() {
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
               Client Growth
+              {comparisonEnabled && <span className="text-xs font-normal text-muted-foreground">(vs previous period)</span>}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -308,6 +467,10 @@ export function CRMDashboard() {
                     <linearGradient id="colorClients" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
                       <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorClientsPrev" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--muted-foreground))" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="hsl(var(--muted-foreground))" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -322,6 +485,28 @@ export function CRMDashboard() {
                     labelStyle={{ color: 'hsl(var(--foreground))' }}
                   />
                   <Legend />
+                  {comparisonEnabled && (
+                    <>
+                      <Area
+                        type="monotone"
+                        dataKey="prevTotalClients"
+                        name="Prev Total"
+                        stroke="hsl(var(--muted-foreground))"
+                        fill="url(#colorClientsPrev)"
+                        strokeWidth={1}
+                        strokeDasharray="5 5"
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="prevNewClients"
+                        name="Prev New"
+                        stroke="hsl(var(--muted-foreground))"
+                        strokeWidth={1}
+                        strokeDasharray="5 5"
+                        dot={false}
+                      />
+                    </>
+                  )}
                   <Area
                     type="monotone"
                     dataKey="totalClients"
@@ -350,6 +535,7 @@ export function CRMDashboard() {
             <CardTitle className="flex items-center gap-2">
               <DollarSign className="h-5 w-5" />
               Revenue Trend
+              {comparisonEnabled && <span className="text-xs font-normal text-muted-foreground">(vs previous period)</span>}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -372,8 +558,18 @@ export function CRMDashboard() {
                       borderRadius: '8px',
                     }}
                     labelStyle={{ color: 'hsl(var(--foreground))' }}
-                    formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
+                    formatter={(value: number, name: string) => [`$${value.toLocaleString()}`, name === 'prevRevenue' ? 'Prev Revenue' : 'Revenue']}
                   />
+                  <Legend />
+                  {comparisonEnabled && (
+                    <Bar 
+                      dataKey="prevRevenue" 
+                      name="Prev Revenue" 
+                      fill="hsl(var(--muted-foreground))" 
+                      radius={[4, 4, 0, 0]} 
+                      opacity={0.5}
+                    />
+                  )}
                   <Bar dataKey="revenue" name="Revenue" fill="url(#colorRevenue)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -466,7 +662,7 @@ export function CRMDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5" />
+              <DollarSign className="h-5 w-5" />
               Revenue by Type
             </CardTitle>
           </CardHeader>
@@ -501,54 +697,9 @@ export function CRMDashboard() {
                 </ResponsiveContainer>
               ) : (
                 <div className="h-full flex items-center justify-center text-muted-foreground">
-                  No purchases yet
+                  No purchase data
                 </div>
               )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Secondary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-yellow-500/10 rounded-full">
-                <TrendingUp className="h-6 w-6 text-yellow-500" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Active Leads</p>
-                <p className="text-2xl font-bold">{stats.leadCount}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-purple-500/10 rounded-full">
-                <Crown className="h-6 w-6 text-purple-500" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">VIP Clients</p>
-                <p className="text-2xl font-bold">{stats.vipCount}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary/10 rounded-full">
-                <ShoppingCart className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total Purchases</p>
-                <p className="text-2xl font-bold">{purchases.length}</p>
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -561,28 +712,23 @@ export function CRMDashboard() {
             <CardTitle>Recent Clients</CardTitle>
           </CardHeader>
           <CardContent>
-            {recentClients.length === 0 ? (
-              <p className="text-muted-foreground text-center py-4">No clients yet</p>
-            ) : (
-              <div className="space-y-4">
-                {recentClients.map((client) => (
+            <div className="space-y-4">
+              {recentClients.length > 0 ? (
+                recentClients.map((client) => (
                   <div key={client.id} className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">{client.full_name}</p>
                       <p className="text-sm text-muted-foreground">{client.email}</p>
                     </div>
-                    <span className={`px-2 py-1 rounded-full text-xs capitalize ${
-                      client.marketing_status === 'vip' ? 'bg-purple-500/10 text-purple-500' :
-                      client.marketing_status === 'customer' ? 'bg-green-500/10 text-green-500' :
-                      client.marketing_status === 'lead' ? 'bg-yellow-500/10 text-yellow-500' :
-                      'bg-muted text-muted-foreground'
-                    }`}>
-                      {client.marketing_status}
+                    <span className="text-xs text-muted-foreground">
+                      {format(parseISO(client.created_at), 'MMM d, yyyy')}
                     </span>
                   </div>
-                ))}
-              </div>
-            )}
+                ))
+              ) : (
+                <p className="text-muted-foreground">No clients yet</p>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -591,23 +737,26 @@ export function CRMDashboard() {
             <CardTitle>Recent Purchases</CardTitle>
           </CardHeader>
           <CardContent>
-            {recentPurchases.length === 0 ? (
-              <p className="text-muted-foreground text-center py-4">No purchases yet</p>
-            ) : (
-              <div className="space-y-4">
-                {recentPurchases.map((purchase) => (
+            <div className="space-y-4">
+              {recentPurchases.length > 0 ? (
+                recentPurchases.map((purchase) => (
                   <div key={purchase.id} className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">{purchase.product_name}</p>
-                      <p className="text-sm text-muted-foreground capitalize">{purchase.purchase_type}</p>
+                      <p className="text-sm text-muted-foreground capitalize">{purchase.purchase_type.replace('_', ' ')}</p>
                     </div>
-                    <span className="font-semibold text-green-500">
-                      ${Number(purchase.amount).toFixed(2)}
-                    </span>
+                    <div className="text-right">
+                      <p className="font-medium text-green-600">${Number(purchase.amount).toLocaleString()}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {format(parseISO(purchase.purchased_at), 'MMM d, yyyy')}
+                      </p>
+                    </div>
                   </div>
-                ))}
-              </div>
-            )}
+                ))
+              ) : (
+                <p className="text-muted-foreground">No purchases yet</p>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
