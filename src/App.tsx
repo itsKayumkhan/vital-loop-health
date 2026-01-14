@@ -20,6 +20,8 @@ import CoachIntakeForm from "./pages/CoachIntakeForm";
 import AdminPanel from "./pages/AdminPanel";
 import Affiliate from "./pages/Affiliate";
 import CRM from "./pages/CRM";
+import EmbedPortal from "./pages/EmbedPortal";
+import EmbedCRM from "./pages/EmbedCRM";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +50,9 @@ const App = () => (
               <Route path="/intake/:specialty" element={<ProtectedRoute><CoachIntakeForm /></ProtectedRoute>} />
               <Route path="/affiliate" element={<Affiliate />} />
               <Route path="/crm" element={<ProtectedRoute requireStaff><CRM /></ProtectedRoute>} />
+              {/* Embed routes for Webflow integration - no navbar/footer */}
+              <Route path="/embed/portal" element={<EmbedPortal />} />
+              <Route path="/embed/crm" element={<EmbedCRM />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
