@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { format, parseISO } from 'date-fns';
-import { X, Users, DollarSign, TrendingUp, Calendar } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, Calendar, Download, FileText, FileSpreadsheet } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,16 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export type DrillDownType = 'clients' | 'revenue' | 'newClients';
 
@@ -58,9 +67,8 @@ const purchaseTypeColors: Record<string, string> = {
 };
 
 export function ChartDrillDown({ open, onOpenChange, data }: ChartDrillDownProps) {
-  if (!data) return null;
-
   const title = useMemo(() => {
+    if (!data) return '';
     switch (data.type) {
       case 'clients':
         return `Total Clients - ${data.period}`;
@@ -74,6 +82,7 @@ export function ChartDrillDown({ open, onOpenChange, data }: ChartDrillDownProps
   }, [data]);
 
   const icon = useMemo(() => {
+    if (!data) return null;
     switch (data.type) {
       case 'clients':
       case 'newClients':
@@ -83,9 +92,10 @@ export function ChartDrillDown({ open, onOpenChange, data }: ChartDrillDownProps
       default:
         return <TrendingUp className="h-5 w-5" />;
     }
-  }, [data.type]);
+  }, [data?.type]);
 
   const summary = useMemo(() => {
+    if (!data) return null;
     if (data.type === 'revenue' && data.purchases) {
       const total = data.purchases.reduce((sum, p) => sum + p.amount, 0);
       const byType = data.purchases.reduce((acc, p) => {
@@ -105,14 +115,132 @@ export function ChartDrillDown({ open, onOpenChange, data }: ChartDrillDownProps
     return null;
   }, [data]);
 
+  // Export to CSV
+  const exportToCSV = useCallback(() => {
+    if (!data) return;
+
+    let csvContent = '';
+    const dateRange = `${format(data.periodStart, 'MMM d, yyyy')} - ${format(data.periodEnd, 'MMM d, yyyy')}`;
+
+    if (data.type === 'revenue' && data.purchases) {
+      csvContent = 'Product Name,Amount,Type,Client,Date\n';
+      data.purchases.forEach(p => {
+        csvContent += `"${p.product_name}","$${p.amount.toLocaleString()}","${p.purchase_type.replace('_', ' ')}","${p.client_name || 'Unknown'}","${format(parseISO(p.purchased_at), 'MMM d, yyyy h:mm a')}"\n`;
+      });
+    } else if (data.clients) {
+      csvContent = 'Name,Email,Status,Created Date\n';
+      data.clients.forEach(c => {
+        csvContent += `"${c.full_name}","${c.email}","${c.marketing_status || 'N/A'}","${format(parseISO(c.created_at), 'MMM d, yyyy')}"\n`;
+      });
+    }
+
+    // Create and download the file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${data.type}-${data.period.replace(/[^a-zA-Z0-9]/g, '-')}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, [data]);
+
+  // Export to PDF
+  const exportToPDF = useCallback(() => {
+    if (!data) return;
+
+    const doc = new jsPDF();
+    const dateRange = `${format(data.periodStart, 'MMM d, yyyy')} - ${format(data.periodEnd, 'MMM d, yyyy')}`;
+
+    // Title
+    doc.setFontSize(18);
+    doc.text(title, 14, 22);
+    
+    // Date range
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    doc.text(dateRange, 14, 30);
+
+    // Summary section
+    doc.setTextColor(0);
+    doc.setFontSize(12);
+    
+    let yPos = 40;
+
+    if (data.type === 'revenue' && data.purchases && summary && 'total' in summary) {
+      doc.text(`Total Revenue: $${summary.total.toLocaleString()}`, 14, yPos);
+      yPos += 8;
+      doc.text(`Transactions: ${summary.count}`, 14, yPos);
+      yPos += 15;
+
+      // Table
+      autoTable(doc, {
+        startY: yPos,
+        head: [['Product', 'Amount', 'Type', 'Client', 'Date']],
+        body: data.purchases.map(p => [
+          p.product_name,
+          `$${p.amount.toLocaleString()}`,
+          p.purchase_type.replace('_', ' '),
+          p.client_name || 'Unknown',
+          format(parseISO(p.purchased_at), 'MMM d, yyyy'),
+        ]),
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [59, 130, 246] },
+      });
+    } else if (data.clients && summary && 'byStatus' in summary) {
+      doc.text(`Total ${data.type === 'newClients' ? 'New ' : ''}Clients: ${summary.count}`, 14, yPos);
+      yPos += 15;
+
+      // Table
+      autoTable(doc, {
+        startY: yPos,
+        head: [['Name', 'Email', 'Status', 'Created']],
+        body: data.clients.map(c => [
+          c.full_name,
+          c.email,
+          c.marketing_status || 'N/A',
+          format(parseISO(c.created_at), 'MMM d, yyyy'),
+        ]),
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [59, 130, 246] },
+      });
+    }
+
+    // Save the PDF
+    doc.save(`${data.type}-${data.period.replace(/[^a-zA-Z0-9]/g, '-')}.pdf`);
+  }, [data, title, summary]);
+
+  if (!data) return null;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh] p-0">
         <DialogHeader className="p-6 pb-4">
-          <DialogTitle className="flex items-center gap-2">
-            {icon}
-            {title}
-          </DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-2">
+              {icon}
+              {title}
+            </DialogTitle>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Download className="h-4 w-4" />
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={exportToCSV} className="gap-2 cursor-pointer">
+                  <FileSpreadsheet className="h-4 w-4" />
+                  Download CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportToPDF} className="gap-2 cursor-pointer">
+                  <FileText className="h-4 w-4" />
+                  Download PDF
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Calendar className="h-4 w-4" />
             {format(data.periodStart, 'MMM d, yyyy')} - {format(data.periodEnd, 'MMM d, yyyy')}
