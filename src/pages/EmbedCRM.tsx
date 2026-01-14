@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCRMActivityLog } from '@/hooks/useCRMActivityLog';
 import { CRMSidebar } from '@/components/crm/CRMSidebar';
 import { CRMDashboard } from '@/components/crm/CRMDashboard';
+import { CoachDashboard } from '@/components/crm/CoachDashboard';
 import { ClientsList } from '@/components/crm/ClientsList';
 import { MembershipsList } from '@/components/crm/MembershipsList';
 import { PurchasesList } from '@/components/crm/PurchasesList';
@@ -179,7 +180,8 @@ export default function EmbedCRM() {
 
     switch (activeTab) {
       case 'dashboard':
-        return <CRMDashboard />;
+        // Show coach-specific dashboard for coaches
+        return role === 'coach' ? <CoachDashboard /> : <CRMDashboard />;
       case 'clients':
         return <ClientsList />;
       case 'intake-forms':
