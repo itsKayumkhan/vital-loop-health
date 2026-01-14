@@ -99,11 +99,6 @@ const EmbedPortal = () => {
   const [assignedCoaches, setAssignedCoaches] = useState<AssignedCoach[]>([]);
   const [profile, setProfile] = useState<{ full_name: string | null; email: string | null; phone: string | null } | null>(null);
 
-  // Show branded loader while auth is loading
-  if (authLoading) {
-    return <EmbedLoader />;
-  }
-
   useEffect(() => {
     const fetchClientData = async () => {
       if (!user) return;
@@ -174,8 +169,13 @@ const EmbedPortal = () => {
 
   const getFormConfig = (specialty: string) => coachForms.find(f => f.specialty === specialty);
 
+  // Show branded loader while auth is loading
+  if (authLoading) {
+    return <EmbedLoader />;
+  }
+
   // Show login prompt for embed
-  if (!authLoading && !user) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-8">
         <Card className="max-w-md w-full">
