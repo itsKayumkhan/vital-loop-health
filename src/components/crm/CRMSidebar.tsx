@@ -13,18 +13,18 @@ interface CRMSidebarProps {
 }
 
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'coach-view', label: 'Coach View', icon: Eye },
+  { id: 'activity-log', label: 'Activity Log', icon: Activity },
   { id: 'clients', label: 'Clients', icon: Users },
+  { id: 'coach-performance', label: 'Coach Performance', icon: BarChart3 },
+  { id: 'coach-view', label: 'Coach View', icon: Eye },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'documents', label: 'Documents', icon: FileText },
   { id: 'intake-forms', label: 'Intake Forms', icon: ClipboardList },
+  { id: 'campaigns', label: 'Marketing', icon: Megaphone },
   { id: 'memberships', label: 'Memberships', icon: Crown },
   { id: 'purchases', label: 'Purchases', icon: ShoppingCart },
-  { id: 'documents', label: 'Documents', icon: FileText },
-  { id: 'campaigns', label: 'Marketing', icon: Megaphone },
-  { id: 'coach-performance', label: 'Coach Performance', icon: BarChart3 },
-  { id: 'satisfaction-surveys', label: 'Satisfaction Surveys', icon: Star },
-  { id: 'activity-log', label: 'Activity Log', icon: Activity },
   { id: 'role-management', label: 'Role Management', icon: UserCog },
+  { id: 'satisfaction-surveys', label: 'Satisfaction Surveys', icon: Star },
 ];
 
 const roleLabels: Record<string, string> = {
