@@ -12,20 +12,44 @@ interface CRMSidebarProps {
   userRole?: string | null;
 }
 
-const navItems = [
-  { id: 'activity-log', label: 'Activity Log', icon: Activity },
-  { id: 'clients', label: 'Clients', icon: Users },
-  { id: 'coach-performance', label: 'Coach Performance', icon: BarChart3 },
-  { id: 'coach-view', label: 'Coach View', icon: Eye },
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'documents', label: 'Documents', icon: FileText },
-  { id: 'intake-forms', label: 'Intake Forms', icon: ClipboardList },
-  { id: 'campaigns', label: 'Marketing', icon: Megaphone },
-  { id: 'memberships', label: 'Memberships', icon: Crown },
-  { id: 'purchases', label: 'Purchases', icon: ShoppingCart },
-  { id: 'role-management', label: 'Role Management', icon: UserCog },
-  { id: 'satisfaction-surveys', label: 'Satisfaction Surveys', icon: Star },
+// Grouped navigation structure
+const navSections = [
+  {
+    label: 'Overview',
+    items: [
+      { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+      { id: 'coach-view', label: 'Coach View', icon: Eye },
+    ],
+  },
+  {
+    label: 'Client Management',
+    items: [
+      { id: 'clients', label: 'Clients', icon: Users },
+      { id: 'documents', label: 'Documents', icon: FileText },
+      { id: 'intake-forms', label: 'Intake Forms', icon: ClipboardList },
+      { id: 'memberships', label: 'Memberships', icon: Crown },
+      { id: 'purchases', label: 'Purchases', icon: ShoppingCart },
+    ],
+  },
+  {
+    label: 'Analytics',
+    items: [
+      { id: 'activity-log', label: 'Activity Log', icon: Activity },
+      { id: 'coach-performance', label: 'Coach Performance', icon: BarChart3 },
+      { id: 'satisfaction-surveys', label: 'Satisfaction Surveys', icon: Star },
+    ],
+  },
+  {
+    label: 'Settings',
+    items: [
+      { id: 'campaigns', label: 'Marketing', icon: Megaphone },
+      { id: 'role-management', label: 'Role Management', icon: UserCog },
+    ],
+  },
 ];
+
+// Flatten for backwards compatibility
+const navItems = navSections.flatMap(section => section.items);
 
 const roleLabels: Record<string, string> = {
   admin: 'Admin',
@@ -44,9 +68,17 @@ export function CRMSidebar({ activeTab, onTabChange, accessibleTabs, userRole }:
     await signOut();
   };
 
+  // Filter sections to only show items the user has access to
+  const visibleSections = navSections
+    .map(section => ({
+      ...section,
+      items: section.items.filter(item => visibleTabs.includes(item.id)),
+    }))
+    .filter(section => section.items.length > 0);
+
   return (
     <div className="w-64 bg-card border-r border-border min-h-screen p-4 flex flex-col">
-      <div className="mb-8">
+      <div className="mb-6">
         <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4">
           <ArrowLeft className="h-4 w-4" />
           <span className="text-sm">Back to Site</span>
@@ -55,23 +87,38 @@ export function CRMSidebar({ activeTab, onTabChange, accessibleTabs, userRole }:
         <p className="text-sm text-muted-foreground">Client Management System</p>
       </div>
 
-      <nav className="space-y-1 flex-1">
-        {navItems
-          .filter(item => visibleTabs.includes(item.id))
-          .map((item) => (
-            <Button
-              key={item.id}
-              variant="ghost"
-              className={cn(
-                "w-full justify-start gap-3",
-                activeTab === item.id && "bg-primary/10 text-primary"
-              )}
-              onClick={() => onTabChange(item.id)}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Button>
-          ))}
+      <nav className="flex-1 space-y-4 overflow-y-auto">
+        {visibleSections.map((section, sectionIndex) => (
+          <div key={section.label}>
+            {/* Section divider (not on first section) */}
+            {sectionIndex > 0 && (
+              <div className="border-t border-border mb-3" />
+            )}
+            
+            {/* Section label */}
+            <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              {section.label}
+            </h3>
+            
+            {/* Section items */}
+            <div className="space-y-1">
+              {section.items.map((item) => (
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  className={cn(
+                    "w-full justify-start gap-3",
+                    activeTab === item.id && "bg-primary/10 text-primary"
+                  )}
+                  onClick={() => onTabChange(item.id)}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* User info and sign out */}
