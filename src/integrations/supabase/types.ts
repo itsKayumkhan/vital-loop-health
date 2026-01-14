@@ -59,6 +59,54 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_analytics_snapshots: {
+        Row: {
+          active_members: number | null
+          churned_members: number | null
+          created_at: string
+          customers_count: number | null
+          id: string
+          leads_count: number | null
+          mrr: number | null
+          new_clients: number | null
+          prospects_count: number | null
+          snapshot_date: string
+          total_clients: number | null
+          total_revenue: number | null
+          vip_count: number | null
+        }
+        Insert: {
+          active_members?: number | null
+          churned_members?: number | null
+          created_at?: string
+          customers_count?: number | null
+          id?: string
+          leads_count?: number | null
+          mrr?: number | null
+          new_clients?: number | null
+          prospects_count?: number | null
+          snapshot_date?: string
+          total_clients?: number | null
+          total_revenue?: number | null
+          vip_count?: number | null
+        }
+        Update: {
+          active_members?: number | null
+          churned_members?: number | null
+          created_at?: string
+          customers_count?: number | null
+          id?: string
+          leads_count?: number | null
+          mrr?: number | null
+          new_clients?: number | null
+          prospects_count?: number | null
+          snapshot_date?: string
+          total_clients?: number | null
+          total_revenue?: number | null
+          vip_count?: number | null
+        }
+        Relationships: []
+      }
       crm_campaign_enrollments: {
         Row: {
           campaign_id: string
@@ -229,6 +277,62 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_communication_logs: {
+        Row: {
+          client_id: string
+          communication_type: string
+          content: string
+          created_at: string
+          direction: string
+          duration_minutes: number | null
+          follow_up_date: string | null
+          follow_up_notes: string | null
+          id: string
+          outcome: string | null
+          staff_id: string | null
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          communication_type: string
+          content: string
+          created_at?: string
+          direction: string
+          duration_minutes?: number | null
+          follow_up_date?: string | null
+          follow_up_notes?: string | null
+          id?: string
+          outcome?: string | null
+          staff_id?: string | null
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          communication_type?: string
+          content?: string
+          created_at?: string
+          direction?: string
+          duration_minutes?: number | null
+          follow_up_date?: string | null
+          follow_up_notes?: string | null
+          id?: string
+          outcome?: string | null
+          staff_id?: string | null
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_communication_logs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_documents: {
         Row: {
           client_id: string
@@ -275,6 +379,66 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "crm_documents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_email_logs: {
+        Row: {
+          campaign_id: string | null
+          clicked_at: string | null
+          client_id: string | null
+          created_at: string
+          email_type: string
+          error_message: string | null
+          id: string
+          opened_at: string | null
+          recipient_email: string
+          sent_at: string
+          status: string | null
+          subject: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          clicked_at?: string | null
+          client_id?: string | null
+          created_at?: string
+          email_type: string
+          error_message?: string | null
+          id?: string
+          opened_at?: string | null
+          recipient_email: string
+          sent_at?: string
+          status?: string | null
+          subject: string
+        }
+        Update: {
+          campaign_id?: string | null
+          clicked_at?: string | null
+          client_id?: string | null
+          created_at?: string
+          email_type?: string
+          error_message?: string | null
+          id?: string
+          opened_at?: string | null
+          recipient_email?: string
+          sent_at?: string
+          status?: string | null
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_email_logs_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "crm_marketing_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_email_logs_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "crm_clients"
