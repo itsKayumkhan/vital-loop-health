@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, LayoutDashboard } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { CartDrawer } from '@/components/CartDrawer';
@@ -18,7 +18,7 @@ const navItems = [
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, isStaff } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,19 +70,20 @@ const Navbar = () => {
           {/* CTA Button */}
           <div className="hidden md:flex items-center gap-4">
             <CartDrawer />
-            {user && isStaff && (
-              <Link to="/crm">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <LayoutDashboard className="h-4 w-4" />
-                  CRM
+            {user && (
+              <Link to="/portal">
+                <Button variant="heroOutline" size="sm">
+                  My VitalityX
                 </Button>
               </Link>
             )}
-            <Link to="/portal">
-              <Button variant="heroOutline" size="sm">
-                My VitalityX
-              </Button>
-            </Link>
+            {!user && (
+              <Link to="/auth">
+                <Button variant="heroOutline" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+            )}
             <Button variant="hero" size="sm">
               Get Started
             </Button>
@@ -133,19 +134,20 @@ const Navbar = () => {
                 <div className="flex justify-center">
                   <CartDrawer />
                 </div>
-                {user && isStaff && (
-                  <Link to="/crm" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="ghost" size="lg" className="w-full gap-2">
-                      <LayoutDashboard className="h-4 w-4" />
-                      CRM Dashboard
+                {user && (
+                  <Link to="/portal" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="heroOutline" size="lg" className="w-full">
+                      My VitalityX
                     </Button>
                   </Link>
                 )}
-                <Link to="/portal" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button variant="heroOutline" size="lg" className="w-full">
-                    My VitalityX
-                  </Button>
-                </Link>
+                {!user && (
+                  <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="heroOutline" size="lg" className="w-full">
+                      Sign In
+                    </Button>
+                  </Link>
+                )}
                 <Button variant="hero" size="lg" className="w-full">
                   Get Started
                 </Button>
