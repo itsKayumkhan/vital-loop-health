@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { 
   CRMClient, 
   CRMMembership, 
@@ -11,11 +12,18 @@ import {
 } from '@/types/crm';
 import { toast } from 'sonner';
 
-export function useCRMClients() {
+type RealtimeSubscriptionOptions = {
+  enabled?: boolean;
+  onUpdate?: () => void;
+};
+
+export function useCRMClients(options: RealtimeSubscriptionOptions = {}) {
+  const { enabled: realtimeEnabled = false, onUpdate } = options;
   const [clients, setClients] = useState<CRMClient[]>([]);
   const [loading, setLoading] = useState(true);
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
-  const fetchClients = async () => {
+  const fetchClients = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('crm_clients')
@@ -29,7 +37,7 @@ export function useCRMClients() {
       setClients(data as CRMClient[]);
     }
     setLoading(false);
-  };
+  }, []);
 
   const createClient = async (client: Partial<CRMClient>) => {
     const { data, error } = await supabase
@@ -43,7 +51,7 @@ export function useCRMClients() {
       throw error;
     }
     toast.success('Client created successfully');
-    await fetchClients();
+    if (!realtimeEnabled) await fetchClients();
     return data;
   };
 
@@ -58,7 +66,7 @@ export function useCRMClients() {
       throw error;
     }
     toast.success('Client updated successfully');
-    await fetchClients();
+    if (!realtimeEnabled) await fetchClients();
   };
 
   const deleteClient = async (id: string) => {
@@ -72,21 +80,61 @@ export function useCRMClients() {
       throw error;
     }
     toast.success('Client deleted successfully');
-    await fetchClients();
+    if (!realtimeEnabled) await fetchClients();
   };
+
+  // Set up realtime subscription
+  useEffect(() => {
+    if (!realtimeEnabled) return;
+
+    channelRef.current = supabase
+      .channel('crm-clients-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'crm_clients',
+        },
+        (payload) => {
+          console.log('Realtime client change:', payload.eventType);
+          
+          if (payload.eventType === 'INSERT') {
+            setClients(prev => [payload.new as CRMClient, ...prev]);
+          } else if (payload.eventType === 'UPDATE') {
+            setClients(prev => prev.map(c => 
+              c.id === (payload.new as CRMClient).id ? payload.new as CRMClient : c
+            ));
+          } else if (payload.eventType === 'DELETE') {
+            setClients(prev => prev.filter(c => c.id !== (payload.old as CRMClient).id));
+          }
+          
+          onUpdate?.();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+      }
+    };
+  }, [realtimeEnabled, onUpdate]);
 
   useEffect(() => {
     fetchClients();
-  }, []);
+  }, [fetchClients]);
 
   return { clients, loading, fetchClients, createClient, updateClient, deleteClient };
 }
 
-export function useCRMMemberships(clientId?: string) {
+export function useCRMMemberships(clientId?: string, options: RealtimeSubscriptionOptions = {}) {
+  const { enabled: realtimeEnabled = false, onUpdate } = options;
   const [memberships, setMemberships] = useState<CRMMembership[]>([]);
   const [loading, setLoading] = useState(true);
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
-  const fetchMemberships = async () => {
+  const fetchMemberships = useCallback(async () => {
     setLoading(true);
     let query = supabase.from('crm_memberships').select('*');
     if (clientId) query = query.eq('client_id', clientId);
@@ -100,7 +148,7 @@ export function useCRMMemberships(clientId?: string) {
       setMemberships(data as CRMMembership[]);
     }
     setLoading(false);
-  };
+  }, [clientId]);
 
   const createMembership = async (membership: Partial<CRMMembership>) => {
     const { data, error } = await supabase
@@ -114,7 +162,7 @@ export function useCRMMemberships(clientId?: string) {
       throw error;
     }
     toast.success('Membership created successfully');
-    await fetchMemberships();
+    if (!realtimeEnabled) await fetchMemberships();
     return data;
   };
 
@@ -129,21 +177,64 @@ export function useCRMMemberships(clientId?: string) {
       throw error;
     }
     toast.success('Membership updated successfully');
-    await fetchMemberships();
+    if (!realtimeEnabled) await fetchMemberships();
   };
+
+  // Set up realtime subscription
+  useEffect(() => {
+    if (!realtimeEnabled) return;
+
+    channelRef.current = supabase
+      .channel('crm-memberships-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'crm_memberships',
+        },
+        (payload) => {
+          console.log('Realtime membership change:', payload.eventType);
+          
+          if (payload.eventType === 'INSERT') {
+            const newMembership = payload.new as CRMMembership;
+            if (!clientId || newMembership.client_id === clientId) {
+              setMemberships(prev => [newMembership, ...prev]);
+            }
+          } else if (payload.eventType === 'UPDATE') {
+            setMemberships(prev => prev.map(m => 
+              m.id === (payload.new as CRMMembership).id ? payload.new as CRMMembership : m
+            ));
+          } else if (payload.eventType === 'DELETE') {
+            setMemberships(prev => prev.filter(m => m.id !== (payload.old as CRMMembership).id));
+          }
+          
+          onUpdate?.();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+      }
+    };
+  }, [realtimeEnabled, clientId, onUpdate]);
 
   useEffect(() => {
     fetchMemberships();
-  }, [clientId]);
+  }, [fetchMemberships]);
 
   return { memberships, loading, fetchMemberships, createMembership, updateMembership };
 }
 
-export function useCRMPurchases(clientId?: string) {
+export function useCRMPurchases(clientId?: string, options: RealtimeSubscriptionOptions = {}) {
+  const { enabled: realtimeEnabled = false, onUpdate } = options;
   const [purchases, setPurchases] = useState<CRMPurchase[]>([]);
   const [loading, setLoading] = useState(true);
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
-  const fetchPurchases = async () => {
+  const fetchPurchases = useCallback(async () => {
     setLoading(true);
     let query = supabase.from('crm_purchases').select('*');
     if (clientId) query = query.eq('client_id', clientId);
@@ -157,7 +248,7 @@ export function useCRMPurchases(clientId?: string) {
       setPurchases(data as CRMPurchase[]);
     }
     setLoading(false);
-  };
+  }, [clientId]);
 
   const createPurchase = async (purchase: Partial<CRMPurchase>) => {
     const { data, error } = await supabase
@@ -171,13 +262,54 @@ export function useCRMPurchases(clientId?: string) {
       throw error;
     }
     toast.success('Purchase recorded successfully');
-    await fetchPurchases();
+    if (!realtimeEnabled) await fetchPurchases();
     return data;
   };
 
+  // Set up realtime subscription
+  useEffect(() => {
+    if (!realtimeEnabled) return;
+
+    channelRef.current = supabase
+      .channel('crm-purchases-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'crm_purchases',
+        },
+        (payload) => {
+          console.log('Realtime purchase change:', payload.eventType);
+          
+          if (payload.eventType === 'INSERT') {
+            const newPurchase = payload.new as CRMPurchase;
+            if (!clientId || newPurchase.client_id === clientId) {
+              setPurchases(prev => [newPurchase, ...prev]);
+            }
+          } else if (payload.eventType === 'UPDATE') {
+            setPurchases(prev => prev.map(p => 
+              p.id === (payload.new as CRMPurchase).id ? payload.new as CRMPurchase : p
+            ));
+          } else if (payload.eventType === 'DELETE') {
+            setPurchases(prev => prev.filter(p => p.id !== (payload.old as CRMPurchase).id));
+          }
+          
+          onUpdate?.();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+      }
+    };
+  }, [realtimeEnabled, clientId, onUpdate]);
+
   useEffect(() => {
     fetchPurchases();
-  }, [clientId]);
+  }, [fetchPurchases]);
 
   return { purchases, loading, fetchPurchases, createPurchase };
 }

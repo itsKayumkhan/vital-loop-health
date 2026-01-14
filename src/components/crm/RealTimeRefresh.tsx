@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { RefreshCw, Radio, Pause, Play } from 'lucide-react';
+import { RefreshCw, Radio, Pause, Play, Zap, ZapOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -10,6 +10,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -18,6 +21,9 @@ type RefreshInterval = 'off' | '10s' | '30s' | '1m' | '5m';
 interface RealTimeRefreshProps {
   onRefresh: () => Promise<void> | void;
   isLoading?: boolean;
+  realtimeEnabled?: boolean;
+  onRealtimeToggle?: (enabled: boolean) => void;
+  lastRealtimeUpdate?: Date | null;
 }
 
 const INTERVAL_MS: Record<RefreshInterval, number> = {
@@ -36,12 +42,25 @@ const INTERVAL_LABELS: Record<RefreshInterval, string> = {
   '5m': '5 minutes',
 };
 
-export function RealTimeRefresh({ onRefresh, isLoading = false }: RealTimeRefreshProps) {
+export function RealTimeRefresh({ 
+  onRefresh, 
+  isLoading = false,
+  realtimeEnabled = false,
+  onRealtimeToggle,
+  lastRealtimeUpdate,
+}: RealTimeRefreshProps) {
   const [autoRefresh, setAutoRefresh] = useState<RefreshInterval>('off');
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Update last refresh when realtime update occurs
+  useEffect(() => {
+    if (lastRealtimeUpdate) {
+      setLastRefresh(lastRealtimeUpdate);
+    }
+  }, [lastRealtimeUpdate]);
 
   const handleRefresh = useCallback(async () => {
     if (isRefreshing || isLoading) return;
@@ -55,12 +74,15 @@ export function RealTimeRefresh({ onRefresh, isLoading = false }: RealTimeRefres
     }
   }, [onRefresh, isRefreshing, isLoading]);
 
-  // Set up auto-refresh interval
+  // Set up auto-refresh interval (disabled when realtime is active)
   useEffect(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
+
+    // Don't use polling if realtime is enabled
+    if (realtimeEnabled) return;
 
     const intervalMs = INTERVAL_MS[autoRefresh];
     if (intervalMs > 0 && !isPaused) {
@@ -72,7 +94,7 @@ export function RealTimeRefresh({ onRefresh, isLoading = false }: RealTimeRefres
         clearInterval(intervalRef.current);
       }
     };
-  }, [autoRefresh, isPaused, handleRefresh]);
+  }, [autoRefresh, isPaused, handleRefresh, realtimeEnabled]);
 
   const handleIntervalChange = (interval: RefreshInterval) => {
     setAutoRefresh(interval);
@@ -85,7 +107,7 @@ export function RealTimeRefresh({ onRefresh, isLoading = false }: RealTimeRefres
     setIsPaused(prev => !prev);
   };
 
-  const isAutoRefreshActive = autoRefresh !== 'off' && !isPaused;
+  const isAutoRefreshActive = autoRefresh !== 'off' && !isPaused && !realtimeEnabled;
 
   return (
     <div className="flex items-center gap-2">
@@ -106,50 +128,90 @@ export function RealTimeRefresh({ onRefresh, isLoading = false }: RealTimeRefres
         <span className="hidden sm:inline">Refresh</span>
       </Button>
 
-      {/* Auto-refresh dropdown */}
+      {/* Real-time & Auto-refresh dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant={isAutoRefreshActive ? "default" : "outline"}
+            variant={realtimeEnabled ? "default" : isAutoRefreshActive ? "secondary" : "outline"}
             size="sm"
             className={cn(
               "gap-2",
-              isAutoRefreshActive && "bg-green-600 hover:bg-green-700"
+              realtimeEnabled && "bg-green-600 hover:bg-green-700"
             )}
           >
-            <Radio className={cn(
-              "h-4 w-4",
-              isAutoRefreshActive && "animate-pulse"
-            )} />
+            {realtimeEnabled ? (
+              <Zap className="h-4 w-4 animate-pulse" />
+            ) : (
+              <Radio className={cn("h-4 w-4", isAutoRefreshActive && "animate-pulse")} />
+            )}
             <span className="hidden sm:inline">
-              {autoRefresh === 'off' ? 'Auto' : INTERVAL_LABELS[autoRefresh]}
+              {realtimeEnabled ? 'Live' : autoRefresh === 'off' ? 'Auto' : INTERVAL_LABELS[autoRefresh]}
             </span>
-            {isAutoRefreshActive && (
+            {realtimeEnabled && (
               <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-xs bg-green-700">
-                Live
+                WebSocket
+              </Badge>
+            )}
+            {isAutoRefreshActive && !realtimeEnabled && (
+              <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-xs">
+                Polling
               </Badge>
             )}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Auto-Refresh Interval</DropdownMenuLabel>
+        <DropdownMenuContent align="end" className="w-56">
+          {/* Realtime toggle */}
+          {onRealtimeToggle && (
+            <>
+              <div className="px-2 py-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Zap className={cn("h-4 w-4", realtimeEnabled && "text-green-500")} />
+                    <Label htmlFor="realtime-toggle" className="text-sm font-medium cursor-pointer">
+                      Real-time Updates
+                    </Label>
+                  </div>
+                  <Switch
+                    id="realtime-toggle"
+                    checked={realtimeEnabled}
+                    onCheckedChange={onRealtimeToggle}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1 pl-6">
+                  Instant updates via WebSocket
+                </p>
+              </div>
+              <DropdownMenuSeparator />
+            </>
+          )}
+
+          <DropdownMenuLabel className="flex items-center gap-2">
+            <Radio className="h-4 w-4" />
+            Polling Interval
+            {realtimeEnabled && (
+              <Badge variant="outline" className="text-xs ml-auto">
+                Disabled
+              </Badge>
+            )}
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
           {(Object.keys(INTERVAL_LABELS) as RefreshInterval[]).map((interval) => (
             <DropdownMenuItem
               key={interval}
               onClick={() => handleIntervalChange(interval)}
+              disabled={realtimeEnabled}
               className={cn(
                 "cursor-pointer",
-                autoRefresh === interval && "bg-accent"
+                autoRefresh === interval && !realtimeEnabled && "bg-accent"
               )}
             >
               {INTERVAL_LABELS[interval]}
-              {autoRefresh === interval && (
+              {autoRefresh === interval && !realtimeEnabled && (
                 <span className="ml-auto text-primary">✓</span>
               )}
             </DropdownMenuItem>
           ))}
-          {autoRefresh !== 'off' && (
+          {autoRefresh !== 'off' && !realtimeEnabled && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={togglePause} className="cursor-pointer">
