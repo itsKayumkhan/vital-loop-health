@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback, useEffect } from 'react';
-import { Users, Crown, TrendingUp, UserPlus, DollarSign, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { Users, Crown, TrendingUp, UserPlus, DollarSign, ArrowUp, ArrowDown, Minus, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCRMClients, useCRMMemberships, useCRMPurchases } from '@/hooks/useCRM';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -161,6 +161,37 @@ export function CRMDashboard() {
     });
   }, [purchases, comparisonRange]);
 
+  // Calculate MRR from active memberships
+  const mrrStats = useMemo(() => {
+    const activeMemberships = memberships.filter(m => m.status === 'active');
+    const currentMRR = activeMemberships.reduce((sum, m) => sum + Number(m.monthly_price || 0), 0);
+    
+    // Calculate MRR by tier
+    const mrrByTier = {
+      free: 0,
+      essential: 0,
+      premium: 0,
+      elite: 0,
+    };
+    
+    activeMemberships.forEach(m => {
+      if (m.tier in mrrByTier) {
+        mrrByTier[m.tier as keyof typeof mrrByTier] += Number(m.monthly_price || 0);
+      }
+    });
+    
+    // Calculate projected annual revenue
+    const projectedAnnual = currentMRR * 12;
+    
+    return {
+      currentMRR,
+      mrrByTier,
+      projectedAnnual,
+      activeMemberCount: activeMemberships.length,
+      avgRevenuePerMember: activeMemberships.length > 0 ? currentMRR / activeMemberships.length : 0,
+    };
+  }, [memberships]);
+
   const stats = useMemo(() => ({
     totalClients: clients.length,
     activeMembers: memberships.filter(m => m.status === 'active').length,
@@ -210,6 +241,33 @@ export function CRMDashboard() {
       };
     }
   }, [dateRange]);
+
+  // MRR trend data by month
+  const mrrTrendData = useMemo(() => {
+    const { intervals, formatStr } = getIntervalData;
+    
+    return intervals.map((interval) => {
+      const intervalEnd = endOfMonth(new Date(interval));
+      
+      // Get memberships that were active at that point in time
+      const activeMembershipsAtTime = memberships.filter(m => {
+        const startDate = parseISO(m.start_date);
+        const endDate = m.end_date ? parseISO(m.end_date) : null;
+        
+        // Was active: started before or on interval end, and either no end date or ended after interval start
+        return startDate <= intervalEnd && (!endDate || endDate >= new Date(interval));
+      });
+      
+      const mrr = activeMembershipsAtTime.reduce((sum, m) => sum + Number(m.monthly_price || 0), 0);
+      const memberCount = activeMembershipsAtTime.length;
+      
+      return {
+        period: format(interval, formatStr),
+        mrr,
+        memberCount,
+      };
+    });
+  }, [memberships, getIntervalData]);
 
   // Get comparison interval data
   const getComparisonIntervalData = useMemo(() => {
@@ -709,6 +767,145 @@ export function CRMDashboard() {
                 )}
               </div>
               <UserPlus className="h-10 w-10 text-blue-500 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* MRR Tracker Section */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+          <RefreshCw className="h-5 w-5" />
+          Membership MRR Tracker
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Current MRR</p>
+                  <p className="text-3xl font-bold text-primary">${mrrStats.currentMRR.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {mrrStats.activeMemberCount} active members
+                  </p>
+                </div>
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <RefreshCw className="h-6 w-6 text-primary" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Projected Annual</p>
+                  <p className="text-3xl font-bold">${mrrStats.projectedAnnual.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Based on current MRR</p>
+                </div>
+                <TrendingUp className="h-10 w-10 text-green-500 opacity-50" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Avg Revenue/Member</p>
+                  <p className="text-3xl font-bold">${mrrStats.avgRevenuePerMember.toFixed(0)}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Per month</p>
+                </div>
+                <Users className="h-10 w-10 text-blue-500 opacity-50" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div>
+                <p className="text-sm text-muted-foreground mb-3">MRR by Tier</p>
+                <div className="space-y-2">
+                  {Object.entries(mrrStats.mrrByTier).map(([tier, amount]) => {
+                    const tierColors: Record<string, string> = {
+                      free: 'bg-muted-foreground/20',
+                      essential: 'bg-blue-500',
+                      premium: 'bg-purple-500',
+                      elite: 'bg-amber-500',
+                    };
+                    const percentage = mrrStats.currentMRR > 0 ? (amount / mrrStats.currentMRR) * 100 : 0;
+                    return amount > 0 ? (
+                      <div key={tier} className="flex items-center gap-2">
+                        <div className={`h-2 w-2 rounded-full ${tierColors[tier]}`} />
+                        <span className="text-xs capitalize flex-1">{tier}</span>
+                        <span className="text-xs font-medium">${amount.toLocaleString()}</span>
+                        <span className="text-xs text-muted-foreground">({percentage.toFixed(0)}%)</span>
+                      </div>
+                    ) : null;
+                  })}
+                  {mrrStats.currentMRR === 0 && (
+                    <p className="text-xs text-muted-foreground">No active memberships</p>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* MRR Trend Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <RefreshCw className="h-5 w-5" />
+              MRR Trend
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">Monthly recurring revenue from memberships over time</p>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[250px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={mrrTrendData}>
+                  <defs>
+                    <linearGradient id="colorMRR" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis dataKey="period" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                  <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} tickFormatter={(value) => `$${value}`} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                    labelStyle={{ color: 'hsl(var(--foreground))' }}
+                    formatter={(value: number, name: string) => [
+                      name === 'mrr' ? `$${value.toLocaleString()}` : value,
+                      name === 'mrr' ? 'MRR' : 'Active Members'
+                    ]}
+                  />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="mrr"
+                    name="MRR"
+                    stroke="hsl(var(--primary))"
+                    fill="url(#colorMRR)"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="memberCount"
+                    name="Active Members"
+                    stroke="hsl(280, 70%, 50%)"
+                    strokeWidth={2}
+                    dot={{ fill: 'hsl(280, 70%, 50%)' }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
