@@ -1,4 +1,4 @@
-import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star } from 'lucide-react';
+import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
@@ -14,6 +14,7 @@ interface CRMSidebarProps {
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'coach-view', label: 'Coach View', icon: Eye },
   { id: 'clients', label: 'Clients', icon: Users },
   { id: 'intake-forms', label: 'Intake Forms', icon: ClipboardList },
   { id: 'memberships', label: 'Memberships', icon: Crown },
