@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Users, Crown, TrendingUp, UserPlus, DollarSign, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCRMClients, useCRMMemberships, useCRMPurchases } from '@/hooks/useCRM';
@@ -22,6 +22,7 @@ import {
 } from 'recharts';
 import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, eachWeekOfInterval, eachDayOfInterval, parseISO, isWithinInterval, differenceInDays } from 'date-fns';
 import { DateRangeFilter, DateRange, ComparisonRange } from './DateRangeFilter';
+import { ChartDrillDown, DrillDownData, DrillDownType } from './ChartDrillDown';
 import { cn } from '@/lib/utils';
 
 type ChangeIndicatorProps = {
@@ -67,6 +68,10 @@ export function CRMDashboard() {
   // Comparison state
   const [comparisonEnabled, setComparisonEnabled] = useState(false);
   const [comparisonRange, setComparisonRange] = useState<ComparisonRange>(null);
+
+  // Drill-down state
+  const [drillDownOpen, setDrillDownOpen] = useState(false);
+  const [drillDownData, setDrillDownData] = useState<DrillDownData | null>(null);
 
   // Filter clients, memberships, and purchases by date range
   const filteredClients = useMemo(() => {
@@ -122,14 +127,22 @@ export function CRMDashboard() {
       return {
         intervals: eachDayOfInterval({ start: dateRange.from, end: dateRange.to }),
         formatStr: 'MMM d',
-        getStart: (date: Date) => new Date(date.setHours(0, 0, 0, 0)),
-        getEnd: (date: Date) => new Date(date.setHours(23, 59, 59, 999)),
+        getStart: (date: Date) => {
+          const d = new Date(date);
+          d.setHours(0, 0, 0, 0);
+          return d;
+        },
+        getEnd: (date: Date) => {
+          const d = new Date(date);
+          d.setHours(23, 59, 59, 999);
+          return d;
+        },
       };
     } else if (daysDiff <= 90) {
       return {
         intervals: eachWeekOfInterval({ start: dateRange.from, end: dateRange.to }),
         formatStr: 'MMM d',
-        getStart: (date: Date) => date,
+        getStart: (date: Date) => new Date(date),
         getEnd: (date: Date) => new Date(date.getTime() + 6 * 24 * 60 * 60 * 1000),
       };
     } else {
@@ -152,14 +165,22 @@ export function CRMDashboard() {
       return {
         intervals: eachDayOfInterval({ start: comparisonRange.from, end: comparisonRange.to }),
         formatStr: 'MMM d',
-        getStart: (date: Date) => new Date(date.setHours(0, 0, 0, 0)),
-        getEnd: (date: Date) => new Date(date.setHours(23, 59, 59, 999)),
+        getStart: (date: Date) => {
+          const d = new Date(date);
+          d.setHours(0, 0, 0, 0);
+          return d;
+        },
+        getEnd: (date: Date) => {
+          const d = new Date(date);
+          d.setHours(23, 59, 59, 999);
+          return d;
+        },
       };
     } else if (daysDiff <= 90) {
       return {
         intervals: eachWeekOfInterval({ start: comparisonRange.from, end: comparisonRange.to }),
         formatStr: 'MMM d',
-        getStart: (date: Date) => date,
+        getStart: (date: Date) => new Date(date),
         getEnd: (date: Date) => new Date(date.getTime() + 6 * 24 * 60 * 60 * 1000),
       };
     } else {
@@ -190,11 +211,13 @@ export function CRMDashboard() {
         return createdAt <= intervalEnd;
       }).length;
 
-      const result: Record<string, string | number> = {
+      const result: Record<string, string | number | Date> = {
         period: format(interval, formatStr),
         index,
         newClients,
         totalClients: cumulativeClients,
+        periodStart: intervalStart,
+        periodEnd: intervalEnd,
       };
 
       return result;
@@ -244,10 +267,12 @@ export function CRMDashboard() {
         })
         .reduce((sum, p) => sum + Number(p.amount), 0);
       
-      const result: Record<string, string | number> = {
+      const result: Record<string, string | number | Date> = {
         period: format(interval, formatStr),
         index,
         revenue: periodRevenue,
+        periodStart: intervalStart,
+        periodEnd: intervalEnd,
       };
 
       return result;
@@ -277,6 +302,77 @@ export function CRMDashboard() {
     
     return mainData;
   }, [purchases, getIntervalData, comparisonEnabled, getComparisonIntervalData]);
+
+  // Handle chart click for drill-down
+  const handleClientChartClick = useCallback((data: any, type: 'totalClients' | 'newClients') => {
+    if (!data || !data.activePayload || data.activePayload.length === 0) return;
+    
+    const payload = data.activePayload[0].payload;
+    const periodStart = payload.periodStart as Date;
+    const periodEnd = payload.periodEnd as Date;
+    
+    const drillDownType: DrillDownType = type === 'newClients' ? 'newClients' : 'clients';
+    
+    let relevantClients;
+    if (type === 'newClients') {
+      relevantClients = clients.filter(c => {
+        const createdAt = parseISO(c.created_at);
+        return isWithinInterval(createdAt, { start: periodStart, end: periodEnd });
+      });
+    } else {
+      relevantClients = clients.filter(c => {
+        const createdAt = parseISO(c.created_at);
+        return createdAt <= periodEnd;
+      });
+    }
+
+    setDrillDownData({
+      type: drillDownType,
+      period: payload.period as string,
+      periodStart,
+      periodEnd,
+      clients: relevantClients.map(c => ({
+        id: c.id,
+        full_name: c.full_name,
+        email: c.email,
+        created_at: c.created_at,
+        marketing_status: c.marketing_status,
+      })),
+    });
+    setDrillDownOpen(true);
+  }, [clients]);
+
+  const handleRevenueChartClick = useCallback((data: any) => {
+    if (!data || !data.activePayload || data.activePayload.length === 0) return;
+    
+    const payload = data.activePayload[0].payload;
+    const periodStart = payload.periodStart as Date;
+    const periodEnd = payload.periodEnd as Date;
+    
+    const relevantPurchases = purchases.filter(p => {
+      const purchaseDate = parseISO(p.purchased_at);
+      return isWithinInterval(purchaseDate, { start: periodStart, end: periodEnd });
+    });
+
+    // Get client names for purchases
+    const clientMap = new Map(clients.map(c => [c.id, c.full_name]));
+
+    setDrillDownData({
+      type: 'revenue',
+      period: payload.period as string,
+      periodStart,
+      periodEnd,
+      purchases: relevantPurchases.map(p => ({
+        id: p.id,
+        product_name: p.product_name,
+        amount: Number(p.amount),
+        purchase_type: p.purchase_type,
+        purchased_at: p.purchased_at,
+        client_name: clientMap.get(p.client_id) || 'Unknown',
+      })),
+    });
+    setDrillDownOpen(true);
+  }, [purchases, clients]);
 
   // Membership tier distribution
   const membershipTierData = useMemo(() => {
@@ -326,6 +422,37 @@ export function CRMDashboard() {
     ];
   }, [clients]);
 
+  // Handle funnel chart click
+  const handleFunnelClick = useCallback((data: any) => {
+    if (!data || !data.stage) return;
+    
+    const statusMap: Record<string, string> = {
+      'Leads': 'lead',
+      'Prospects': 'prospect',
+      'Customers': 'customer',
+      'VIP': 'vip',
+      'Churned': 'churned',
+    };
+    
+    const status = statusMap[data.stage];
+    const relevantClients = clients.filter(c => c.marketing_status === status);
+
+    setDrillDownData({
+      type: 'clients',
+      period: data.stage,
+      periodStart: dateRange.from,
+      periodEnd: dateRange.to,
+      clients: relevantClients.map(c => ({
+        id: c.id,
+        full_name: c.full_name,
+        email: c.email,
+        created_at: c.created_at,
+        marketing_status: c.marketing_status,
+      })),
+    });
+    setDrillDownOpen(true);
+  }, [clients, dateRange]);
+
   // Purchase type breakdown
   const purchaseTypeData = useMemo(() => {
     const typeCounts: Record<string, number> = {};
@@ -343,10 +470,35 @@ export function CRMDashboard() {
     
     return Object.entries(typeCounts).map(([type, amount]) => ({
       name: type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      type,
       value: amount,
       color: colors[type as keyof typeof colors] || 'hsl(var(--muted-foreground))',
     }));
   }, [purchases]);
+
+  // Handle purchase type pie click
+  const handlePurchaseTypeClick = useCallback((data: any) => {
+    if (!data || !data.type) return;
+    
+    const relevantPurchases = purchases.filter(p => p.purchase_type === data.type);
+    const clientMap = new Map(clients.map(c => [c.id, c.full_name]));
+
+    setDrillDownData({
+      type: 'revenue',
+      period: data.name,
+      periodStart: dateRange.from,
+      periodEnd: dateRange.to,
+      purchases: relevantPurchases.map(p => ({
+        id: p.id,
+        product_name: p.product_name,
+        amount: Number(p.amount),
+        purchase_type: p.purchase_type,
+        purchased_at: p.purchased_at,
+        client_name: clientMap.get(p.client_id) || 'Unknown',
+      })),
+    });
+    setDrillDownOpen(true);
+  }, [purchases, clients, dateRange]);
 
   const recentClients = clients.slice(0, 5);
   const recentPurchases = purchases.slice(0, 5);
@@ -458,11 +610,16 @@ export function CRMDashboard() {
               Client Growth
               {comparisonEnabled && <span className="text-xs font-normal text-muted-foreground">(vs previous period)</span>}
             </CardTitle>
+            <p className="text-xs text-muted-foreground">Click on chart to see details</p>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={clientGrowthData}>
+                <AreaChart 
+                  data={clientGrowthData}
+                  onClick={(data) => handleClientChartClick(data, 'totalClients')}
+                  style={{ cursor: 'pointer' }}
+                >
                   <defs>
                     <linearGradient id="colorClients" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
@@ -537,11 +694,16 @@ export function CRMDashboard() {
               Revenue Trend
               {comparisonEnabled && <span className="text-xs font-normal text-muted-foreground">(vs previous period)</span>}
             </CardTitle>
+            <p className="text-xs text-muted-foreground">Click on bars to see transactions</p>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={revenueData}>
+                <BarChart 
+                  data={revenueData}
+                  onClick={handleRevenueChartClick}
+                  style={{ cursor: 'pointer' }}
+                >
                   <defs>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="hsl(140, 70%, 45%)" stopOpacity={0.8} />
@@ -632,11 +794,17 @@ export function CRMDashboard() {
               <Users className="h-5 w-5" />
               Marketing Funnel
             </CardTitle>
+            <p className="text-xs text-muted-foreground">Click on bars to see clients</p>
           </CardHeader>
           <CardContent>
             <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={marketingFunnelData} layout="vertical">
+                <BarChart 
+                  data={marketingFunnelData} 
+                  layout="vertical"
+                  onClick={(data) => data?.activePayload?.[0]?.payload && handleFunnelClick(data.activePayload[0].payload)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" horizontal={false} />
                   <XAxis type="number" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
                   <YAxis dataKey="stage" type="category" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} width={70} />
@@ -665,6 +833,7 @@ export function CRMDashboard() {
               <DollarSign className="h-5 w-5" />
               Revenue by Type
             </CardTitle>
+            <p className="text-xs text-muted-foreground">Click on segments to see details</p>
           </CardHeader>
           <CardContent>
             <div className="h-[250px]">
@@ -679,6 +848,8 @@ export function CRMDashboard() {
                       outerRadius={80}
                       paddingAngle={5}
                       dataKey="value"
+                      onClick={handlePurchaseTypeClick}
+                      style={{ cursor: 'pointer' }}
                     >
                       {purchaseTypeData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -760,6 +931,13 @@ export function CRMDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Drill-down Modal */}
+      <ChartDrillDown 
+        open={drillDownOpen} 
+        onOpenChange={setDrillDownOpen} 
+        data={drillDownData} 
+      />
     </div>
   );
 }
