@@ -27,7 +27,7 @@ import {
   Cell,
   Legend,
 } from 'recharts';
-import { Users, FileCheck, ClipboardList, TrendingUp, Award, Target } from 'lucide-react';
+import { Users, FileCheck, ClipboardList, TrendingUp, Award, Target, Star } from 'lucide-react';
 import { format, parseISO, subDays, isWithinInterval } from 'date-fns';
 
 interface CoachStats {
@@ -41,6 +41,8 @@ interface CoachStats {
   totalForms: number;
   completionRate: number;
   recentActivity: number; // forms completed in last 30 days
+  avgRating: number;
+  totalSurveys: number;
 }
 
 export function CoachPerformance() {
@@ -78,7 +80,19 @@ export function CoachPerformance() {
     },
   });
 
-  const loading = coachesLoading || clientsLoading || formsLoading;
+  // Fetch satisfaction surveys
+  const { data: surveys, isLoading: surveysLoading } = useQuery({
+    queryKey: ['coach-satisfaction-surveys'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('coach_satisfaction_surveys')
+        .select('id, coach_id, rating');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const loading = coachesLoading || clientsLoading || formsLoading || surveysLoading;
 
   // Calculate coach performance metrics
   const coachStats = useMemo<CoachStats[]>(() => {
@@ -89,6 +103,7 @@ export function CoachPerformance() {
     return coaches.map((coach: any) => {
       const coachClients = clients.filter(c => c.assigned_coach_id === coach.user_id);
       const coachForms = intakeForms.filter(f => f.assigned_to === coach.user_id);
+      const coachSurveys = surveys?.filter(s => s.coach_id === coach.user_id) || [];
       
       const pendingForms = coachForms.filter(f => f.status === 'pending' || f.status === 'assigned').length;
       const completedForms = coachForms.filter(f => f.status === 'completed').length;
@@ -101,6 +116,10 @@ export function CoachPerformance() {
         return isWithinInterval(completedDate, { start: thirtyDaysAgo, end: new Date() });
       }).length;
 
+      const avgRating = coachSurveys.length > 0 
+        ? coachSurveys.reduce((sum, s) => sum + s.rating, 0) / coachSurveys.length 
+        : 0;
+
       return {
         coachId: coach.user_id,
         coachEmail: coach.email || '',
@@ -112,9 +131,11 @@ export function CoachPerformance() {
         totalForms,
         completionRate: totalForms > 0 ? Math.round((completedForms / totalForms) * 100) : 0,
         recentActivity,
+        avgRating: Math.round(avgRating * 10) / 10,
+        totalSurveys: coachSurveys.length,
       };
     });
-  }, [coaches, clients, intakeForms]);
+  }, [coaches, clients, intakeForms, surveys]);
 
   // Summary stats
   const summaryStats = useMemo(() => {
@@ -126,6 +147,12 @@ export function CoachPerformance() {
       ? Math.round(coachStats.reduce((sum, c) => sum + c.completionRate, 0) / totalCoaches) 
       : 0;
     const totalRecentActivity = coachStats.reduce((sum, c) => sum + c.recentActivity, 0);
+    
+    const coachesWithRatings = coachStats.filter(c => c.totalSurveys > 0);
+    const avgSatisfactionRating = coachesWithRatings.length > 0
+      ? (coachesWithRatings.reduce((sum, c) => sum + c.avgRating, 0) / coachesWithRatings.length).toFixed(1)
+      : '0.0';
+    const totalSurveys = coachStats.reduce((sum, c) => sum + c.totalSurveys, 0);
 
     return {
       totalCoaches,
@@ -134,6 +161,8 @@ export function CoachPerformance() {
       totalPendingForms,
       avgCompletionRate,
       totalRecentActivity,
+      avgSatisfactionRating,
+      totalSurveys,
     };
   }, [coachStats]);
 
@@ -211,7 +240,7 @@ export function CoachPerformance() {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Coaches</CardTitle>
@@ -253,6 +282,20 @@ export function CoachPerformance() {
           <CardContent>
             <div className="text-2xl font-bold">{summaryStats.avgCompletionRate}%</div>
             <p className="text-xs text-muted-foreground">{summaryStats.totalRecentActivity} completed (30d)</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Avg Satisfaction</CardTitle>
+            <Star className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold">{summaryStats.avgSatisfactionRating}</span>
+              <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+            </div>
+            <p className="text-xs text-muted-foreground">{summaryStats.totalSurveys} surveys</p>
           </CardContent>
         </Card>
       </div>
@@ -398,13 +441,14 @@ export function CoachPerformance() {
                 <TableHead className="text-center">In Review</TableHead>
                 <TableHead className="text-center">Completed</TableHead>
                 <TableHead className="text-center">Completion Rate</TableHead>
+                <TableHead className="text-center">Rating</TableHead>
                 <TableHead className="text-center">Recent (30d)</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {coachStats.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                     No coaches found
                   </TableCell>
                 </TableRow>
@@ -447,6 +491,17 @@ export function CoachPerformance() {
                         <Progress value={coach.completionRate} className="h-2 w-16" />
                         <span className="text-sm font-medium">{coach.completionRate}%</span>
                       </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {coach.totalSurveys > 0 ? (
+                        <div className="flex items-center justify-center gap-1">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          <span className="text-sm font-medium">{coach.avgRating}</span>
+                          <span className="text-xs text-muted-foreground">({coach.totalSurveys})</span>
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">—</span>
+                      )}
                     </TableCell>
                     <TableCell className="text-center">
                       <Badge variant="secondary">{coach.recentActivity}</Badge>
