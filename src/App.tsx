@@ -20,6 +20,7 @@ import PortalManage from "./pages/PortalManage";
 import CoachIntakeForm from "./pages/CoachIntakeForm";
 import AdminPanel from "./pages/AdminPanel";
 import Affiliate from "./pages/Affiliate";
+import CRM from "./pages/CRM";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="/portal/admin" element={<ProtectedRoute requireRole="admin"><AdminPanel /></ProtectedRoute>} />
               <Route path="/intake/:specialty" element={<ProtectedRoute><CoachIntakeForm /></ProtectedRoute>} />
               <Route path="/affiliate" element={<Affiliate />} />
+              <Route path="/crm" element={<ProtectedRoute requireStaff><CRM /></ProtectedRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
