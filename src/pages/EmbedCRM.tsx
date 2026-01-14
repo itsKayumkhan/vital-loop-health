@@ -15,6 +15,7 @@ import { CampaignsList } from '@/components/crm/CampaignsList';
 import { IntakeFormsList } from '@/components/crm/IntakeFormsList';
 import { ActivityLogList } from '@/components/crm/ActivityLogList';
 import { RoleManagement } from '@/components/crm/RoleManagement';
+import { LeadConversionWorkflow } from '@/components/crm/LeadConversionWorkflow';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,6 +42,7 @@ export default function EmbedCRM() {
         'clients-active': { action: 'view_clients', resourceType: 'client' },
         'clients-leads': { action: 'view_clients', resourceType: 'client' },
         'clients-cancelled': { action: 'view_clients', resourceType: 'client' },
+        'lead-conversion': { action: 'view_clients', resourceType: 'client' },
         'intake-forms': { action: 'view_intake_forms', resourceType: 'intake_form' },
         memberships: { action: 'view_memberships', resourceType: 'membership' },
         purchases: { action: 'view_purchases', resourceType: 'purchase' },
@@ -64,10 +66,10 @@ export default function EmbedCRM() {
   // Determine which tabs the user can access based on role
   const getAccessibleTabs = () => {
     if (role === 'admin') {
-      return ['dashboard', 'coach-view', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'coach-performance', 'satisfaction-surveys', 'activity-log', 'role-management'];
+      return ['dashboard', 'coach-view', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'coach-performance', 'satisfaction-surveys', 'activity-log', 'role-management'];
     }
     if (role === 'health_architect') {
-      return ['dashboard', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'satisfaction-surveys'];
+      return ['dashboard', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'satisfaction-surveys'];
     }
     if (role === 'coach') {
       return ['dashboard', 'clients', 'clients-active', 'intake-forms', 'documents'];
@@ -200,6 +202,8 @@ export default function EmbedCRM() {
         return <ClientsList filterStatus="lead" />;
       case 'clients-cancelled':
         return <ClientsList filterStatus="churned" />;
+      case 'lead-conversion':
+        return <LeadConversionWorkflow />;
       case 'intake-forms':
         return <IntakeFormsList />;
       case 'memberships':

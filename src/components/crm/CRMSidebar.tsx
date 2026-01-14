@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star, Eye, Search, X, ChevronDown, ChevronRight, UserCheck, UserX, UserPlus } from 'lucide-react';
+import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star, Eye, Search, X, ChevronDown, ChevronRight, UserCheck, UserX, UserPlus, GitBranch } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -56,6 +56,7 @@ const navSections: NavSection[] = [
           { id: 'clients-cancelled', label: 'Cancelled', icon: UserX },
         ]
       },
+      { id: 'lead-conversion', label: 'Lead Conversion', icon: GitBranch },
       { id: 'documents', label: 'Documents', icon: FileText },
       { id: 'intake-forms', label: 'Intake Forms', icon: ClipboardList },
       { id: 'memberships', label: 'Memberships', icon: Crown },
