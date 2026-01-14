@@ -59,6 +59,47 @@ export type Database = {
         }
         Relationships: []
       }
+      coach_satisfaction_surveys: {
+        Row: {
+          client_id: string
+          coach_id: string
+          created_at: string
+          feedback: string | null
+          id: string
+          rating: number
+          session_date: string | null
+          survey_type: string
+        }
+        Insert: {
+          client_id: string
+          coach_id: string
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          rating: number
+          session_date?: string | null
+          survey_type?: string
+        }
+        Update: {
+          client_id?: string
+          coach_id?: string
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          rating?: number
+          session_date?: string | null
+          survey_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_satisfaction_surveys_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_activity_log: {
         Row: {
           action: string

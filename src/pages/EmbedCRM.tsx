@@ -6,6 +6,7 @@ import { CRMSidebar } from '@/components/crm/CRMSidebar';
 import { CRMDashboard } from '@/components/crm/CRMDashboard';
 import { CoachDashboard } from '@/components/crm/CoachDashboard';
 import { CoachPerformance } from '@/components/crm/CoachPerformance';
+import { SatisfactionSurveysList } from '@/components/crm/SatisfactionSurveysList';
 import { ClientsList } from '@/components/crm/ClientsList';
 import { MembershipsList } from '@/components/crm/MembershipsList';
 import { PurchasesList } from '@/components/crm/PurchasesList';
@@ -59,10 +60,10 @@ export default function EmbedCRM() {
   // Determine which tabs the user can access based on role
   const getAccessibleTabs = () => {
     if (role === 'admin') {
-      return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'coach-performance', 'activity-log', 'role-management'];
+      return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'coach-performance', 'satisfaction-surveys', 'activity-log', 'role-management'];
     }
     if (role === 'health_architect') {
-      return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns'];
+      return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'satisfaction-surveys'];
     }
     if (role === 'coach') {
       return ['dashboard', 'clients', 'intake-forms', 'documents'];
@@ -198,6 +199,8 @@ export default function EmbedCRM() {
         return <CampaignsList />;
       case 'coach-performance':
         return <CoachPerformance />;
+      case 'satisfaction-surveys':
+        return <SatisfactionSurveysList />;
       case 'activity-log':
         return <ActivityLogList />;
       case 'role-management':
