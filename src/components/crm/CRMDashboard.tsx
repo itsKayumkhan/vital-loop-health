@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { Users, Crown, TrendingUp, UserPlus, DollarSign, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCRMClients, useCRMMemberships, useCRMPurchases } from '@/hooks/useCRM';
@@ -23,7 +23,10 @@ import {
 import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, eachWeekOfInterval, eachDayOfInterval, parseISO, isWithinInterval, differenceInDays } from 'date-fns';
 import { DateRangeFilter, DateRange, ComparisonRange } from './DateRangeFilter';
 import { ChartDrillDown, DrillDownData, DrillDownType } from './ChartDrillDown';
+import { SavedViewsManager } from './SavedViewsManager';
+import { useSavedViews, SavedViewConfig } from '@/hooks/useSavedViews';
 import { cn } from '@/lib/utils';
+
 
 type ChangeIndicatorProps = {
   current: number;
@@ -56,6 +59,7 @@ export function CRMDashboard() {
   const { clients, loading: clientsLoading } = useCRMClients();
   const { memberships, loading: membershipsLoading } = useCRMMemberships();
   const { purchases, loading: purchasesLoading } = useCRMPurchases();
+  const { getDefaultView } = useSavedViews();
 
   const loading = clientsLoading || membershipsLoading || purchasesLoading;
 
@@ -72,6 +76,31 @@ export function CRMDashboard() {
   // Drill-down state
   const [drillDownOpen, setDrillDownOpen] = useState(false);
   const [drillDownData, setDrillDownData] = useState<DrillDownData | null>(null);
+
+  // Load default view on mount
+  useEffect(() => {
+    const defaultView = getDefaultView();
+    if (defaultView) {
+      handleLoadView(defaultView.config);
+    }
+  }, []);
+
+  // Handle loading a saved view
+  const handleLoadView = useCallback((config: SavedViewConfig) => {
+    setDateRange({
+      from: new Date(config.dateRange.from),
+      to: new Date(config.dateRange.to),
+    });
+    setComparisonEnabled(config.comparisonEnabled);
+    if (config.comparisonRange) {
+      setComparisonRange({
+        from: new Date(config.comparisonRange.from),
+        to: new Date(config.comparisonRange.to),
+      });
+    } else {
+      setComparisonRange(null);
+    }
+  }, []);
 
   // Filter clients, memberships, and purchases by date range
   const filteredClients = useMemo(() => {
@@ -522,9 +551,19 @@ export function CRMDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground">Overview of your client management system</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+            <p className="text-muted-foreground">Overview of your client management system</p>
+          </div>
+          <SavedViewsManager
+            currentConfig={{
+              dateRange,
+              comparisonEnabled,
+              comparisonRange,
+            }}
+            onLoadView={handleLoadView}
+          />
         </div>
         <DateRangeFilter 
           dateRange={dateRange} 
