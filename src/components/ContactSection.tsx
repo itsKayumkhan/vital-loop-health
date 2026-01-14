@@ -5,6 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { z } from 'zod';
+
+// Validation schema
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
+  email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
+  phone: z.string().trim().min(1, "Phone is required").max(20, "Phone must be less than 20 characters"),
+  message: z.string().trim().max(1000, "Message must be less than 1000 characters").optional(),
+});
 
 const ContactSection = () => {
   const { toast } = useToast();
@@ -28,21 +38,62 @@ const ContactSection = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission - replace with actual CRM integration later
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Validate form data
+      const validatedData = contactSchema.parse(formData);
 
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    toast({
-      title: "Message Sent!",
-      description: "We'll be in touch within 24 hours.",
-    });
+      // Save to CRM as a lead
+      const { error } = await supabase.from('crm_clients').insert({
+        full_name: validatedData.name,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        health_goals: validatedData.message || null,
+        marketing_status: 'lead',
+        lead_source: 'Contact Form',
+        notes: `Submitted via contact form on ${new Date().toLocaleDateString()}`,
+      });
 
-    // Reset form after delay
-    setTimeout(() => {
-      setFormData({ name: '', email: '', phone: '', message: '' });
-      setIsSubmitted(false);
-    }, 3000);
+      if (error) {
+        // Check if it's a duplicate email error
+        if (error.code === '23505') {
+          toast({
+            title: "Already in our system!",
+            description: "We have your contact info. A team member will reach out soon.",
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        toast({
+          title: "Message Sent!",
+          description: "We'll be in touch within 24 hours.",
+        });
+      }
+
+      setIsSubmitted(true);
+
+      // Reset form after delay
+      setTimeout(() => {
+        setFormData({ name: '', email: '', phone: '', message: '' });
+        setIsSubmitted(false);
+      }, 3000);
+    } catch (err: any) {
+      if (err instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: err.errors[0]?.message || "Please check your input",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Something went wrong",
+          description: "Please try again later.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
