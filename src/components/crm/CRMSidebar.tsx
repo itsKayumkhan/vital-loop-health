@@ -1,5 +1,7 @@
-import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star, Eye } from 'lucide-react';
+import { useState } from 'react';
+import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star, Eye, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -60,6 +62,7 @@ const roleLabels: Record<string, string> = {
 
 export function CRMSidebar({ activeTab, onTabChange, accessibleTabs, userRole }: CRMSidebarProps) {
   const { signOut, user } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
   
   // If no accessibleTabs provided, show all (backwards compatibility)
   const visibleTabs = accessibleTabs || navItems.map(item => item.id);
@@ -68,23 +71,51 @@ export function CRMSidebar({ activeTab, onTabChange, accessibleTabs, userRole }:
     await signOut();
   };
 
-  // Filter sections to only show items the user has access to
+  // Filter sections to only show items the user has access to and match search
   const visibleSections = navSections
     .map(section => ({
       ...section,
-      items: section.items.filter(item => visibleTabs.includes(item.id)),
+      items: section.items.filter(item => {
+        const hasAccess = visibleTabs.includes(item.id);
+        const matchesSearch = searchQuery === '' || 
+          item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          section.label.toLowerCase().includes(searchQuery.toLowerCase());
+        return hasAccess && matchesSearch;
+      }),
     }))
     .filter(section => section.items.length > 0);
 
   return (
     <div className="w-64 bg-card border-r border-border min-h-screen p-4 flex flex-col">
-      <div className="mb-6">
+      <div className="mb-4">
         <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4">
           <ArrowLeft className="h-4 w-4" />
           <span className="text-sm">Back to Site</span>
         </Link>
         <h2 className="text-xl font-bold text-foreground">VitalityX CRM</h2>
         <p className="text-sm text-muted-foreground">Client Management System</p>
+      </div>
+
+      {/* Search input */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Search tabs..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9 pr-8 h-9 text-sm"
+        />
+        {searchQuery && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6"
+            onClick={() => setSearchQuery('')}
+          >
+            <X className="h-3 w-3" />
+          </Button>
+        )}
       </div>
 
       <nav className="flex-1 space-y-4 overflow-y-auto">
