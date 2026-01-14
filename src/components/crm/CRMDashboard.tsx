@@ -24,6 +24,7 @@ import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, eachW
 import { DateRangeFilter, DateRange, ComparisonRange } from './DateRangeFilter';
 import { ChartDrillDown, DrillDownData, DrillDownType } from './ChartDrillDown';
 import { SavedViewsManager } from './SavedViewsManager';
+import { RealTimeRefresh } from './RealTimeRefresh';
 import { useSavedViews, SavedViewConfig } from '@/hooks/useSavedViews';
 import { cn } from '@/lib/utils';
 
@@ -56,12 +57,21 @@ function ChangeIndicator({ current, previous, format: formatType = 'number' }: C
 }
 
 export function CRMDashboard() {
-  const { clients, loading: clientsLoading } = useCRMClients();
-  const { memberships, loading: membershipsLoading } = useCRMMemberships();
-  const { purchases, loading: purchasesLoading } = useCRMPurchases();
+  const { clients, loading: clientsLoading, fetchClients } = useCRMClients();
+  const { memberships, loading: membershipsLoading, fetchMemberships } = useCRMMemberships();
+  const { purchases, loading: purchasesLoading, fetchPurchases } = useCRMPurchases();
   const { getDefaultView } = useSavedViews();
 
   const loading = clientsLoading || membershipsLoading || purchasesLoading;
+
+  // Combined refresh function
+  const handleRefreshAll = useCallback(async () => {
+    await Promise.all([
+      fetchClients(),
+      fetchMemberships(),
+      fetchPurchases(),
+    ]);
+  }, [fetchClients, fetchMemberships, fetchPurchases]);
 
   // Date range state
   const [dateRange, setDateRange] = useState<DateRange>(() => ({
@@ -556,14 +566,17 @@ export function CRMDashboard() {
             <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
             <p className="text-muted-foreground">Overview of your client management system</p>
           </div>
-          <SavedViewsManager
-            currentConfig={{
-              dateRange,
-              comparisonEnabled,
-              comparisonRange,
-            }}
-            onLoadView={handleLoadView}
-          />
+          <div className="flex flex-wrap items-center gap-3">
+            <RealTimeRefresh onRefresh={handleRefreshAll} isLoading={loading} />
+            <SavedViewsManager
+              currentConfig={{
+                dateRange,
+                comparisonEnabled,
+                comparisonRange,
+              }}
+              onLoadView={handleLoadView}
+            />
+          </div>
         </div>
         <DateRangeFilter 
           dateRange={dateRange} 
