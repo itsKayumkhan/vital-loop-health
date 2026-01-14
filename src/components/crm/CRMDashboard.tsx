@@ -57,9 +57,26 @@ function ChangeIndicator({ current, previous, format: formatType = 'number' }: C
 }
 
 export function CRMDashboard() {
-  const { clients, loading: clientsLoading, fetchClients } = useCRMClients();
-  const { memberships, loading: membershipsLoading, fetchMemberships } = useCRMMemberships();
-  const { purchases, loading: purchasesLoading, fetchPurchases } = useCRMPurchases();
+  // Realtime state
+  const [realtimeEnabled, setRealtimeEnabled] = useState(false);
+  const [lastRealtimeUpdate, setLastRealtimeUpdate] = useState<Date | null>(null);
+
+  const handleRealtimeUpdate = useCallback(() => {
+    setLastRealtimeUpdate(new Date());
+  }, []);
+
+  const { clients, loading: clientsLoading, fetchClients } = useCRMClients({ 
+    enabled: realtimeEnabled, 
+    onUpdate: handleRealtimeUpdate 
+  });
+  const { memberships, loading: membershipsLoading, fetchMemberships } = useCRMMemberships(
+    undefined,
+    { enabled: realtimeEnabled, onUpdate: handleRealtimeUpdate }
+  );
+  const { purchases, loading: purchasesLoading, fetchPurchases } = useCRMPurchases(
+    undefined,
+    { enabled: realtimeEnabled, onUpdate: handleRealtimeUpdate }
+  );
   const { getDefaultView } = useSavedViews();
 
   const loading = clientsLoading || membershipsLoading || purchasesLoading;
@@ -567,7 +584,13 @@ export function CRMDashboard() {
             <p className="text-muted-foreground">Overview of your client management system</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <RealTimeRefresh onRefresh={handleRefreshAll} isLoading={loading} />
+            <RealTimeRefresh 
+              onRefresh={handleRefreshAll} 
+              isLoading={loading}
+              realtimeEnabled={realtimeEnabled}
+              onRealtimeToggle={setRealtimeEnabled}
+              lastRealtimeUpdate={lastRealtimeUpdate}
+            />
             <SavedViewsManager
               currentConfig={{
                 dateRange,
