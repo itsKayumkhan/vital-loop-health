@@ -232,6 +232,31 @@ const Portal = () => {
 
                 {/* Overview Tab */}
                 <TabsContent value="overview" className="space-y-6">
+                  {/* Pending Forms Banner */}
+                  {submissions.filter(s => s.status === 'pending').length > 0 && (
+                    <Card className="border-secondary/50 bg-secondary/5">
+                      <CardContent className="py-4">
+                        <div className="flex items-center justify-between gap-4 flex-wrap">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+                              <FileText className="w-5 h-5 text-secondary" />
+                            </div>
+                            <div>
+                              <p className="font-semibold">You have {submissions.filter(s => s.status === 'pending').length} intake form(s) to complete</p>
+                              <p className="text-sm text-muted-foreground">Complete your forms to help your coach personalize your program</p>
+                            </div>
+                          </div>
+                          <Button variant="hero" size="sm" asChild>
+                            <Link to="#" onClick={() => document.querySelector('[value="forms"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))}>
+                              Complete Forms
+                              <ArrowRight className="ml-2 w-4 h-4" />
+                            </Link>
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {/* Membership Card */}
                     <Card className="glass-card">
@@ -491,65 +516,119 @@ const Portal = () => {
                         Coach Intake Forms
                       </CardTitle>
                       <CardDescription>
-                        Complete intake forms to get started with our specialty coaches
+                        Complete intake forms to help your coach personalize your program
                       </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <div className="grid md:grid-cols-2 gap-6">
-                        {coachForms.map((form) => {
-                          const submission = getSubmissionForSpecialty(form.specialty);
-                          const Icon = form.icon;
-                          const status = submission ? formStatusConfig[submission.status] : null;
-                          const StatusIcon = status?.icon;
-
-                          return (
-                            <div
-                              key={form.specialty}
-                              className="glass-card rounded-xl p-5 hover:border-secondary/50 transition-all duration-300"
-                            >
-                              <div className="flex items-start gap-4">
-                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${form.gradient} flex items-center justify-center flex-shrink-0`}>
-                                  <Icon className="w-6 h-6 text-white" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-start justify-between gap-2">
-                                    <h3 className="font-bold">{form.title.replace(' Intake', '')}</h3>
-                                    {status && (
-                                      <Badge className={status.color}>
-                                        {StatusIcon && <StatusIcon className="w-3 h-3 mr-1" />}
-                                        {status.label}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                                    {form.description}
-                                  </p>
-                                  <div className="mt-4">
-                                    {submission ? (
-                                      <div className="flex items-center justify-between">
-                                        <span className="text-xs text-muted-foreground">
-                                          Submitted {new Date(submission.submitted_at).toLocaleDateString()}
-                                        </span>
-                                        {submission.status === 'pending' && (
-                                          <Button variant="link" size="sm" asChild className="text-secondary">
-                                            <Link to={`/intake/${form.specialty}`}>Update Form</Link>
-                                          </Button>
-                                        )}
+                    <CardContent className="space-y-6">
+                      {/* Pending Forms Section */}
+                      {submissions.filter(s => s.status === 'pending').length > 0 && (
+                        <div className="space-y-3">
+                          <h3 className="text-sm font-semibold text-secondary flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4" />
+                            Action Required - Complete These Forms
+                          </h3>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {submissions.filter(s => s.status === 'pending').map((submission) => {
+                              const form = getFormConfig(submission.specialty);
+                              if (!form) return null;
+                              const Icon = form.icon;
+                              return (
+                                <div
+                                  key={submission.id}
+                                  className="glass-card rounded-xl p-5 border-secondary/30 bg-secondary/5 hover:border-secondary/50 transition-all duration-300"
+                                >
+                                  <div className="flex items-start gap-4">
+                                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${form.gradient} flex items-center justify-center flex-shrink-0`}>
+                                      <Icon className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-start justify-between gap-2">
+                                        <h3 className="font-bold">{form.title.replace(' Intake', '')}</h3>
+                                        <Badge className="bg-yellow-500/20 text-yellow-600">
+                                          <Clock className="w-3 h-3 mr-1" />
+                                          Pending
+                                        </Badge>
                                       </div>
-                                    ) : (
-                                      <Button variant="heroOutline" size="sm" asChild className="group">
-                                        <Link to={`/intake/${form.specialty}`}>
-                                          Start Form
-                                          <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                        </Link>
-                                      </Button>
-                                    )}
+                                      <p className="text-sm text-muted-foreground mt-1">{form.tagline}</p>
+                                      <div className="mt-4">
+                                        <Button variant="hero" size="sm" asChild className="w-full">
+                                          <Link to={`/intake/${form.specialty}`}>
+                                            Complete Form
+                                            <ArrowRight className="ml-2 w-4 h-4" />
+                                          </Link>
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* All Forms */}
+                      <div className="space-y-3">
+                        {submissions.filter(s => s.status === 'pending').length > 0 && (
+                          <h3 className="text-sm font-medium text-muted-foreground">All Forms</h3>
+                        )}
+                        <div className="grid md:grid-cols-2 gap-6">
+                          {coachForms.map((form) => {
+                            const submission = getSubmissionForSpecialty(form.specialty);
+                            const Icon = form.icon;
+                            const status = submission ? formStatusConfig[submission.status] : null;
+                            const StatusIcon = status?.icon;
+                            const isPending = submission?.status === 'pending';
+
+                            return (
+                              <div
+                                key={form.specialty}
+                                className={`glass-card rounded-xl p-5 hover:border-secondary/50 transition-all duration-300 ${isPending ? 'border-secondary/30 bg-secondary/5' : ''}`}
+                              >
+                                <div className="flex items-start gap-4">
+                                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${form.gradient} flex items-center justify-center flex-shrink-0`}>
+                                    <Icon className="w-6 h-6 text-white" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-start justify-between gap-2">
+                                      <h3 className="font-bold">{form.title.replace(' Intake', '')}</h3>
+                                      {status && (
+                                        <Badge className={status.color}>
+                                          {StatusIcon && <StatusIcon className="w-3 h-3 mr-1" />}
+                                          {status.label}
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                      {form.description}
+                                    </p>
+                                    <div className="mt-4">
+                                      {submission ? (
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-xs text-muted-foreground">
+                                            {isPending ? 'Assigned' : 'Submitted'} {new Date(submission.submitted_at).toLocaleDateString()}
+                                          </span>
+                                          {isPending && (
+                                            <Button variant="hero" size="sm" asChild>
+                                              <Link to={`/intake/${form.specialty}`}>Complete Form</Link>
+                                            </Button>
+                                          )}
+                                        </div>
+                                      ) : (
+                                        <Button variant="heroOutline" size="sm" asChild className="group">
+                                          <Link to={`/intake/${form.specialty}`}>
+                                            Start Form
+                                            <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                          </Link>
+                                        </Button>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
