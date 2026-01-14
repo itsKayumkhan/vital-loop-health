@@ -24,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { coachForms } from '@/data/coachForms';
+import EmbedLoader from '@/components/EmbedLoader';
 
 // Types
 interface Membership {
@@ -97,6 +98,11 @@ const EmbedPortal = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [assignedCoaches, setAssignedCoaches] = useState<AssignedCoach[]>([]);
   const [profile, setProfile] = useState<{ full_name: string | null; email: string | null; phone: string | null } | null>(null);
+
+  // Show branded loader while auth is loading
+  if (authLoading) {
+    return <EmbedLoader />;
+  }
 
   useEffect(() => {
     const fetchClientData = async () => {

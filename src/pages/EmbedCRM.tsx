@@ -8,36 +8,17 @@ import { PurchasesList } from '@/components/crm/PurchasesList';
 import { DocumentsList } from '@/components/crm/DocumentsList';
 import { CampaignsList } from '@/components/crm/CampaignsList';
 import { IntakeFormsList } from '@/components/crm/IntakeFormsList';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
+import EmbedLoader from '@/components/EmbedLoader';
 
 export default function EmbedCRM() {
   const { user, loading, isStaff } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen bg-background">
-        <div className="w-64 p-4">
-          <Skeleton className="h-8 w-32 mb-8" />
-          <div className="space-y-2">
-            {[...Array(7)].map((_, i) => (
-              <Skeleton key={i} className="h-10 w-full" />
-            ))}
-          </div>
-        </div>
-        <div className="flex-1 p-8">
-          <Skeleton className="h-12 w-64 mb-6" />
-          <div className="grid grid-cols-4 gap-4 mb-6">
-            {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-24" />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <EmbedLoader />;
   }
 
   if (!user) {
