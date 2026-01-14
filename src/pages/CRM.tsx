@@ -9,6 +9,7 @@ import { MembershipsList } from '@/components/crm/MembershipsList';
 import { PurchasesList } from '@/components/crm/PurchasesList';
 import { DocumentsList } from '@/components/crm/DocumentsList';
 import { CampaignsList } from '@/components/crm/CampaignsList';
+import { IntakeFormsList } from '@/components/crm/IntakeFormsList';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function CRM() {
@@ -21,7 +22,7 @@ export default function CRM() {
         <div className="w-64 p-4">
           <Skeleton className="h-8 w-32 mb-8" />
           <div className="space-y-2">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(7)].map((_, i) => (
               <Skeleton key={i} className="h-10 w-full" />
             ))}
           </div>
@@ -52,6 +53,8 @@ export default function CRM() {
         return <CRMDashboard />;
       case 'clients':
         return <ClientsList />;
+      case 'intake-forms':
+        return <IntakeFormsList />;
       case 'memberships':
         return <MembershipsList />;
       case 'purchases':

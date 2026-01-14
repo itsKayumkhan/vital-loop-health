@@ -16,7 +16,6 @@ import Contact from "./pages/Contact";
 import CGMIntakeForm from "./pages/CGMIntakeForm";
 import Auth from "./pages/Auth";
 import Portal from "./pages/Portal";
-import PortalManage from "./pages/PortalManage";
 import CoachIntakeForm from "./pages/CoachIntakeForm";
 import AdminPanel from "./pages/AdminPanel";
 import Affiliate from "./pages/Affiliate";
@@ -45,7 +44,6 @@ const App = () => (
               <Route path="/cgm-intake" element={<CGMIntakeForm />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/portal" element={<ProtectedRoute><Portal /></ProtectedRoute>} />
-              <Route path="/portal/manage" element={<ProtectedRoute requireStaff><PortalManage /></ProtectedRoute>} />
               <Route path="/portal/admin" element={<ProtectedRoute requireRole="admin"><AdminPanel /></ProtectedRoute>} />
               <Route path="/intake/:specialty" element={<ProtectedRoute><CoachIntakeForm /></ProtectedRoute>} />
               <Route path="/affiliate" element={<Affiliate />} />
