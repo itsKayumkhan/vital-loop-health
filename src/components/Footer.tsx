@@ -47,6 +47,7 @@ const Footer = () => {
               <li><a href="#" className="hover:text-secondary transition-colors">Our Team</a></li>
               <li><a href="#" className="hover:text-secondary transition-colors">Client Portal</a></li>
               <li><a href="#" className="hover:text-secondary transition-colors">Contact</a></li>
+              <li><a href="/affiliate" className="hover:text-secondary transition-colors">Affiliate Program</a></li>
               <li><a href="#" className="hover:text-secondary transition-colors">Privacy Policy</a></li>
             </ul>
           </div>
