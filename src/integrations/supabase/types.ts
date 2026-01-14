@@ -59,6 +59,377 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_campaign_enrollments: {
+        Row: {
+          campaign_id: string
+          client_id: string
+          conversion_date: string | null
+          enrolled_at: string
+          id: string
+          last_interaction: string | null
+          notes: string | null
+          status: string | null
+        }
+        Insert: {
+          campaign_id: string
+          client_id: string
+          conversion_date?: string | null
+          enrolled_at?: string
+          id?: string
+          last_interaction?: string | null
+          notes?: string | null
+          status?: string | null
+        }
+        Update: {
+          campaign_id?: string
+          client_id?: string
+          conversion_date?: string | null
+          enrolled_at?: string
+          id?: string
+          last_interaction?: string | null
+          notes?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_campaign_enrollments_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "crm_marketing_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_campaign_enrollments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_client_notes: {
+        Row: {
+          author_id: string | null
+          client_id: string
+          content: string
+          created_at: string
+          id: string
+          is_pinned: boolean | null
+          note_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          client_id: string
+          content: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean | null
+          note_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          client_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean | null
+          note_type?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_client_notes_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_clients: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          date_of_birth: string | null
+          email: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          full_name: string
+          health_goals: string | null
+          id: string
+          lead_source: string | null
+          marketing_status:
+            | Database["public"]["Enums"]["marketing_status"]
+            | null
+          notes: string | null
+          phone: string | null
+          referral_source: string | null
+          state: string | null
+          tags: string[] | null
+          updated_at: string
+          user_id: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name: string
+          health_goals?: string | null
+          id?: string
+          lead_source?: string | null
+          marketing_status?:
+            | Database["public"]["Enums"]["marketing_status"]
+            | null
+          notes?: string | null
+          phone?: string | null
+          referral_source?: string | null
+          state?: string | null
+          tags?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name?: string
+          health_goals?: string | null
+          id?: string
+          lead_source?: string | null
+          marketing_status?:
+            | Database["public"]["Enums"]["marketing_status"]
+            | null
+          notes?: string | null
+          phone?: string | null
+          referral_source?: string | null
+          state?: string | null
+          tags?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
+      crm_documents: {
+        Row: {
+          client_id: string
+          created_at: string
+          description: string | null
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_path: string
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          name: string
+          shared_with_client: boolean | null
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          description?: string | null
+          document_type?: Database["public"]["Enums"]["document_type"]
+          file_path: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          name: string
+          shared_with_client?: boolean | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          description?: string | null
+          document_type?: Database["public"]["Enums"]["document_type"]
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          name?: string
+          shared_with_client?: boolean | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_documents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_marketing_campaigns: {
+        Row: {
+          campaign_type: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          name: string
+          start_date: string | null
+          status: string | null
+          target_segment: string | null
+          updated_at: string
+        }
+        Insert: {
+          campaign_type: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          start_date?: string | null
+          status?: string | null
+          target_segment?: string | null
+          updated_at?: string
+        }
+        Update: {
+          campaign_type?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          start_date?: string | null
+          status?: string | null
+          target_segment?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      crm_memberships: {
+        Row: {
+          client_id: string
+          created_at: string
+          end_date: string | null
+          id: string
+          monthly_price: number | null
+          notes: string | null
+          renewal_date: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["membership_status"]
+          stripe_subscription_id: string | null
+          tier: Database["public"]["Enums"]["membership_tier"]
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          monthly_price?: number | null
+          notes?: string | null
+          renewal_date?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["membership_status"]
+          stripe_subscription_id?: string | null
+          tier?: Database["public"]["Enums"]["membership_tier"]
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          monthly_price?: number | null
+          notes?: string | null
+          renewal_date?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["membership_status"]
+          stripe_subscription_id?: string | null
+          tier?: Database["public"]["Enums"]["membership_tier"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_memberships_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_purchases: {
+        Row: {
+          amount: number
+          client_id: string
+          created_at: string
+          currency: string | null
+          description: string | null
+          id: string
+          product_name: string
+          purchase_type: Database["public"]["Enums"]["purchase_type"]
+          purchased_at: string
+          status: string | null
+          stripe_invoice_id: string | null
+          stripe_payment_id: string | null
+        }
+        Insert: {
+          amount: number
+          client_id: string
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          id?: string
+          product_name: string
+          purchase_type: Database["public"]["Enums"]["purchase_type"]
+          purchased_at?: string
+          status?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_id?: string | null
+        }
+        Update: {
+          amount?: number
+          client_id?: string
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          id?: string
+          product_name?: string
+          purchase_type?: Database["public"]["Enums"]["purchase_type"]
+          purchased_at?: string
+          status?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_purchases_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       form_activity_log: {
         Row: {
           action: string
@@ -186,12 +557,22 @@ export type Database = {
         | "performance"
         | "wellness_recovery"
         | "mental_performance"
+      document_type:
+        | "contract"
+        | "lab_results"
+        | "health_record"
+        | "invoice"
+        | "other"
       form_status:
         | "pending"
         | "in_review"
         | "assigned"
         | "completed"
         | "archived"
+      marketing_status: "lead" | "prospect" | "customer" | "churned" | "vip"
+      membership_status: "active" | "paused" | "cancelled" | "expired"
+      membership_tier: "free" | "essential" | "premium" | "elite"
+      purchase_type: "subscription" | "one_time" | "supplement" | "service"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -326,6 +707,13 @@ export const Constants = {
         "wellness_recovery",
         "mental_performance",
       ],
+      document_type: [
+        "contract",
+        "lab_results",
+        "health_record",
+        "invoice",
+        "other",
+      ],
       form_status: [
         "pending",
         "in_review",
@@ -333,6 +721,10 @@ export const Constants = {
         "completed",
         "archived",
       ],
+      marketing_status: ["lead", "prospect", "customer", "churned", "vip"],
+      membership_status: ["active", "paused", "cancelled", "expired"],
+      membership_tier: ["free", "essential", "premium", "elite"],
+      purchase_type: ["subscription", "one_time", "supplement", "service"],
     },
   },
 } as const
