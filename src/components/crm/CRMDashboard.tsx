@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Users, Crown, ShoppingCart, TrendingUp, UserPlus, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCRMClients, useCRMMemberships, useCRMPurchases } from '@/hooks/useCRM';
@@ -20,7 +20,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, parseISO, isWithinInterval } from 'date-fns';
+import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, eachWeekOfInterval, eachDayOfInterval, parseISO, isWithinInterval, differenceInDays } from 'date-fns';
+import { DateRangeFilter, DateRange } from './DateRangeFilter';
 
 export function CRMDashboard() {
   const { clients, loading: clientsLoading } = useCRMClients();
@@ -29,71 +30,115 @@ export function CRMDashboard() {
 
   const loading = clientsLoading || membershipsLoading || purchasesLoading;
 
-  const stats = {
+  // Date range state
+  const [dateRange, setDateRange] = useState<DateRange>(() => ({
+    from: subMonths(new Date(), 6),
+    to: new Date(),
+  }));
+
+  // Filter clients, memberships, and purchases by date range
+  const filteredClients = useMemo(() => {
+    return clients.filter(c => {
+      const createdAt = parseISO(c.created_at);
+      return isWithinInterval(createdAt, { start: dateRange.from, end: dateRange.to });
+    });
+  }, [clients, dateRange]);
+
+  const filteredPurchases = useMemo(() => {
+    return purchases.filter(p => {
+      const purchaseDate = parseISO(p.purchased_at);
+      return isWithinInterval(purchaseDate, { start: dateRange.from, end: dateRange.to });
+    });
+  }, [purchases, dateRange]);
+
+  const stats = useMemo(() => ({
     totalClients: clients.length,
     activeMembers: memberships.filter(m => m.status === 'active').length,
-    totalRevenue: purchases.reduce((sum, p) => sum + Number(p.amount), 0),
-    newClientsThisMonth: clients.filter(c => {
-      const createdAt = new Date(c.created_at);
-      const now = new Date();
-      return createdAt.getMonth() === now.getMonth() && 
-             createdAt.getFullYear() === now.getFullYear();
-    }).length,
+    totalRevenue: filteredPurchases.reduce((sum, p) => sum + Number(p.amount), 0),
+    newClientsInRange: filteredClients.length,
     leadCount: clients.filter(c => c.marketing_status === 'lead').length,
     vipCount: clients.filter(c => c.marketing_status === 'vip').length,
-  };
+  }), [clients, memberships, filteredClients, filteredPurchases]);
 
-  // Generate client growth data for the last 6 months
-  const clientGrowthData = useMemo(() => {
-    const now = new Date();
-    const sixMonthsAgo = subMonths(now, 5);
-    const months = eachMonthOfInterval({ start: startOfMonth(sixMonthsAgo), end: startOfMonth(now) });
+  // Determine the right interval granularity based on date range
+  const getIntervalData = useMemo(() => {
+    const daysDiff = differenceInDays(dateRange.to, dateRange.from);
     
-    return months.map(month => {
-      const monthStart = startOfMonth(month);
-      const monthEnd = endOfMonth(month);
+    if (daysDiff <= 14) {
+      // Daily granularity for short ranges
+      return {
+        intervals: eachDayOfInterval({ start: dateRange.from, end: dateRange.to }),
+        formatStr: 'MMM d',
+        getStart: (date: Date) => new Date(date.setHours(0, 0, 0, 0)),
+        getEnd: (date: Date) => new Date(date.setHours(23, 59, 59, 999)),
+      };
+    } else if (daysDiff <= 90) {
+      // Weekly granularity for medium ranges
+      return {
+        intervals: eachWeekOfInterval({ start: dateRange.from, end: dateRange.to }),
+        formatStr: 'MMM d',
+        getStart: (date: Date) => date,
+        getEnd: (date: Date) => new Date(date.getTime() + 6 * 24 * 60 * 60 * 1000),
+      };
+    } else {
+      // Monthly granularity for long ranges
+      return {
+        intervals: eachMonthOfInterval({ start: startOfMonth(dateRange.from), end: startOfMonth(dateRange.to) }),
+        formatStr: 'MMM yyyy',
+        getStart: startOfMonth,
+        getEnd: endOfMonth,
+      };
+    }
+  }, [dateRange]);
+
+  // Generate client growth data based on date range
+  const clientGrowthData = useMemo(() => {
+    const { intervals, formatStr, getStart, getEnd } = getIntervalData;
+    
+    return intervals.map(interval => {
+      const intervalStart = getStart(new Date(interval));
+      const intervalEnd = getEnd(new Date(interval));
       
       const newClients = clients.filter(c => {
         const createdAt = parseISO(c.created_at);
-        return isWithinInterval(createdAt, { start: monthStart, end: monthEnd });
+        return isWithinInterval(createdAt, { start: intervalStart, end: intervalEnd });
       }).length;
       
       const cumulativeClients = clients.filter(c => {
         const createdAt = parseISO(c.created_at);
-        return createdAt <= monthEnd;
+        return createdAt <= intervalEnd;
       }).length;
       
       return {
-        month: format(month, 'MMM yyyy'),
+        period: format(interval, formatStr),
         newClients,
         totalClients: cumulativeClients,
       };
     });
-  }, [clients]);
+  }, [clients, getIntervalData]);
 
-  // Generate revenue trend data for the last 6 months
+  // Generate revenue trend data based on date range
   const revenueData = useMemo(() => {
-    const now = new Date();
-    const sixMonthsAgo = subMonths(now, 5);
-    const months = eachMonthOfInterval({ start: startOfMonth(sixMonthsAgo), end: startOfMonth(now) });
+    const { intervals, formatStr, getStart, getEnd } = getIntervalData;
     
-    return months.map(month => {
-      const monthStart = startOfMonth(month);
-      const monthEnd = endOfMonth(month);
+    return intervals.map(interval => {
+      const intervalStart = getStart(new Date(interval));
+      const intervalEnd = getEnd(new Date(interval));
       
-      const monthRevenue = purchases
+      const periodRevenue = purchases
         .filter(p => {
           const purchaseDate = parseISO(p.purchased_at);
-          return isWithinInterval(purchaseDate, { start: monthStart, end: monthEnd });
+          return isWithinInterval(purchaseDate, { start: intervalStart, end: intervalEnd });
         })
         .reduce((sum, p) => sum + Number(p.amount), 0);
       
       return {
-        month: format(month, 'MMM'),
-        revenue: monthRevenue,
+        period: format(interval, formatStr),
+        revenue: periodRevenue,
       };
     });
-  }, [purchases]);
+  }, [purchases, getIntervalData]);
+
 
   // Membership tier distribution
   const membershipTierData = useMemo(() => {
@@ -186,9 +231,12 @@ export function CRMDashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground">Overview of your client management system</p>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground">Overview of your client management system</p>
+        </div>
+        <DateRangeFilter dateRange={dateRange} onDateRangeChange={setDateRange} />
       </div>
 
       {/* Stats Grid */}
@@ -233,8 +281,8 @@ export function CRMDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">New This Month</p>
-                <p className="text-3xl font-bold">{stats.newClientsThisMonth}</p>
+                <p className="text-sm text-muted-foreground">New in Range</p>
+                <p className="text-3xl font-bold">{stats.newClientsInRange}</p>
               </div>
               <UserPlus className="h-10 w-10 text-blue-500 opacity-50" />
             </div>
@@ -263,7 +311,7 @@ export function CRMDashboard() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="month" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                  <XAxis dataKey="period" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
                   <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
                   <Tooltip
                     contentStyle={{
@@ -315,7 +363,7 @@ export function CRMDashboard() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="month" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                  <XAxis dataKey="period" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
                   <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} tickFormatter={(value) => `$${value}`} />
                   <Tooltip
                     contentStyle={{
