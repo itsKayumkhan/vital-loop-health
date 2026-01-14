@@ -80,7 +80,7 @@ const Navbar = () => {
             )}
             <Link to="/portal">
               <Button variant="heroOutline" size="sm">
-                My Portal
+                My VitalityX
               </Button>
             </Link>
             <Button variant="hero" size="sm">
@@ -143,7 +143,7 @@ const Navbar = () => {
                 )}
                 <Link to="/portal" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="heroOutline" size="lg" className="w-full">
-                    My Portal
+                    My VitalityX
                   </Button>
                 </Link>
                 <Button variant="hero" size="lg" className="w-full">
