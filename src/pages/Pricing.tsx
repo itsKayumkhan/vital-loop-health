@@ -266,7 +266,7 @@ const MembershipSection = () => {
                 className="w-full mt-auto"
                 size="lg"
               >
-                {tier.popular ? 'Start Your Journey' : 'Choose Plan'}
+                Start Your Journey
               </Button>
             </motion.div>
           ))}
