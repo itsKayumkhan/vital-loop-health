@@ -20,6 +20,15 @@ const typeColors: Record<PurchaseType, string> = {
   one_time: 'bg-green-500/10 text-green-500',
   supplement: 'bg-purple-500/10 text-purple-500',
   service: 'bg-amber-500/10 text-amber-500',
+  lab_testing: 'bg-cyan-500/10 text-cyan-500',
+};
+
+const typeLabels: Record<PurchaseType, string> = {
+  subscription: 'Membership',
+  one_time: 'One Time',
+  supplement: 'Supplements',
+  service: 'Service',
+  lab_testing: 'Lab Testing',
 };
 
 export function PurchasesList() {
@@ -125,10 +134,11 @@ export function PurchasesList() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="subscription">Subscription</SelectItem>
-            <SelectItem value="one_time">One-Time</SelectItem>
-            <SelectItem value="supplement">Supplement</SelectItem>
+            <SelectItem value="subscription">Membership</SelectItem>
+            <SelectItem value="supplement">Supplements</SelectItem>
+            <SelectItem value="lab_testing">Lab Testing</SelectItem>
             <SelectItem value="service">Service</SelectItem>
+            <SelectItem value="one_time">One-Time</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -162,7 +172,7 @@ export function PurchasesList() {
 
                     <div className="flex items-center gap-3">
                       <Badge className={typeColors[purchase.purchase_type]}>
-                        {purchase.purchase_type.replace('_', ' ')}
+                        {typeLabels[purchase.purchase_type] || purchase.purchase_type.replace('_', ' ')}
                       </Badge>
                       <span className="text-lg font-semibold text-green-500">
                         ${Number(purchase.amount).toFixed(2)}

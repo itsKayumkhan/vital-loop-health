@@ -1,6 +1,6 @@
 export type MembershipTier = 'free' | 'essential' | 'premium' | 'elite';
 export type MembershipStatus = 'active' | 'paused' | 'cancelled' | 'expired';
-export type PurchaseType = 'subscription' | 'one_time' | 'supplement' | 'service';
+export type PurchaseType = 'subscription' | 'one_time' | 'supplement' | 'service' | 'lab_testing';
 export type DocumentType = 'contract' | 'lab_results' | 'health_record' | 'invoice' | 'other';
 export type MarketingStatus = 'lead' | 'prospect' | 'customer' | 'churned' | 'vip';
 

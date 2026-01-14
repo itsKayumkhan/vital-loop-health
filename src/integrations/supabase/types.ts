@@ -855,7 +855,12 @@ export type Database = {
       marketing_status: "lead" | "prospect" | "customer" | "churned" | "vip"
       membership_status: "active" | "paused" | "cancelled" | "expired"
       membership_tier: "free" | "essential" | "premium" | "elite"
-      purchase_type: "subscription" | "one_time" | "supplement" | "service"
+      purchase_type:
+        | "subscription"
+        | "one_time"
+        | "supplement"
+        | "service"
+        | "lab_testing"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1007,7 +1012,13 @@ export const Constants = {
       marketing_status: ["lead", "prospect", "customer", "churned", "vip"],
       membership_status: ["active", "paused", "cancelled", "expired"],
       membership_tier: ["free", "essential", "premium", "elite"],
-      purchase_type: ["subscription", "one_time", "supplement", "service"],
+      purchase_type: [
+        "subscription",
+        "one_time",
+        "supplement",
+        "service",
+        "lab_testing",
+      ],
     },
   },
 } as const

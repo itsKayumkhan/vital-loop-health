@@ -509,28 +509,67 @@ export function CRMDashboard() {
     setDrillDownOpen(true);
   }, [clients, dateRange]);
 
-  // Purchase type breakdown
+  // Revenue by category (4 main types)
+  const revenueByCategory = useMemo(() => {
+    const categories = {
+      subscription: { label: 'Membership', amount: 0, color: 'hsl(220, 70%, 50%)', icon: Crown },
+      supplement: { label: 'Supplements', amount: 0, color: 'hsl(280, 70%, 50%)', icon: DollarSign },
+      lab_testing: { label: 'Lab Testing', amount: 0, color: 'hsl(180, 70%, 45%)', icon: TrendingUp },
+      service: { label: 'Services', amount: 0, color: 'hsl(45, 90%, 50%)', icon: Users },
+    };
+    
+    filteredPurchases.forEach(p => {
+      if (p.purchase_type === 'subscription') {
+        categories.subscription.amount += Number(p.amount);
+      } else if (p.purchase_type === 'supplement') {
+        categories.supplement.amount += Number(p.amount);
+      } else if (p.purchase_type === 'lab_testing') {
+        categories.lab_testing.amount += Number(p.amount);
+      } else if (p.purchase_type === 'service' || p.purchase_type === 'one_time') {
+        categories.service.amount += Number(p.amount);
+      }
+    });
+    
+    return Object.entries(categories).map(([key, data]) => ({
+      id: key,
+      ...data,
+    }));
+  }, [filteredPurchases]);
+
+  // Purchase type breakdown for pie chart
   const purchaseTypeData = useMemo(() => {
     const typeCounts: Record<string, number> = {};
     
-    purchases.forEach(p => {
-      typeCounts[p.purchase_type] = (typeCounts[p.purchase_type] || 0) + Number(p.amount);
+    filteredPurchases.forEach(p => {
+      // Group into 4 main categories
+      let category = p.purchase_type;
+      if (p.purchase_type === 'one_time') {
+        category = 'service'; // Group one_time with services
+      }
+      typeCounts[category] = (typeCounts[category] || 0) + Number(p.amount);
     });
     
-    const colors = {
-      subscription: 'hsl(var(--primary))',
-      one_time: 'hsl(140, 70%, 45%)',
+    const labels: Record<string, string> = {
+      subscription: 'Membership',
+      supplement: 'Supplements',
+      lab_testing: 'Lab Testing',
+      service: 'Services',
+    };
+    
+    const colors: Record<string, string> = {
+      subscription: 'hsl(220, 70%, 50%)',
       supplement: 'hsl(280, 70%, 50%)',
-      service: 'hsl(200, 70%, 50%)',
+      lab_testing: 'hsl(180, 70%, 45%)',
+      service: 'hsl(45, 90%, 50%)',
     };
     
     return Object.entries(typeCounts).map(([type, amount]) => ({
-      name: type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      name: labels[type] || type,
       type,
       value: amount,
-      color: colors[type as keyof typeof colors] || 'hsl(var(--muted-foreground))',
+      color: colors[type] || 'hsl(var(--muted-foreground))',
     }));
-  }, [purchases]);
+  }, [filteredPurchases]);
 
   // Handle purchase type pie click
   const handlePurchaseTypeClick = useCallback((data: any) => {
@@ -673,6 +712,68 @@ export function CRMDashboard() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Revenue by Category */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-foreground">Revenue by Category</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {revenueByCategory.map((category) => (
+            <Card 
+              key={category.id} 
+              className="cursor-pointer hover:border-primary/50 transition-colors"
+              onClick={() => {
+                const relevantPurchases = filteredPurchases.filter(p => {
+                  if (category.id === 'service') {
+                    return p.purchase_type === 'service' || p.purchase_type === 'one_time';
+                  }
+                  return p.purchase_type === category.id;
+                });
+                const clientMap = new Map(clients.map(c => [c.id, c.full_name]));
+                
+                setDrillDownData({
+                  type: 'revenue',
+                  period: category.label,
+                  periodStart: dateRange.from,
+                  periodEnd: dateRange.to,
+                  purchases: relevantPurchases.map(p => ({
+                    id: p.id,
+                    product_name: p.product_name,
+                    amount: Number(p.amount),
+                    purchase_type: p.purchase_type,
+                    purchased_at: p.purchased_at,
+                    client_name: clientMap.get(p.client_id) || 'Unknown',
+                  })),
+                });
+                setDrillDownOpen(true);
+              }}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">{category.label}</p>
+                    <p className="text-2xl font-bold">${category.amount.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {stats.totalRevenue > 0 
+                        ? `${((category.amount / stats.totalRevenue) * 100).toFixed(1)}% of total`
+                        : '0% of total'
+                      }
+                    </p>
+                  </div>
+                  <div 
+                    className="h-12 w-12 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: `${category.color}20` }}
+                  >
+                    <category.icon 
+                      className="h-6 w-6" 
+                      style={{ color: category.color }}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
 
       {/* Charts Row 1 */}
