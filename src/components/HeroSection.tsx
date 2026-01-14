@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Play } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import DNAHelix from './DNAHelix';
 
@@ -55,10 +56,12 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Button variant="hero" size="xl" className="group">
-              Start Your Genetic Journey
-              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <Link to="/pricing">
+              <Button variant="hero" size="xl" className="group">
+                Start Your VitalityX Journey
+                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
             <Button variant="glass" size="xl" className="group">
               <Play size={18} className="mr-2" />
               Watch How It Works
