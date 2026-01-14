@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Search, MoreHorizontal, Mail, Phone, Tag, Eye, Pencil, Trash2, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -52,11 +52,18 @@ interface Coach {
   full_name: string;
 }
 
-export function ClientsList() {
+interface ClientsListProps {
+  filterStatus?: 'all' | 'active' | 'lead' | 'churned';
+}
+
+export function ClientsList({ filterStatus = 'all' }: ClientsListProps) {
   const { clients, loading, createClient, updateClient, deleteClient, fetchClients } = useCRMClients();
   const { role } = useAuth();
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  // Initialize status filter based on prop
+  const [statusFilter, setStatusFilter] = useState<string>(
+    filterStatus === 'active' ? 'customer' : filterStatus === 'all' ? 'all' : filterStatus
+  );
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<CRMClient | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -64,6 +71,17 @@ export function ClientsList() {
   const [assignCoachDialogOpen, setAssignCoachDialogOpen] = useState(false);
   const [clientToAssign, setClientToAssign] = useState<CRMClient | null>(null);
   const [selectedCoachId, setSelectedCoachId] = useState<string>('');
+
+  // Update status filter when prop changes
+  useEffect(() => {
+    if (filterStatus === 'active') {
+      setStatusFilter('customer');
+    } else if (filterStatus === 'all') {
+      setStatusFilter('all');
+    } else {
+      setStatusFilter(filterStatus);
+    }
+  }, [filterStatus]);
 
   const canAssignCoach = role === 'admin' || role === 'health_architect';
 
@@ -196,8 +214,16 @@ export function ClientsList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Clients</h1>
-          <p className="text-muted-foreground">Manage your client database</p>
+          <h1 className="text-3xl font-bold text-foreground">
+            {filterStatus === 'lead' ? 'Leads' : 
+             filterStatus === 'active' ? 'Active Clients' : 
+             filterStatus === 'churned' ? 'Cancelled Clients' : 'Clients'}
+          </h1>
+          <p className="text-muted-foreground">
+            {filterStatus === 'lead' ? 'Potential clients from contact forms and inquiries' : 
+             filterStatus === 'active' ? 'Currently active customers' : 
+             filterStatus === 'churned' ? 'Former clients who have cancelled' : 'Manage your client database'}
+          </p>
         </div>
         <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
           setIsAddDialogOpen(open);

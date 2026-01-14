@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star, Eye, Search, X } from 'lucide-react';
+import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star, Eye, Search, X, ChevronDown, ChevronRight, UserCheck, UserX, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Badge } from '@/components/ui/badge';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface CRMSidebarProps {
   activeTab: string;
@@ -14,8 +15,27 @@ interface CRMSidebarProps {
   userRole?: string | null;
 }
 
-// Grouped navigation structure
-const navSections = [
+// Sub-items for expandable menus
+interface NavSubItem {
+  id: string;
+  label: string;
+  icon: any;
+}
+
+interface NavItem {
+  id: string;
+  label: string;
+  icon: any;
+  subItems?: NavSubItem[];
+}
+
+interface NavSection {
+  label: string;
+  items: NavItem[];
+}
+
+// Grouped navigation structure with sub-items
+const navSections: NavSection[] = [
   {
     label: 'Overview',
     items: [
@@ -26,7 +46,16 @@ const navSections = [
   {
     label: 'Client Management',
     items: [
-      { id: 'clients', label: 'Clients', icon: Users },
+      { 
+        id: 'clients', 
+        label: 'Clients', 
+        icon: Users,
+        subItems: [
+          { id: 'clients-active', label: 'Active Clients', icon: UserCheck },
+          { id: 'clients-leads', label: 'Leads', icon: UserPlus },
+          { id: 'clients-cancelled', label: 'Cancelled', icon: UserX },
+        ]
+      },
       { id: 'documents', label: 'Documents', icon: FileText },
       { id: 'intake-forms', label: 'Intake Forms', icon: ClipboardList },
       { id: 'memberships', label: 'Memberships', icon: Crown },
@@ -50,8 +79,12 @@ const navSections = [
   },
 ];
 
-// Flatten for backwards compatibility
-const navItems = navSections.flatMap(section => section.items);
+// Flatten for backwards compatibility (include sub-items)
+const navItems = navSections.flatMap(section => 
+  section.items.flatMap(item => 
+    item.subItems ? [item, ...item.subItems] : [item]
+  )
+);
 
 const roleLabels: Record<string, string> = {
   admin: 'Admin',
@@ -63,12 +96,26 @@ const roleLabels: Record<string, string> = {
 export function CRMSidebar({ activeTab, onTabChange, accessibleTabs, userRole }: CRMSidebarProps) {
   const { signOut, user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedItems, setExpandedItems] = useState<string[]>(['clients']); // Default expand clients
   
   // If no accessibleTabs provided, show all (backwards compatibility)
   const visibleTabs = accessibleTabs || navItems.map(item => item.id);
 
   const handleSignOut = async () => {
     await signOut();
+  };
+
+  const toggleExpanded = (itemId: string) => {
+    setExpandedItems(prev => 
+      prev.includes(itemId) 
+        ? prev.filter(id => id !== itemId)
+        : [...prev, itemId]
+    );
+  };
+
+  // Check if active tab is a sub-item of a given parent
+  const isSubItemActive = (item: NavItem) => {
+    return item.subItems?.some(sub => sub.id === activeTab) || false;
   };
 
   // Filter sections to only show items the user has access to and match search
@@ -79,7 +126,8 @@ export function CRMSidebar({ activeTab, onTabChange, accessibleTabs, userRole }:
         const hasAccess = visibleTabs.includes(item.id);
         const matchesSearch = searchQuery === '' || 
           item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          section.label.toLowerCase().includes(searchQuery.toLowerCase());
+          section.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.subItems?.some(sub => sub.label.toLowerCase().includes(searchQuery.toLowerCase()));
         return hasAccess && matchesSearch;
       }),
     }))
@@ -133,20 +181,87 @@ export function CRMSidebar({ activeTab, onTabChange, accessibleTabs, userRole }:
             
             {/* Section items */}
             <div className="space-y-1">
-              {section.items.map((item) => (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  className={cn(
-                    "w-full justify-start gap-3",
-                    activeTab === item.id && "bg-primary/10 text-primary"
-                  )}
-                  onClick={() => onTabChange(item.id)}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.label}
-                </Button>
-              ))}
+              {section.items.map((item) => {
+                const hasSubItems = item.subItems && item.subItems.length > 0;
+                const isExpanded = expandedItems.includes(item.id);
+                const isActive = activeTab === item.id || isSubItemActive(item);
+                
+                if (hasSubItems) {
+                  return (
+                    <Collapsible
+                      key={item.id}
+                      open={isExpanded}
+                      onOpenChange={() => toggleExpanded(item.id)}
+                    >
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className={cn(
+                            "w-full justify-between gap-3",
+                            isActive && "bg-primary/10 text-primary"
+                          )}
+                        >
+                          <span className="flex items-center gap-3">
+                            <item.icon className="h-4 w-4" />
+                            {item.label}
+                          </span>
+                          {isExpanded ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="pl-4 mt-1 space-y-1">
+                        {/* All clients option */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={cn(
+                            "w-full justify-start gap-3 text-sm",
+                            activeTab === item.id && "bg-primary/10 text-primary"
+                          )}
+                          onClick={() => onTabChange(item.id)}
+                        >
+                          <Users className="h-3 w-3" />
+                          All Clients
+                        </Button>
+                        {/* Sub-items */}
+                        {item.subItems?.map((subItem) => (
+                          <Button
+                            key={subItem.id}
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                              "w-full justify-start gap-3 text-sm",
+                              activeTab === subItem.id && "bg-primary/10 text-primary"
+                            )}
+                            onClick={() => onTabChange(subItem.id)}
+                          >
+                            <subItem.icon className="h-3 w-3" />
+                            {subItem.label}
+                          </Button>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  );
+                }
+                
+                return (
+                  <Button
+                    key={item.id}
+                    variant="ghost"
+                    className={cn(
+                      "w-full justify-start gap-3",
+                      activeTab === item.id && "bg-primary/10 text-primary"
+                    )}
+                    onClick={() => onTabChange(item.id)}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                  </Button>
+                );
+              })}
             </div>
           </div>
         ))}
