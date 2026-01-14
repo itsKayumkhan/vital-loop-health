@@ -5,6 +5,7 @@ import { useCRMActivityLog } from '@/hooks/useCRMActivityLog';
 import { CRMSidebar } from '@/components/crm/CRMSidebar';
 import { CRMDashboard } from '@/components/crm/CRMDashboard';
 import { CoachDashboard } from '@/components/crm/CoachDashboard';
+import { CoachPerformance } from '@/components/crm/CoachPerformance';
 import { ClientsList } from '@/components/crm/ClientsList';
 import { MembershipsList } from '@/components/crm/MembershipsList';
 import { PurchasesList } from '@/components/crm/PurchasesList';
@@ -40,6 +41,7 @@ export default function EmbedCRM() {
         purchases: { action: 'view_purchases', resourceType: 'purchase' },
         documents: { action: 'view_documents', resourceType: 'document' },
         campaigns: { action: 'view_campaigns', resourceType: 'campaign' },
+        'coach-performance': { action: 'view_dashboard', resourceType: 'dashboard' },
         'activity-log': { action: 'view_activity_log', resourceType: 'activity_log' },
         'role-management': { action: 'view_clients', resourceType: 'client' },
       };
@@ -57,7 +59,7 @@ export default function EmbedCRM() {
   // Determine which tabs the user can access based on role
   const getAccessibleTabs = () => {
     if (role === 'admin') {
-      return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'activity-log', 'role-management'];
+      return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'coach-performance', 'activity-log', 'role-management'];
     }
     if (role === 'health_architect') {
       return ['dashboard', 'clients', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns'];
@@ -194,6 +196,8 @@ export default function EmbedCRM() {
         return <DocumentsList />;
       case 'campaigns':
         return <CampaignsList />;
+      case 'coach-performance':
+        return <CoachPerformance />;
       case 'activity-log':
         return <ActivityLogList />;
       case 'role-management':
