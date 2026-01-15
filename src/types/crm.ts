@@ -4,6 +4,12 @@ export type PurchaseType = 'subscription' | 'one_time' | 'supplement' | 'service
 export type DocumentType = 'contract' | 'lab_results' | 'health_record' | 'invoice' | 'other';
 export type MarketingStatus = 'lead' | 'prospect' | 'customer' | 'churned' | 'vip';
 
+// New program-specific types
+export type ProgramType = 'wellness' | 'sleep' | 'mental_performance' | 'bundle';
+export type SleepMembershipTier = 'foundational' | 'enhanced' | 'premium';
+export type MentalPerformanceMembershipTier = 'cognitive_foundations' | 'performance_optimization' | 'elite_cognition';
+export type BundleMembershipTier = 'essential_recovery' | 'performance_recovery' | 'elite_recovery';
+
 export interface CRMClient {
   id: string;
   user_id: string | null;
@@ -42,6 +48,11 @@ export interface CRMMembership {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  // New program-specific fields
+  program_type: ProgramType;
+  sleep_tier: SleepMembershipTier | null;
+  mental_performance_tier: MentalPerformanceMembershipTier | null;
+  bundle_tier: BundleMembershipTier | null;
 }
 
 export interface CRMPurchase {

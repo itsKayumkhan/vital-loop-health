@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback, useEffect } from 'react';
-import { Users, Crown, TrendingUp, UserPlus, DollarSign, ArrowUp, ArrowDown, Minus, RefreshCw, UserMinus, AlertTriangle, Clock, CheckCircle, Calendar } from 'lucide-react';
+import { Users, Crown, TrendingUp, UserPlus, DollarSign, ArrowUp, ArrowDown, Minus, RefreshCw, UserMinus, AlertTriangle, Clock, CheckCircle, Calendar, Brain, Moon, Package } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCRMClients, useCRMMemberships, useCRMPurchases } from '@/hooks/useCRM';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -179,6 +179,29 @@ export function CRMDashboard() {
         mrrByTier[m.tier as keyof typeof mrrByTier] += Number(m.monthly_price || 0);
       }
     });
+
+    // Calculate MRR by program type
+    const mrrByProgram = {
+      wellness: 0,
+      sleep: 0,
+      mental_performance: 0,
+      bundle: 0,
+    };
+
+    const membersByProgram = {
+      wellness: 0,
+      sleep: 0,
+      mental_performance: 0,
+      bundle: 0,
+    };
+
+    activeMemberships.forEach(m => {
+      const programType = (m as any).program_type || 'wellness';
+      if (programType in mrrByProgram) {
+        mrrByProgram[programType as keyof typeof mrrByProgram] += Number(m.monthly_price || 0);
+        membersByProgram[programType as keyof typeof membersByProgram]++;
+      }
+    });
     
     // Calculate projected annual revenue
     const projectedAnnual = currentMRR * 12;
@@ -186,6 +209,8 @@ export function CRMDashboard() {
     return {
       currentMRR,
       mrrByTier,
+      mrrByProgram,
+      membersByProgram,
       projectedAnnual,
       activeMemberCount: activeMemberships.length,
       avgRevenuePerMember: activeMemberships.length > 0 ? currentMRR / activeMemberships.length : 0,
@@ -1014,6 +1039,50 @@ export function CRMDashboard() {
           </Card>
         </div>
 
+        {/* Program Type MRR Breakdown */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="border-l-4 border-l-amber-500">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Crown className="h-5 w-5 text-amber-500" />
+                <p className="text-sm font-medium">Wellness</p>
+              </div>
+              <p className="text-2xl font-bold">${mrrStats.mrrByProgram.wellness.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">{mrrStats.membersByProgram.wellness} active members</p>
+            </CardContent>
+          </Card>
+          <Card className="border-l-4 border-l-indigo-500">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Moon className="h-5 w-5 text-indigo-500" />
+                <p className="text-sm font-medium">Sleep</p>
+              </div>
+              <p className="text-2xl font-bold">${mrrStats.mrrByProgram.sleep.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">{mrrStats.membersByProgram.sleep} active members</p>
+            </CardContent>
+          </Card>
+          <Card className="border-l-4 border-l-emerald-500">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Brain className="h-5 w-5 text-emerald-500" />
+                <p className="text-sm font-medium">Mental Performance</p>
+              </div>
+              <p className="text-2xl font-bold">${mrrStats.mrrByProgram.mental_performance.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">{mrrStats.membersByProgram.mental_performance} active members</p>
+            </CardContent>
+          </Card>
+          <Card className="border-l-4 border-l-purple-500">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Package className="h-5 w-5 text-purple-500" />
+                <p className="text-sm font-medium">Recovery Bundles</p>
+              </div>
+              <p className="text-2xl font-bold">${mrrStats.mrrByProgram.bundle.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">{mrrStats.membersByProgram.bundle} active members</p>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* MRR Trend Chart */}
         <Card>
           <CardHeader>
@@ -1071,7 +1140,61 @@ export function CRMDashboard() {
           </CardContent>
         </Card>
 
-        {/* Churn Rate Tracking */}
+        {/* Program Type MRR Distribution Pie Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              MRR by Program Type
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">Revenue distribution across program types</p>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[250px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: 'Wellness', value: mrrStats.mrrByProgram.wellness, color: 'hsl(45, 90%, 50%)' },
+                      { name: 'Sleep', value: mrrStats.mrrByProgram.sleep, color: 'hsl(240, 60%, 60%)' },
+                      { name: 'Mental Performance', value: mrrStats.mrrByProgram.mental_performance, color: 'hsl(160, 60%, 45%)' },
+                      { name: 'Recovery Bundles', value: mrrStats.mrrByProgram.bundle, color: 'hsl(280, 60%, 55%)' },
+                    ].filter(d => d.value > 0)}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    innerRadius={40}
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                    labelLine={true}
+                  >
+                    {[
+                      { name: 'Wellness', value: mrrStats.mrrByProgram.wellness, color: 'hsl(45, 90%, 50%)' },
+                      { name: 'Sleep', value: mrrStats.mrrByProgram.sleep, color: 'hsl(240, 60%, 60%)' },
+                      { name: 'Mental Performance', value: mrrStats.mrrByProgram.mental_performance, color: 'hsl(160, 60%, 45%)' },
+                      { name: 'Recovery Bundles', value: mrrStats.mrrByProgram.bundle, color: 'hsl(280, 60%, 55%)' },
+                    ].filter(d => d.value > 0).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                    formatter={(value: number) => [`$${value.toLocaleString()}`, 'MRR']}
+                  />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            {mrrStats.currentMRR === 0 && (
+              <p className="text-center text-muted-foreground text-sm">No active memberships to display</p>
+            )}
+          </CardContent>
+        </Card>
+
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" />
