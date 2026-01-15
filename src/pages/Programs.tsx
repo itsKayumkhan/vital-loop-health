@@ -544,12 +544,12 @@ const ProgramSection = ({
               <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-4">
                 <tier.icon className="w-8 h-8 text-secondary" />
               </div>
-              <h3 className="text-3xl font-bold mb-1">{tier.name}</h3>
-              <p className="text-secondary text-sm font-medium mb-2">{tier.tagline}</p>
-              <p className="text-muted-foreground text-sm h-[48px] flex items-start justify-center">{tier.description}</p>
+              <h3 className="text-2xl md:text-3xl font-bold mb-1 min-h-[36px] flex items-center justify-center">{tier.name}</h3>
+              <p className="text-secondary text-sm font-medium mb-2 min-h-[20px]">{tier.tagline}</p>
+              <p className="text-muted-foreground text-sm min-h-[60px]">{tier.description}</p>
             </div>
 
-            <div className="text-center mb-8 h-[88px] flex flex-col justify-start">
+            <div className="text-center mb-8 min-h-[88px]">
               {isAnnual ? (
                 <>
                   <div>
@@ -700,13 +700,13 @@ const BundleSection = ({ tiers }: { tiers: BundleTier[] }) => {
               <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-4">
                 <tier.icon className="w-8 h-8 text-secondary" />
               </div>
-              <h3 className="text-3xl font-bold mb-1">{tier.name}</h3>
-              <p className="text-secondary text-sm font-medium mb-2">{tier.tagline}</p>
-              <p className="text-muted-foreground text-sm h-[48px] flex items-start justify-center">{tier.description}</p>
+              <h3 className="text-2xl md:text-3xl font-bold mb-1 min-h-[36px] flex items-center justify-center">{tier.name}</h3>
+              <p className="text-secondary text-sm font-medium mb-2 min-h-[20px]">{tier.tagline}</p>
+              <p className="text-muted-foreground text-sm min-h-[60px]">{tier.description}</p>
             </div>
 
             {/* Pricing with savings */}
-            <div className="text-center mb-6 h-[110px] flex flex-col justify-start">
+            <div className="text-center mb-6 min-h-[100px]">
               {isAnnual ? (
                 <>
                   <div>
