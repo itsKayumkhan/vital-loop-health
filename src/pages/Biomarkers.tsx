@@ -33,6 +33,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import BiomarkerQuiz from '@/components/BiomarkerQuiz';
 
 // Educational content about biomarkers
 const biomarkerEducation = [
@@ -363,6 +364,9 @@ const Biomarkers = () => {
             </div>
           </div>
         </section>
+
+        {/* Personalized Quiz */}
+        <BiomarkerQuiz />
 
         {/* Biomarker Categories - What Each Reveals */}
         <section className="py-16 md:py-24 bg-card/30">
