@@ -42,6 +42,7 @@ const navSections: NavSection[] = [
     items: [
       { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
       { id: 'coach-view', label: 'Coach View', icon: Eye },
+      { id: 'coach-tracking', label: 'Client Tracking', icon: Activity },
     ],
   },
   {

@@ -19,6 +19,7 @@ import { LeadConversionWorkflow } from '@/components/crm/LeadConversionWorkflow'
 import { RevenueForecast } from '@/components/crm/RevenueForecast';
 import { SleepProgramDashboard } from '@/components/sleep/SleepProgramDashboard';
 import { MentalPerformanceDashboard } from '@/components/mental/MentalPerformanceDashboard';
+import { CoachTrackingDashboard } from '@/components/crm/CoachTrackingDashboard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -72,13 +73,13 @@ export default function EmbedCRM() {
   // Determine which tabs the user can access based on role
   const getAccessibleTabs = () => {
     if (role === 'admin') {
-      return ['dashboard', 'coach-view', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'sleep-program', 'mental-program', 'revenue-forecast', 'coach-performance', 'satisfaction-surveys', 'activity-log', 'role-management'];
+      return ['dashboard', 'coach-view', 'coach-tracking', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'sleep-program', 'mental-program', 'revenue-forecast', 'coach-performance', 'satisfaction-surveys', 'activity-log', 'role-management'];
     }
     if (role === 'health_architect') {
-      return ['dashboard', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'sleep-program', 'mental-program', 'revenue-forecast', 'satisfaction-surveys'];
+      return ['dashboard', 'coach-tracking', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'sleep-program', 'mental-program', 'revenue-forecast', 'satisfaction-surveys'];
     }
     if (role === 'coach') {
-      return ['dashboard', 'clients', 'clients-active', 'intake-forms', 'documents', 'sleep-program', 'mental-program'];
+      return ['dashboard', 'coach-tracking', 'clients', 'clients-active', 'intake-forms', 'documents', 'sleep-program', 'mental-program'];
     }
     return [];
   };
@@ -200,6 +201,8 @@ export default function EmbedCRM() {
       case 'coach-view':
         // Allow admins to view the coach dashboard
         return <CoachDashboard />;
+      case 'coach-tracking':
+        return <CoachTrackingDashboard />;
       case 'clients':
         return <ClientsList filterStatus="all" />;
       case 'clients-active':
