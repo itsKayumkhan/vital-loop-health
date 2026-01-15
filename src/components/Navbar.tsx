@@ -9,9 +9,10 @@ import logo from '@/assets/vitalityx-logo.jpg';
 
 const navItems = [
   { name: 'Services', href: '/services', isPage: true },
-  { name: 'Why Us', href: '/why-us', isPage: true },
+  { name: 'Biomarkers', href: '/biomarkers', isPage: true },
   { name: 'Programs', href: '/programs', isPage: true },
   { name: 'Supplements', href: '/supplements', isPage: true },
+  { name: 'Why Us', href: '/why-us', isPage: true },
   { name: 'Contact', href: '/contact', isPage: true },
 ];
 

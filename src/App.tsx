@@ -14,6 +14,7 @@ import Supplements from "./pages/Supplements";
 import ProductDetail from "./pages/ProductDetail";
 import WhyUs from "./pages/WhyUs";
 import Contact from "./pages/Contact";
+import Biomarkers from "./pages/Biomarkers";
 import CGMIntakeForm from "./pages/CGMIntakeForm";
 import SleepIntakeForm from "./pages/SleepIntakeForm";
 import MentalIntakeForm from "./pages/MentalIntakeForm";
@@ -42,6 +43,7 @@ const App = () => (
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/programs" element={<Programs />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/biomarkers" element={<Biomarkers />} />
               <Route path="/supplements" element={<Supplements />} />
               <Route path="/supplements/:id" element={<ProductDetail />} />
               <Route path="/product/:handle" element={<ProductDetail />} />
