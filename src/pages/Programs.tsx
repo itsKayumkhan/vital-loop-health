@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield, Quote, Star } from 'lucide-react';
+import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield, Quote, Star, Package, Percent } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -10,6 +10,88 @@ import TestCatalog from '@/components/TestCatalog';
 import JourneyPathway from '@/components/JourneyPathway';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+
+// Recovery Bundle tiers combining Sleep + Mental Performance
+const recoveryBundleTiers = [
+  {
+    name: 'Essential Recovery',
+    tagline: 'Foundation Bundle',
+    description: 'Combine sleep foundations and cognitive essentials at a discounted rate for complete mind-body recovery.',
+    monthlyPrice: 249, // $149 + $149 = $298, save $49
+    originalPrice: 298,
+    icon: Package,
+    popular: false,
+    sleepTier: 'Foundational',
+    mentalTier: 'Cognitive Foundations',
+    features: [
+      'Full Sleep Foundational program',
+      'Full Cognitive Foundations program',
+      'Unified progress tracking dashboard',
+      'Cross-program insights & correlations',
+      'Combined weekly check-ins',
+      'Sleep-cognition optimization tips',
+      'Email support for both programs',
+    ],
+    crossBenefits: [
+      'See how sleep quality impacts next-day focus',
+      'Unified recommendations for sleep + cognition',
+    ],
+  },
+  {
+    name: 'Performance Recovery',
+    tagline: 'Optimization Bundle',
+    description: 'Advanced sleep and mental performance protocols with integrated coaching for peak daily performance.',
+    monthlyPrice: 449, // $279 + $279 = $558, save $109
+    originalPrice: 558,
+    icon: Zap,
+    popular: true,
+    sleepTier: 'Advanced',
+    mentalTier: 'Performance Optimization',
+    features: [
+      'Full Sleep Advanced program',
+      'Full Performance Optimization program',
+      'Bi-weekly integrated coaching sessions',
+      'Combined HRV & readiness analysis',
+      'Circadian-aligned focus protocols',
+      'Sleep + nootropic supplement stack',
+      'Stress resilience training',
+      'Priority support for both programs',
+    ],
+    crossBenefits: [
+      'Optimize deep sleep for memory consolidation',
+      'Time peak focus to your circadian rhythm',
+      'Combined supplement protocol synergies',
+    ],
+  },
+  {
+    name: 'Elite Recovery',
+    tagline: 'Total Mastery Bundle',
+    description: 'White-glove sleep and cognitive optimization with weekly expert sessions and advanced diagnostics.',
+    monthlyPrice: 749, // $449 + $449 = $898, save $149
+    originalPrice: 898,
+    icon: Shield,
+    popular: false,
+    sleepTier: 'Elite',
+    mentalTier: 'Elite Cognition',
+    features: [
+      'Full Sleep Elite program',
+      'Full Elite Cognition program',
+      'Weekly integrated coaching sessions',
+      'Advanced sleep + cognitive testing',
+      'Personalized recovery architecture',
+      'Executive performance protocols',
+      'Travel & high-stress optimization',
+      'VIP priority scheduling',
+      'Exclusive recovery masterclasses',
+    ],
+    crossBenefits: [
+      'Complete sleep-to-performance pipeline',
+      'Executive decision fatigue protocols',
+      'Burnout prevention with recovery focus',
+      'Travel protocols for both programs',
+    ],
+  },
+];
 
 // Testimonials data by program type
 const testimonials = {
@@ -89,6 +171,32 @@ const testimonials = {
       quote: 'Brain fog was killing my performance in meetings. The foundational protocols cleared the haze within 3 weeks. I feel sharp and present all day now.',
       metric: 'Zero brain fog',
       avatar: 'JB',
+    },
+  ],
+  bundle: [
+    {
+      name: 'Marcus T.',
+      role: 'Startup Founder',
+      tier: 'Performance Recovery',
+      quote: 'The bundle changed everything. Once my sleep improved, my focus during the day skyrocketed. The integrated coaching helped me see the connection between rest and peak performance.',
+      metric: '3x productivity',
+      avatar: 'MT',
+    },
+    {
+      name: 'Dr. Emily R.',
+      role: 'Surgeon',
+      tier: 'Elite Recovery',
+      quote: 'Operating with precision requires both restorative sleep and mental sharpness. The Elite bundle optimized both, and my colleagues noticed the difference in my decision-making.',
+      metric: 'Peak precision',
+      avatar: 'ER',
+    },
+    {
+      name: 'Kevin M.',
+      role: 'Investment Banker',
+      tier: 'Essential Recovery',
+      quote: 'I thought I could outwork my sleep issues. The bundle showed me that fixing sleep first made the mental performance gains actually stick. Wish I started here.',
+      metric: '50% less fatigue',
+      avatar: 'KM',
     },
   ],
 };
@@ -495,6 +603,204 @@ const ProgramSection = ({
   );
 };
 
+interface BundleTier {
+  name: string;
+  tagline: string;
+  description: string;
+  monthlyPrice: number;
+  originalPrice: number;
+  icon: React.ComponentType<{ className?: string }>;
+  popular: boolean;
+  sleepTier: string;
+  mentalTier: string;
+  features: string[];
+  crossBenefits: string[];
+}
+
+const BundleSection = ({ tiers }: { tiers: BundleTier[] }) => {
+  const [isAnnual, setIsAnnual] = useState(false);
+
+  const getAnnualTotal = (monthlyPrice: number) => {
+    return Math.round(monthlyPrice * 12 * 0.85);
+  };
+
+  const getAnnualOriginal = (originalPrice: number) => {
+    return Math.round(originalPrice * 12 * 0.85);
+  };
+
+  return (
+    <div className="py-12">
+      {/* Bundle value proposition */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="text-center mb-8 max-w-3xl mx-auto"
+      >
+        <div className="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+          <Percent className="w-4 h-4" />
+          Bundle & Save up to 17%
+        </div>
+        <p className="text-muted-foreground">
+          Sleep and mental performance are deeply connected. When you optimize both together, 
+          you unlock synergies that accelerate your results.
+        </p>
+      </motion.div>
+
+      {/* Billing Toggle */}
+      <div className="flex items-center justify-center gap-4 mb-12">
+        <span className={`font-medium transition-colors ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+          Monthly
+        </span>
+        <button
+          onClick={() => setIsAnnual(!isAnnual)}
+          className={`relative w-16 h-8 rounded-full transition-colors duration-300 ${
+            isAnnual ? 'bg-secondary' : 'bg-muted'
+          }`}
+        >
+          <span
+            className={`absolute top-1 w-6 h-6 rounded-full bg-background shadow-md transition-transform duration-300 ${
+              isAnnual ? 'translate-x-9' : 'translate-x-1'
+            }`}
+          />
+        </button>
+        <span className={`font-medium transition-colors ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+          Annual
+        </span>
+        {isAnnual && (
+          <span className="bg-secondary/20 text-secondary px-3 py-1 rounded-full text-sm font-semibold">
+            Save 15% more
+          </span>
+        )}
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
+        {tiers.map((tier, index) => (
+          <motion.div
+            key={tier.name}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.15 }}
+            className={`relative rounded-2xl p-8 transition-all duration-300 flex flex-col ${
+              tier.popular
+                ? 'bg-gradient-to-b from-secondary/20 to-primary/10 border-2 border-secondary shadow-glow'
+                : 'glass-card border-border/50 hover:border-secondary/30'
+            }`}
+          >
+            {tier.popular && (
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                <span className="bg-secondary text-secondary-foreground px-4 py-1.5 rounded-full text-sm font-semibold">
+                  Best Value
+                </span>
+              </div>
+            )}
+
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-4">
+                <tier.icon className="w-8 h-8 text-secondary" />
+              </div>
+              <h3 className="text-3xl font-bold mb-1">{tier.name}</h3>
+              <p className="text-secondary text-sm font-medium mb-3">{tier.tagline}</p>
+              <p className="text-muted-foreground text-sm min-h-[60px]">{tier.description}</p>
+            </div>
+
+            {/* Pricing with savings */}
+            <div className="text-center mb-6 h-[120px] flex flex-col justify-start">
+              {isAnnual ? (
+                <>
+                  <div>
+                    <span className="text-5xl font-bold text-foreground">${getAnnualTotal(tier.monthlyPrice).toLocaleString()}</span>
+                    <span className="text-muted-foreground">/year</span>
+                  </div>
+                  <p className="text-muted-foreground text-sm mt-1 line-through">
+                    ${getAnnualOriginal(tier.originalPrice).toLocaleString()}/year if purchased separately
+                  </p>
+                  <p className="text-secondary text-sm font-semibold">
+                    Total savings: ${(getAnnualOriginal(tier.originalPrice) - getAnnualTotal(tier.monthlyPrice)).toLocaleString()}/year
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <span className="text-5xl font-bold text-foreground">${tier.monthlyPrice}</span>
+                    <span className="text-muted-foreground">/month</span>
+                  </div>
+                  <p className="text-muted-foreground text-sm mt-1 line-through">
+                    ${tier.originalPrice}/mo if purchased separately
+                  </p>
+                  <p className="text-secondary text-sm font-semibold">
+                    Save ${tier.originalPrice - tier.monthlyPrice}/month
+                  </p>
+                </>
+              )}
+            </div>
+
+            {/* Included programs */}
+            <div className="bg-muted/30 rounded-xl p-4 mb-6">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Includes:</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <Moon className="w-4 h-4 text-secondary" />
+                  <span>Sleep {tier.sleepTier}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Brain className="w-4 h-4 text-secondary" />
+                  <span>Mental {tier.mentalTier}</span>
+                </div>
+              </div>
+            </div>
+
+            <ul className="space-y-3 mb-6 flex-grow">
+              {tier.features.map((feature) => (
+                <li key={feature} className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-foreground">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            {/* Cross-program benefits */}
+            <div className="border-t border-border/30 pt-4 mb-6">
+              <p className="text-xs font-semibold text-secondary uppercase tracking-wider mb-3 flex items-center gap-2">
+                <Zap className="w-3.5 h-3.5" />
+                Cross-Program Synergies
+              </p>
+              <ul className="space-y-2">
+                {tier.crossBenefits.map((benefit) => (
+                  <li key={benefit} className="flex items-start gap-2 text-xs text-muted-foreground">
+                    <ArrowRight className="w-3.5 h-3.5 text-secondary flex-shrink-0 mt-0.5" />
+                    <span>{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <Button
+              variant={tier.popular ? 'hero' : 'heroOutline'}
+              className="w-full mt-auto"
+              size="lg"
+            >
+              Get the Bundle
+            </Button>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Trust note */}
+      <motion.p
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        className="text-center text-muted-foreground text-sm mt-12"
+      >
+        Bundle programs include unified coaching, integrated tracking, and cross-program insights. 
+        Cancel anytime with no hidden fees.
+      </motion.p>
+    </div>
+  );
+};
+
 const TestimonialsSection = ({ testimonials }: { testimonials: TestimonialType[] }) => {
   return (
     <div className="mt-20 pt-16 border-t border-border/30">
@@ -638,7 +944,7 @@ const Programs = () => {
             </motion.div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-3 mb-8 bg-muted/50 p-1 rounded-xl">
+              <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-4 mb-8 bg-muted/50 p-1 rounded-xl">
                 <TabsTrigger 
                   value="wellness" 
                   className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3"
@@ -659,6 +965,16 @@ const Programs = () => {
                 >
                   <Brain className="w-4 h-4" />
                   <span className="hidden sm:inline">Mental</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="bundle"
+                  className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3 relative"
+                >
+                  <Package className="w-4 h-4" />
+                  <span className="hidden sm:inline">Bundle</span>
+                  <span className="absolute -top-2 -right-1 bg-secondary text-secondary-foreground text-[10px] px-1.5 py-0.5 rounded-full font-semibold">
+                    Save
+                  </span>
                 </TabsTrigger>
               </TabsList>
 
@@ -706,6 +1022,21 @@ const Programs = () => {
                     </p>
                   </div>
                 )}
+                {activeTab === 'bundle' && (
+                  <div className="max-w-2xl mx-auto">
+                    <h3 className="text-2xl font-bold mb-3 flex items-center justify-center gap-3">
+                      <Package className="w-6 h-6 text-secondary" />
+                      Recovery Bundle
+                      <span className="bg-secondary/20 text-secondary text-sm px-3 py-1 rounded-full font-semibold">
+                        Save up to $149/mo
+                      </span>
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Combine Sleep + Mental Performance programs at a discounted rate. 
+                      Optimize your rest and cognition together for complete recovery.
+                    </p>
+                  </div>
+                )}
               </motion.div>
 
               <TabsContent value="wellness" className="mt-0">
@@ -721,6 +1052,11 @@ const Programs = () => {
               <TabsContent value="mental" className="mt-0">
                 <ProgramSection tiers={mentalProgramTiers} />
                 <TestimonialsSection testimonials={testimonials.mental} />
+              </TabsContent>
+
+              <TabsContent value="bundle" className="mt-0">
+                <BundleSection tiers={recoveryBundleTiers} />
+                <TestimonialsSection testimonials={testimonials.bundle} />
               </TabsContent>
             </Tabs>
           </div>
