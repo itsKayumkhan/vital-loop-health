@@ -549,7 +549,7 @@ const ProgramSection = ({
               <p className="text-muted-foreground text-sm min-h-[60px]">{tier.description}</p>
             </div>
 
-            <div className="text-center mb-8 min-h-[88px]">
+            <div className="text-center mb-6 min-h-[100px]">
               {isAnnual ? (
                 <>
                   <div>
@@ -706,7 +706,7 @@ const BundleSection = ({ tiers }: { tiers: BundleTier[] }) => {
             </div>
 
             {/* Pricing with savings */}
-            <div className="text-center mb-6 min-h-[100px]">
+            <div className="text-center mb-6 min-h-[120px]">
               {isAnnual ? (
                 <>
                   <div>
