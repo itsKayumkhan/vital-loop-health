@@ -14,6 +14,76 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_sleep_interventions: {
+        Row: {
+          assessment_id: string | null
+          assigned_by: string | null
+          client_id: string
+          compliance_score: number | null
+          created_at: string
+          effectiveness_rating: number | null
+          end_date: string | null
+          id: string
+          intervention_id: string
+          notes: string | null
+          start_date: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          assessment_id?: string | null
+          assigned_by?: string | null
+          client_id: string
+          compliance_score?: number | null
+          created_at?: string
+          effectiveness_rating?: number | null
+          end_date?: string | null
+          id?: string
+          intervention_id: string
+          notes?: string | null
+          start_date?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assessment_id?: string | null
+          assigned_by?: string | null
+          client_id?: string
+          compliance_score?: number | null
+          created_at?: string
+          effectiveness_rating?: number | null
+          end_date?: string | null
+          id?: string
+          intervention_id?: string
+          notes?: string | null
+          start_date?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_sleep_interventions_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "sleep_assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_sleep_interventions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_sleep_interventions_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "sleep_interventions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coach_intake_forms: {
         Row: {
           assigned_to: string | null
@@ -781,6 +851,275 @@ export type Database = {
         }
         Relationships: []
       }
+      sleep_assessments: {
+        Row: {
+          average_bedtime: string | null
+          average_wake_time: string | null
+          bedroom_temperature: string | null
+          caffeine_intake: string | null
+          client_id: string
+          coach_id: string | null
+          coach_notes: string | null
+          created_at: string
+          current_sleep_aids: string | null
+          difficulty_falling_asleep: number | null
+          difficulty_staying_asleep: number | null
+          exercise_timing: string | null
+          id: string
+          intervention_plan: Json | null
+          isi_score: number | null
+          last_caffeine_time: string | null
+          light_exposure: string | null
+          medications: string | null
+          noise_level: string | null
+          phenotype: Database["public"]["Enums"]["sleep_phenotype"] | null
+          primary_sleep_goals: string | null
+          program_tier: Database["public"]["Enums"]["sleep_program_tier"]
+          screen_time_before_bed: number | null
+          sleep_distress: number | null
+          sleep_environment_notes: string | null
+          sleep_interference_daily: number | null
+          sleep_quality_score: number | null
+          sleep_satisfaction: number | null
+          status: Database["public"]["Enums"]["sleep_assessment_status"]
+          stress_level: number | null
+          updated_at: string
+          waking_too_early: number | null
+        }
+        Insert: {
+          average_bedtime?: string | null
+          average_wake_time?: string | null
+          bedroom_temperature?: string | null
+          caffeine_intake?: string | null
+          client_id: string
+          coach_id?: string | null
+          coach_notes?: string | null
+          created_at?: string
+          current_sleep_aids?: string | null
+          difficulty_falling_asleep?: number | null
+          difficulty_staying_asleep?: number | null
+          exercise_timing?: string | null
+          id?: string
+          intervention_plan?: Json | null
+          isi_score?: number | null
+          last_caffeine_time?: string | null
+          light_exposure?: string | null
+          medications?: string | null
+          noise_level?: string | null
+          phenotype?: Database["public"]["Enums"]["sleep_phenotype"] | null
+          primary_sleep_goals?: string | null
+          program_tier?: Database["public"]["Enums"]["sleep_program_tier"]
+          screen_time_before_bed?: number | null
+          sleep_distress?: number | null
+          sleep_environment_notes?: string | null
+          sleep_interference_daily?: number | null
+          sleep_quality_score?: number | null
+          sleep_satisfaction?: number | null
+          status?: Database["public"]["Enums"]["sleep_assessment_status"]
+          stress_level?: number | null
+          updated_at?: string
+          waking_too_early?: number | null
+        }
+        Update: {
+          average_bedtime?: string | null
+          average_wake_time?: string | null
+          bedroom_temperature?: string | null
+          caffeine_intake?: string | null
+          client_id?: string
+          coach_id?: string | null
+          coach_notes?: string | null
+          created_at?: string
+          current_sleep_aids?: string | null
+          difficulty_falling_asleep?: number | null
+          difficulty_staying_asleep?: number | null
+          exercise_timing?: string | null
+          id?: string
+          intervention_plan?: Json | null
+          isi_score?: number | null
+          last_caffeine_time?: string | null
+          light_exposure?: string | null
+          medications?: string | null
+          noise_level?: string | null
+          phenotype?: Database["public"]["Enums"]["sleep_phenotype"] | null
+          primary_sleep_goals?: string | null
+          program_tier?: Database["public"]["Enums"]["sleep_program_tier"]
+          screen_time_before_bed?: number | null
+          sleep_distress?: number | null
+          sleep_environment_notes?: string | null
+          sleep_interference_daily?: number | null
+          sleep_quality_score?: number | null
+          sleep_satisfaction?: number | null
+          status?: Database["public"]["Enums"]["sleep_assessment_status"]
+          stress_level?: number | null
+          updated_at?: string
+          waking_too_early?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_assessments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sleep_interventions: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          duration_days: number | null
+          id: string
+          instructions: string | null
+          is_active: boolean | null
+          name: string
+          program_tiers:
+            | Database["public"]["Enums"]["sleep_program_tier"][]
+            | null
+          sequence_order: number | null
+          target_phenotypes:
+            | Database["public"]["Enums"]["sleep_phenotype"][]
+            | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          name: string
+          program_tiers?:
+            | Database["public"]["Enums"]["sleep_program_tier"][]
+            | null
+          sequence_order?: number | null
+          target_phenotypes?:
+            | Database["public"]["Enums"]["sleep_phenotype"][]
+            | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          name?: string
+          program_tiers?:
+            | Database["public"]["Enums"]["sleep_program_tier"][]
+            | null
+          sequence_order?: number | null
+          target_phenotypes?:
+            | Database["public"]["Enums"]["sleep_phenotype"][]
+            | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sleep_tracking_entries: {
+        Row: {
+          assessment_id: string | null
+          bedtime: string | null
+          client_id: string
+          created_at: string
+          daytime_focus_rating: number | null
+          deep_sleep_hours: number | null
+          entry_date: string
+          factors_affecting_sleep: string | null
+          hrv_score: number | null
+          id: string
+          light_sleep_hours: number | null
+          mood_rating: number | null
+          morning_energy_rating: number | null
+          night_awakenings: number | null
+          notes: string | null
+          recovery_score: number | null
+          rem_sleep_hours: number | null
+          resting_heart_rate: number | null
+          sleep_onset_minutes: number | null
+          sleep_quality_rating: number | null
+          stress_resilience_rating: number | null
+          time_awake_minutes: number | null
+          total_sleep_hours: number | null
+          updated_at: string
+          wake_time: string | null
+        }
+        Insert: {
+          assessment_id?: string | null
+          bedtime?: string | null
+          client_id: string
+          created_at?: string
+          daytime_focus_rating?: number | null
+          deep_sleep_hours?: number | null
+          entry_date?: string
+          factors_affecting_sleep?: string | null
+          hrv_score?: number | null
+          id?: string
+          light_sleep_hours?: number | null
+          mood_rating?: number | null
+          morning_energy_rating?: number | null
+          night_awakenings?: number | null
+          notes?: string | null
+          recovery_score?: number | null
+          rem_sleep_hours?: number | null
+          resting_heart_rate?: number | null
+          sleep_onset_minutes?: number | null
+          sleep_quality_rating?: number | null
+          stress_resilience_rating?: number | null
+          time_awake_minutes?: number | null
+          total_sleep_hours?: number | null
+          updated_at?: string
+          wake_time?: string | null
+        }
+        Update: {
+          assessment_id?: string | null
+          bedtime?: string | null
+          client_id?: string
+          created_at?: string
+          daytime_focus_rating?: number | null
+          deep_sleep_hours?: number | null
+          entry_date?: string
+          factors_affecting_sleep?: string | null
+          hrv_score?: number | null
+          id?: string
+          light_sleep_hours?: number | null
+          mood_rating?: number | null
+          morning_energy_rating?: number | null
+          night_awakenings?: number | null
+          notes?: string | null
+          recovery_score?: number | null
+          rem_sleep_hours?: number | null
+          resting_heart_rate?: number | null
+          sleep_onset_minutes?: number | null
+          sleep_quality_rating?: number | null
+          stress_resilience_rating?: number | null
+          time_awake_minutes?: number | null
+          total_sleep_hours?: number | null
+          updated_at?: string
+          wake_time?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_tracking_entries_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "sleep_assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sleep_tracking_entries_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -861,6 +1200,18 @@ export type Database = {
         | "supplement"
         | "service"
         | "lab_testing"
+      sleep_assessment_status:
+        | "pending"
+        | "in_progress"
+        | "completed"
+        | "reviewed"
+      sleep_phenotype:
+        | "stress_dominant"
+        | "circadian_shifted"
+        | "fragmented"
+        | "short_duration"
+        | "recovery_deficient"
+      sleep_program_tier: "foundational" | "advanced" | "elite"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1019,6 +1370,20 @@ export const Constants = {
         "service",
         "lab_testing",
       ],
+      sleep_assessment_status: [
+        "pending",
+        "in_progress",
+        "completed",
+        "reviewed",
+      ],
+      sleep_phenotype: [
+        "stress_dominant",
+        "circadian_shifted",
+        "fragmented",
+        "short_duration",
+        "recovery_deficient",
+      ],
+      sleep_program_tier: ["foundational", "advanced", "elite"],
     },
   },
 } as const
