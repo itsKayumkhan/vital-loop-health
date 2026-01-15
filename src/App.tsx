@@ -9,6 +9,12 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Pricing from "./pages/Pricing";
 import Services from "./pages/Services";
+import Programs from "./pages/Programs";
+import NutritionProgram from "./pages/programs/NutritionProgram";
+import PerformanceProgram from "./pages/programs/PerformanceProgram";
+import WellnessProgram from "./pages/programs/WellnessProgram";
+import MentalPerformanceProgram from "./pages/programs/MentalPerformanceProgram";
+import SleepProgram from "./pages/programs/SleepProgram";
 import Supplements from "./pages/Supplements";
 import ProductDetail from "./pages/ProductDetail";
 import WhyUs from "./pages/WhyUs";
@@ -38,6 +44,12 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/programs" element={<Programs />} />
+              <Route path="/programs/nutrition" element={<NutritionProgram />} />
+              <Route path="/programs/performance" element={<PerformanceProgram />} />
+              <Route path="/programs/wellness" element={<WellnessProgram />} />
+              <Route path="/programs/mental-performance" element={<MentalPerformanceProgram />} />
+              <Route path="/programs/sleep" element={<SleepProgram />} />
               <Route path="/supplements" element={<Supplements />} />
               <Route path="/supplements/:id" element={<ProductDetail />} />
               <Route path="/product/:handle" element={<ProductDetail />} />
