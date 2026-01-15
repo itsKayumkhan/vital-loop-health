@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield, Quote, Star, Package, Percent, User, Settings, BarChart3, RefreshCw, Lightbulb } from 'lucide-react';
+import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield, Quote, Star, Package, Percent, User, Settings, BarChart3, RefreshCw, Lightbulb, Dna, FlaskConical, Pill, Calendar, HeartPulse } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -685,6 +685,128 @@ const SleepOptimizationPathway = () => {
     </div>
   );
 };
+
+const LongevityProtocolInfo = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const biomarkerCategories = [
+    { 
+      icon: HeartPulse, 
+      title: 'Cardiovascular Optimization', 
+      markers: 'ApoB, Lp(a), hs-CRP, homocysteine, lipid panels' 
+    },
+    { 
+      icon: Activity, 
+      title: 'Metabolic Health', 
+      markers: 'Fasting insulin, HbA1c, HOMA-IR, adiponectin' 
+    },
+    { 
+      icon: Dna, 
+      title: 'Cellular Aging Markers', 
+      markers: 'Telomere length, DNA methylation age, oxidative stress' 
+    },
+    { 
+      icon: Brain, 
+      title: 'Cognitive & Hormonal', 
+      markers: 'BDNF, IGF-1, DHEA-S, free testosterone, thyroid panel' 
+    },
+    { 
+      icon: Shield, 
+      title: 'Inflammation & Immunity', 
+      markers: 'IL-6, TNF-alpha, neutrophil-to-lymphocyte ratio' 
+    },
+  ];
+
+  const interventions = [
+    { icon: FlaskConical, name: 'Precision supplementation protocols' },
+    { icon: Utensils, name: 'Longevity-focused nutrition strategies' },
+    { icon: Activity, name: 'Exercise prescription for healthspan' },
+    { icon: Pill, name: 'Pharmacological interventions (as appropriate)' },
+    { icon: Calendar, name: 'Quarterly biomarker reassessment' },
+    { icon: RefreshCw, name: 'Continuous protocol refinement' },
+  ];
+
+  return (
+    <div className="mt-4 border-t border-secondary/20 pt-4">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center gap-2 text-secondary text-sm font-medium hover:text-secondary/80 transition-colors w-full justify-center"
+      >
+        <Dna className="w-4 h-4" />
+        Longevity Protocol
+        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+      </button>
+      
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-4 bg-secondary/5 rounded-xl p-4 space-y-4">
+              {/* Header */}
+              <div className="text-center">
+                <h4 className="text-sm font-semibold text-foreground">
+                  Precision Longevity & Biomarker Optimization
+                </h4>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Extend healthspan through data-driven interventions targeting the biological mechanisms of aging
+                </p>
+              </div>
+
+              {/* Biomarker Categories */}
+              <div className="space-y-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Biomarker Panels</p>
+                {biomarkerCategories.map((category, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                      <category.icon className="w-3.5 h-3.5 text-secondary" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-foreground">{category.title}</p>
+                      <p className="text-xs text-muted-foreground">{category.markers}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Interventions */}
+              <div className="border-t border-secondary/10 pt-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Intervention Strategies</p>
+                <div className="grid grid-cols-1 gap-1.5">
+                  {interventions.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-2 text-xs text-foreground">
+                      <item.icon className="w-3 h-3 text-secondary" />
+                      <span>{item.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Approach */}
+              <div className="bg-muted/30 rounded-lg p-3">
+                <p className="text-xs text-muted-foreground text-center">
+                  <span className="text-secondary font-medium">Our Approach:</span> Bi-annual comprehensive lab panels, personalized intervention stacks, and continuous optimization based on your biological age trajectory
+                </p>
+              </div>
+
+              {/* CTA */}
+              <div className="pt-2 border-t border-secondary/10">
+                <Link to="/contact" className="flex items-center justify-center gap-2 text-xs text-secondary hover:text-secondary/80 font-medium transition-colors">
+                  <FileText className="w-3.5 h-3.5" />
+                  Schedule Longevity Consultation
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 interface ProgramTier {
   name: string;
   tagline: string;
@@ -702,7 +824,9 @@ const ProgramSection = ({
   showSleepProtocol = false,
   sleepProtocolTierName = '',
   showSleepPathway = false,
-  sleepPathwayTierName = ''
+  sleepPathwayTierName = '',
+  showLongevity = false,
+  longevityTierName = ''
 }: { 
   tiers: ProgramTier[];
   showCGM?: boolean;
@@ -711,6 +835,8 @@ const ProgramSection = ({
   sleepProtocolTierName?: string;
   showSleepPathway?: boolean;
   sleepPathwayTierName?: string;
+  showLongevity?: boolean;
+  longevityTierName?: string;
 }) => {
   const [isAnnual, setIsAnnual] = useState(false);
 
@@ -808,6 +934,7 @@ const ProgramSection = ({
             {showCGM && tier.name === cgmTierName && <CGMProtocolInfo />}
             {showSleepProtocol && tier.name === sleepProtocolTierName && <SleepProtocolInfo />}
             {showSleepPathway && tier.name === sleepPathwayTierName && <SleepOptimizationPathway />}
+            {showLongevity && tier.name === longevityTierName && <LongevityProtocolInfo />}
 
             <Button
               variant={tier.popular ? 'hero' : 'heroOutline'}
@@ -1276,7 +1403,9 @@ const Programs = () => {
                   showCGM 
                   cgmTierName="Elevate" 
                   showSleepPathway 
-                  sleepPathwayTierName="Transcend" 
+                  sleepPathwayTierName="Transcend"
+                  showLongevity
+                  longevityTierName="Transcend"
                 />
                 <TestimonialsSection testimonials={testimonials.wellness} />
               </TabsContent>
