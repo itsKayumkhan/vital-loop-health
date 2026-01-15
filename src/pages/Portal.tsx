@@ -16,7 +16,8 @@ import {
   User,
   LogOut,
   Mail,
-  Phone
+  Phone,
+  Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +28,7 @@ import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { coachForms } from '@/data/coachForms';
+import { ProgramAssessmentsTab } from '@/components/portal/ProgramAssessmentsTab';
 
 // Types
 interface Membership {
@@ -221,14 +223,23 @@ const Portal = () => {
               <div className="text-center py-12 text-muted-foreground">Loading your portal...</div>
             ) : (
               <Tabs defaultValue="overview" className="space-y-8">
-                <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 gap-2">
+                <TabsList className="grid w-full grid-cols-4 md:grid-cols-7 gap-2">
                   <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="programs">
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    Programs
+                  </TabsTrigger>
                   <TabsTrigger value="membership">Membership</TabsTrigger>
                   <TabsTrigger value="purchases">Purchases</TabsTrigger>
                   <TabsTrigger value="coaches">My Coaches</TabsTrigger>
                   <TabsTrigger value="forms">Intake Forms</TabsTrigger>
                   <TabsTrigger value="documents">Documents</TabsTrigger>
                 </TabsList>
+
+                {/* Programs Tab */}
+                <TabsContent value="programs">
+                  <ProgramAssessmentsTab />
+                </TabsContent>
 
                 {/* Overview Tab */}
                 <TabsContent value="overview" className="space-y-6">
