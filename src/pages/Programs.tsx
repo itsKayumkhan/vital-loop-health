@@ -964,7 +964,7 @@ const Programs = () => {
                   className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3"
                 >
                   <Brain className="w-4 h-4" />
-                  <span className="hidden sm:inline">Mental</span>
+                  <span className="hidden sm:inline">Mental Performance</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="bundle"
