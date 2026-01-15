@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield, Quote, Star, Package, Percent } from 'lucide-react';
+import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield, Quote, Star, Package, Percent, LayoutGrid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -10,6 +10,7 @@ import TestCatalog from '@/components/TestCatalog';
 import JourneyPathway from '@/components/JourneyPathway';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import ProgramComparison from '@/components/ProgramComparison';
 
 // Recovery Bundle tiers combining Sleep + Mental Performance
 const recoveryBundleTiers = [
@@ -944,7 +945,7 @@ const Programs = () => {
             </motion.div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="flex flex-wrap justify-center gap-2 w-full max-w-4xl mx-auto mb-8 bg-muted/50 p-2 rounded-xl sm:grid sm:grid-cols-4">
+              <TabsList className="flex flex-wrap justify-center gap-2 w-full max-w-5xl mx-auto mb-8 bg-muted/50 p-2 rounded-xl sm:grid sm:grid-cols-5">
                 <TabsTrigger 
                   value="wellness" 
                   className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3 px-4 text-sm"
@@ -975,6 +976,13 @@ const Programs = () => {
                   <span className="absolute -top-2 -right-1 bg-secondary text-secondary-foreground text-[10px] px-1.5 py-0.5 rounded-full font-semibold">
                     Save
                   </span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="compare"
+                  className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3 px-4 text-sm"
+                >
+                  <LayoutGrid className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden md:inline">Compare All</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -1037,6 +1045,18 @@ const Programs = () => {
                     </p>
                   </div>
                 )}
+                {activeTab === 'compare' && (
+                  <div className="max-w-2xl mx-auto">
+                    <h3 className="text-2xl font-bold mb-3 flex items-center justify-center gap-3">
+                      <LayoutGrid className="w-6 h-6 text-secondary" />
+                      Compare All Programs
+                    </h3>
+                    <p className="text-muted-foreground">
+                      View all membership tiers side-by-side to find the perfect fit 
+                      for your health optimization goals.
+                    </p>
+                  </div>
+                )}
               </motion.div>
 
               <TabsContent value="wellness" className="mt-0">
@@ -1057,6 +1077,10 @@ const Programs = () => {
               <TabsContent value="bundle" className="mt-0">
                 <BundleSection tiers={recoveryBundleTiers} />
                 <TestimonialsSection testimonials={testimonials.bundle} />
+              </TabsContent>
+
+              <TabsContent value="compare" className="mt-0">
+                <ProgramComparison />
               </TabsContent>
             </Tabs>
           </div>
