@@ -162,54 +162,6 @@ const biomarkerCategories = [
   },
 ];
 
-// Test packages with membership integration
-const testPackages = [
-  {
-    name: 'Foundation Panel',
-    price: 299,
-    description: 'Essential biomarkers for baseline health assessment',
-    markers: 35,
-    includes: [
-      'Complete metabolic panel',
-      'Basic hormone check',
-      'Vitamin D & B12',
-      'Thyroid screen',
-      'Inflammation markers',
-    ],
-    memberDiscount: 15,
-    popular: false,
-  },
-  {
-    name: 'Genetic Blueprint',
-    price: 499,
-    description: 'Comprehensive testing for performance and longevity',
-    markers: 75,
-    includes: [
-      'Everything in Foundation',
-      'Advanced lipid analysis',
-      'Complete hormone panel',
-      'Micronutrient status',
-      'Genetic methylation',
-    ],
-    memberDiscount: 20,
-    popular: true,
-  },
-  {
-    name: 'Elite Performance',
-    price: 999,
-    description: 'Complete biological blueprint for peak optimization',
-    markers: 120,
-    includes: [
-      'Everything in Optimization',
-      'Full genetic analysis',
-      'Microbiome mapping',
-      'Neurotransmitter panel',
-      'Advanced cardiac markers',
-    ],
-    memberDiscount: 25,
-    popular: false,
-  },
-];
 
 // Individual test categories
 const testCategories = [
@@ -476,77 +428,6 @@ const Biomarkers = () => {
           </div>
         </section>
 
-        {/* Test Packages with Membership Integration */}
-        <section className="py-16 md:py-24">
-          <div className="container mx-auto px-4 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Comprehensive <span className="text-gradient">Test Packages</span>
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Choose from our curated panels designed for different health goals.
-                Members receive exclusive pricing on all testing.
-              </p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              {testPackages.map((pkg, index) => (
-                <motion.div
-                  key={pkg.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="relative"
-                >
-                  {pkg.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                      <Badge className="bg-secondary text-secondary-foreground">
-                        Most Popular
-                      </Badge>
-                    </div>
-                  )}
-                  <Card className={`h-full glass-card ${pkg.popular ? 'border-secondary/50 glow-green' : 'border-border/50'}`}>
-                    <CardHeader className="text-center pb-4">
-                      <CardTitle className="text-xl mb-2">{pkg.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{pkg.description}</p>
-                      <div className="pt-4">
-                        <span className="text-4xl font-bold">${pkg.price}</span>
-                        <Badge variant="outline" className="ml-2 text-xs border-secondary/30 text-secondary">
-                          {pkg.markers}+ markers
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-secondary mt-2">
-                        Members save {pkg.memberDiscount}%
-                      </p>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-3 mb-6">
-                        {pkg.includes.map((item, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm">
-                            <Check className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
-                            <span className="text-muted-foreground">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <Button
-                        variant={pkg.popular ? 'hero' : 'heroOutline'}
-                        className="w-full"
-                      >
-                        Select Package
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* Individual Tests Accordion */}
         <section className="py-16 md:py-24 bg-card/30">
