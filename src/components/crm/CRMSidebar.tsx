@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star, Eye, Search, X, ChevronDown, ChevronRight, UserCheck, UserX, UserPlus, GitBranch } from 'lucide-react';
+import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star, Eye, Search, X, ChevronDown, ChevronRight, UserCheck, UserX, UserPlus, GitBranch, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -66,6 +66,7 @@ const navSections: NavSection[] = [
   {
     label: 'Analytics',
     items: [
+      { id: 'revenue-forecast', label: 'Revenue Forecast', icon: TrendingUp },
       { id: 'activity-log', label: 'Activity Log', icon: Activity },
       { id: 'coach-performance', label: 'Coach Performance', icon: BarChart3 },
       { id: 'satisfaction-surveys', label: 'Satisfaction Surveys', icon: Star },
