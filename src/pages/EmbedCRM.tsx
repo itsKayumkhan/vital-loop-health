@@ -17,6 +17,7 @@ import { ActivityLogList } from '@/components/crm/ActivityLogList';
 import { RoleManagement } from '@/components/crm/RoleManagement';
 import { LeadConversionWorkflow } from '@/components/crm/LeadConversionWorkflow';
 import { RevenueForecast } from '@/components/crm/RevenueForecast';
+import { SleepProgramDashboard } from '@/components/sleep/SleepProgramDashboard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,6 +52,7 @@ export default function EmbedCRM() {
         campaigns: { action: 'view_campaigns', resourceType: 'campaign' },
         'coach-performance': { action: 'view_dashboard', resourceType: 'dashboard' },
         'revenue-forecast': { action: 'view_dashboard', resourceType: 'dashboard' },
+        'sleep-program': { action: 'view_dashboard', resourceType: 'dashboard' },
         'activity-log': { action: 'view_activity_log', resourceType: 'activity_log' },
         'role-management': { action: 'view_clients', resourceType: 'client' },
       };
@@ -68,13 +70,13 @@ export default function EmbedCRM() {
   // Determine which tabs the user can access based on role
   const getAccessibleTabs = () => {
     if (role === 'admin') {
-      return ['dashboard', 'coach-view', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'revenue-forecast', 'coach-performance', 'satisfaction-surveys', 'activity-log', 'role-management'];
+      return ['dashboard', 'coach-view', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'sleep-program', 'revenue-forecast', 'coach-performance', 'satisfaction-surveys', 'activity-log', 'role-management'];
     }
     if (role === 'health_architect') {
-      return ['dashboard', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'revenue-forecast', 'satisfaction-surveys'];
+      return ['dashboard', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'sleep-program', 'revenue-forecast', 'satisfaction-surveys'];
     }
     if (role === 'coach') {
-      return ['dashboard', 'clients', 'clients-active', 'intake-forms', 'documents'];
+      return ['dashboard', 'clients', 'clients-active', 'intake-forms', 'documents', 'sleep-program'];
     }
     return [];
   };
@@ -220,6 +222,8 @@ export default function EmbedCRM() {
         return <CoachPerformance />;
       case 'revenue-forecast':
         return <RevenueForecast />;
+      case 'sleep-program':
+        return <SleepProgramDashboard />;
       case 'satisfaction-surveys':
         return <SatisfactionSurveysList />;
       case 'activity-log':
