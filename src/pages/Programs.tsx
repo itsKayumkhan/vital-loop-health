@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield } from 'lucide-react';
+import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield, Quote, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -9,6 +9,98 @@ import Footer from '@/components/Footer';
 import TestCatalog from '@/components/TestCatalog';
 import JourneyPathway from '@/components/JourneyPathway';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+
+// Testimonials data by program type
+const testimonials = {
+  wellness: [
+    {
+      name: 'Michael R.',
+      role: 'Tech Executive',
+      tier: 'Elevate',
+      quote: 'The CGM insights were a game-changer. I discovered my glucose was spiking after my usual breakfast, and the nutrition coaching helped me optimize my morning routine. Energy levels are through the roof now.',
+      metric: '40% more energy',
+      avatar: 'MR',
+    },
+    {
+      name: 'Sarah K.',
+      role: 'Entrepreneur',
+      tier: 'Transcend',
+      quote: 'Having a dedicated Health Architect who knows my entire health picture is invaluable. My labs improved across the board, and I feel 10 years younger. This is the future of healthcare.',
+      metric: 'All markers optimal',
+      avatar: 'SK',
+    },
+    {
+      name: 'David L.',
+      role: 'Attorney',
+      tier: 'Ignite',
+      quote: 'I was skeptical at first, but after 90 days my cholesterol dropped significantly and I lost 15 pounds without feeling like I was on a diet. The personalized protocol made all the difference.',
+      metric: '15 lbs lost',
+      avatar: 'DL',
+    },
+  ],
+  sleep: [
+    {
+      name: 'Jennifer M.',
+      role: 'Healthcare Professional',
+      tier: 'Advanced',
+      quote: 'After years of struggling with insomnia, the sleep phenotype analysis revealed I was circadian-shifted. The personalized protocol helped me fall asleep in under 20 minutes for the first time in years.',
+      metric: '20 min to sleep',
+      avatar: 'JM',
+    },
+    {
+      name: 'Robert T.',
+      role: 'Shift Worker',
+      tier: 'Elite',
+      quote: 'Working nights destroyed my sleep. The Elite program gave me a complete circadian reset protocol. My HRV improved by 30% and I actually feel rested on my days off now.',
+      metric: '30% HRV increase',
+      avatar: 'RT',
+    },
+    {
+      name: 'Amanda P.',
+      role: 'New Parent',
+      tier: 'Foundational',
+      quote: 'Even with a baby, the sleep hygiene protocols helped me maximize the sleep I could get. My morning energy went from a 3 to a 7. Life-changing during this season.',
+      metric: '2x energy levels',
+      avatar: 'AP',
+    },
+  ],
+  mental: [
+    {
+      name: 'Chris H.',
+      role: 'Software Engineer',
+      tier: 'Performance Optimization',
+      quote: 'My focus was scattered before the program. Now I can do 4-hour deep work blocks without distraction. The flow state protocols and supplement stack were exactly what I needed.',
+      metric: '4hr focus blocks',
+      avatar: 'CH',
+    },
+    {
+      name: 'Lisa W.',
+      role: 'Creative Director',
+      tier: 'Elite Cognition',
+      quote: 'The cognitive assessment pinpointed my stress reactivity patterns. After 8 weeks, my team noticed I was calmer under pressure and my creative output doubled.',
+      metric: '2x creative output',
+      avatar: 'LW',
+    },
+    {
+      name: 'James B.',
+      role: 'Sales Executive',
+      tier: 'Cognitive Foundations',
+      quote: 'Brain fog was killing my performance in meetings. The foundational protocols cleared the haze within 3 weeks. I feel sharp and present all day now.',
+      metric: 'Zero brain fog',
+      avatar: 'JB',
+    },
+  ],
+};
+
+type TestimonialType = {
+  name: string;
+  role: string;
+  tier: string;
+  quote: string;
+  metric: string;
+  avatar: string;
+};
 
 const membershipTiers = [
   {
@@ -403,6 +495,77 @@ const ProgramSection = ({
   );
 };
 
+const TestimonialsSection = ({ testimonials }: { testimonials: TestimonialType[] }) => {
+  return (
+    <div className="mt-20 pt-16 border-t border-border/30">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="text-center mb-12"
+      >
+        <h3 className="text-2xl md:text-3xl font-bold mb-3">
+          Real Results from <span className="text-gradient">Real Members</span>
+        </h3>
+        <p className="text-muted-foreground max-w-xl mx-auto">
+          Hear from people who have transformed their health with our programs.
+        </p>
+      </motion.div>
+
+      <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        {testimonials.map((testimonial, index) => (
+          <motion.div
+            key={testimonial.name}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 }}
+            className="relative glass-card rounded-2xl p-6 border border-border/50 hover:border-secondary/30 transition-all duration-300 group"
+          >
+            {/* Quote icon */}
+            <div className="absolute -top-3 -left-3 w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
+              <Quote className="w-5 h-5 text-secondary" />
+            </div>
+
+            {/* Stars */}
+            <div className="flex gap-1 mb-4 pt-2">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-4 h-4 fill-secondary text-secondary" />
+              ))}
+            </div>
+
+            {/* Quote text */}
+            <p className="text-foreground/90 text-sm leading-relaxed mb-6">
+              "{testimonial.quote}"
+            </p>
+
+            {/* Metric badge */}
+            <div className="mb-6">
+              <span className="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-3 py-1.5 rounded-full text-xs font-semibold">
+                <TrendingUp className="w-3.5 h-3.5" />
+                {testimonial.metric}
+              </span>
+            </div>
+
+            {/* Author */}
+            <div className="flex items-center gap-3 pt-4 border-t border-border/30">
+              <Avatar className="w-10 h-10 bg-gradient-to-br from-secondary/20 to-primary/20">
+                <AvatarFallback className="bg-gradient-to-br from-secondary/20 to-primary/20 text-foreground font-semibold text-sm">
+                  {testimonial.avatar}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-semibold text-foreground text-sm">{testimonial.name}</p>
+                <p className="text-muted-foreground text-xs">{testimonial.role} • {testimonial.tier}</p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Programs = () => {
   const [activeTab, setActiveTab] = useState('wellness');
 
@@ -547,14 +710,17 @@ const Programs = () => {
 
               <TabsContent value="wellness" className="mt-0">
                 <ProgramSection tiers={membershipTiers} showCGM cgmTierName="Elevate" />
+                <TestimonialsSection testimonials={testimonials.wellness} />
               </TabsContent>
 
               <TabsContent value="sleep" className="mt-0">
                 <ProgramSection tiers={sleepProgramTiers} />
+                <TestimonialsSection testimonials={testimonials.sleep} />
               </TabsContent>
 
               <TabsContent value="mental" className="mt-0">
                 <ProgramSection tiers={mentalProgramTiers} />
+                <TestimonialsSection testimonials={testimonials.mental} />
               </TabsContent>
             </Tabs>
           </div>
