@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star, Eye, Search, X, ChevronDown, ChevronRight, UserCheck, UserX, UserPlus, GitBranch, TrendingUp } from 'lucide-react';
+import { Users, FileText, ShoppingCart, Crown, Megaphone, LayoutDashboard, ArrowLeft, ClipboardList, LogOut, Shield, Activity, UserCog, BarChart3, Star, Eye, Search, X, ChevronDown, ChevronRight, UserCheck, UserX, UserPlus, GitBranch, TrendingUp, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -61,6 +61,12 @@ const navSections: NavSection[] = [
       { id: 'intake-forms', label: 'Intake Forms', icon: ClipboardList },
       { id: 'memberships', label: 'Memberships', icon: Crown },
       { id: 'purchases', label: 'Purchases', icon: ShoppingCart },
+    ],
+  },
+  {
+    label: 'Programs',
+    items: [
+      { id: 'sleep-program', label: 'Sleep Optimization', icon: Moon },
     ],
   },
   {
