@@ -15,6 +15,8 @@ import ProductDetail from "./pages/ProductDetail";
 import WhyUs from "./pages/WhyUs";
 import Contact from "./pages/Contact";
 import CGMIntakeForm from "./pages/CGMIntakeForm";
+import SleepIntakeForm from "./pages/SleepIntakeForm";
+import MentalIntakeForm from "./pages/MentalIntakeForm";
 import Auth from "./pages/Auth";
 import Portal from "./pages/Portal";
 import CoachIntakeForm from "./pages/CoachIntakeForm";
@@ -46,6 +48,8 @@ const App = () => (
               <Route path="/why-us" element={<WhyUs />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/cgm-intake" element={<CGMIntakeForm />} />
+              <Route path="/sleep-assessment" element={<SleepIntakeForm />} />
+              <Route path="/mental-assessment" element={<MentalIntakeForm />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/portal" element={<ProtectedRoute><Portal /></ProtectedRoute>} />
               <Route path="/portal/admin" element={<ProtectedRoute requireRole="admin"><AdminPanel /></ProtectedRoute>} />
