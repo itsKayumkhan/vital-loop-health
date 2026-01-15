@@ -14,6 +14,76 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_mental_interventions: {
+        Row: {
+          assessment_id: string | null
+          assigned_by: string | null
+          client_id: string
+          compliance_score: number | null
+          created_at: string
+          effectiveness_rating: number | null
+          end_date: string | null
+          id: string
+          intervention_id: string
+          notes: string | null
+          start_date: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          assessment_id?: string | null
+          assigned_by?: string | null
+          client_id: string
+          compliance_score?: number | null
+          created_at?: string
+          effectiveness_rating?: number | null
+          end_date?: string | null
+          id?: string
+          intervention_id: string
+          notes?: string | null
+          start_date?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assessment_id?: string | null
+          assigned_by?: string | null
+          client_id?: string
+          compliance_score?: number | null
+          created_at?: string
+          effectiveness_rating?: number | null
+          end_date?: string | null
+          id?: string
+          intervention_id?: string
+          notes?: string | null
+          start_date?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_mental_interventions_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "mental_performance_assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_mental_interventions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_mental_interventions_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "mental_performance_interventions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_sleep_interventions: {
         Row: {
           assessment_id: string | null
@@ -818,6 +888,293 @@ export type Database = {
           },
         ]
       }
+      mental_performance_assessments: {
+        Row: {
+          afternoon_energy_dip: number | null
+          anxiety_frequency: number | null
+          brain_fog: number | null
+          caffeine_dependency: string | null
+          client_id: string
+          coach_id: string | null
+          coach_notes: string | null
+          cognitive_demands: string | null
+          cognitive_function_score: number | null
+          created_at: string
+          emotional_resilience: number | null
+          exercise_frequency: string | null
+          focus_difficulty: number | null
+          id: string
+          intervention_plan: Json | null
+          meditation_practice: boolean | null
+          memory_issues: number | null
+          mental_energy_score: number | null
+          mental_fatigue: number | null
+          mood_stability: number | null
+          morning_mental_clarity: number | null
+          motivation_level: number | null
+          nutrition_quality: number | null
+          peak_performance_hours: string | null
+          phenotype:
+            | Database["public"]["Enums"]["mental_performance_phenotype"]
+            | null
+          primary_mental_goals: string | null
+          processing_speed: number | null
+          program_tier: Database["public"]["Enums"]["mental_performance_tier"]
+          screen_time_hours: number | null
+          status: Database["public"]["Enums"]["mental_performance_status"]
+          stress_level: number | null
+          stress_resilience_score: number | null
+          task_completion_ability: number | null
+          updated_at: string
+          work_type: string | null
+        }
+        Insert: {
+          afternoon_energy_dip?: number | null
+          anxiety_frequency?: number | null
+          brain_fog?: number | null
+          caffeine_dependency?: string | null
+          client_id: string
+          coach_id?: string | null
+          coach_notes?: string | null
+          cognitive_demands?: string | null
+          cognitive_function_score?: number | null
+          created_at?: string
+          emotional_resilience?: number | null
+          exercise_frequency?: string | null
+          focus_difficulty?: number | null
+          id?: string
+          intervention_plan?: Json | null
+          meditation_practice?: boolean | null
+          memory_issues?: number | null
+          mental_energy_score?: number | null
+          mental_fatigue?: number | null
+          mood_stability?: number | null
+          morning_mental_clarity?: number | null
+          motivation_level?: number | null
+          nutrition_quality?: number | null
+          peak_performance_hours?: string | null
+          phenotype?:
+            | Database["public"]["Enums"]["mental_performance_phenotype"]
+            | null
+          primary_mental_goals?: string | null
+          processing_speed?: number | null
+          program_tier?: Database["public"]["Enums"]["mental_performance_tier"]
+          screen_time_hours?: number | null
+          status?: Database["public"]["Enums"]["mental_performance_status"]
+          stress_level?: number | null
+          stress_resilience_score?: number | null
+          task_completion_ability?: number | null
+          updated_at?: string
+          work_type?: string | null
+        }
+        Update: {
+          afternoon_energy_dip?: number | null
+          anxiety_frequency?: number | null
+          brain_fog?: number | null
+          caffeine_dependency?: string | null
+          client_id?: string
+          coach_id?: string | null
+          coach_notes?: string | null
+          cognitive_demands?: string | null
+          cognitive_function_score?: number | null
+          created_at?: string
+          emotional_resilience?: number | null
+          exercise_frequency?: string | null
+          focus_difficulty?: number | null
+          id?: string
+          intervention_plan?: Json | null
+          meditation_practice?: boolean | null
+          memory_issues?: number | null
+          mental_energy_score?: number | null
+          mental_fatigue?: number | null
+          mood_stability?: number | null
+          morning_mental_clarity?: number | null
+          motivation_level?: number | null
+          nutrition_quality?: number | null
+          peak_performance_hours?: string | null
+          phenotype?:
+            | Database["public"]["Enums"]["mental_performance_phenotype"]
+            | null
+          primary_mental_goals?: string | null
+          processing_speed?: number | null
+          program_tier?: Database["public"]["Enums"]["mental_performance_tier"]
+          screen_time_hours?: number | null
+          status?: Database["public"]["Enums"]["mental_performance_status"]
+          stress_level?: number | null
+          stress_resilience_score?: number | null
+          task_completion_ability?: number | null
+          updated_at?: string
+          work_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mental_performance_assessments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mental_performance_interventions: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          duration_days: number | null
+          id: string
+          instructions: string | null
+          is_active: boolean | null
+          name: string
+          program_tiers:
+            | Database["public"]["Enums"]["mental_performance_tier"][]
+            | null
+          sequence_order: number | null
+          target_phenotypes:
+            | Database["public"]["Enums"]["mental_performance_phenotype"][]
+            | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          name: string
+          program_tiers?:
+            | Database["public"]["Enums"]["mental_performance_tier"][]
+            | null
+          sequence_order?: number | null
+          target_phenotypes?:
+            | Database["public"]["Enums"]["mental_performance_phenotype"][]
+            | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          name?: string
+          program_tiers?:
+            | Database["public"]["Enums"]["mental_performance_tier"][]
+            | null
+          sequence_order?: number | null
+          target_phenotypes?:
+            | Database["public"]["Enums"]["mental_performance_phenotype"][]
+            | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mental_performance_tracking: {
+        Row: {
+          anxiety_level: number | null
+          assessment_id: string | null
+          caffeine_intake: number | null
+          client_id: string
+          created_at: string
+          deep_work_hours: number | null
+          distractions_count: number | null
+          entry_date: string
+          exercise_completed: boolean | null
+          factors_affecting_cognition: string | null
+          focus_rating: number | null
+          hrv_score: number | null
+          id: string
+          meditation_minutes: number | null
+          memory_rating: number | null
+          mental_clarity_rating: number | null
+          mental_energy_rating: number | null
+          mood_rating: number | null
+          nature_exposure_minutes: number | null
+          notes: string | null
+          peak_focus_time: string | null
+          productivity_rating: number | null
+          readiness_score: number | null
+          stress_level: number | null
+          tasks_completed: number | null
+          updated_at: string
+        }
+        Insert: {
+          anxiety_level?: number | null
+          assessment_id?: string | null
+          caffeine_intake?: number | null
+          client_id: string
+          created_at?: string
+          deep_work_hours?: number | null
+          distractions_count?: number | null
+          entry_date?: string
+          exercise_completed?: boolean | null
+          factors_affecting_cognition?: string | null
+          focus_rating?: number | null
+          hrv_score?: number | null
+          id?: string
+          meditation_minutes?: number | null
+          memory_rating?: number | null
+          mental_clarity_rating?: number | null
+          mental_energy_rating?: number | null
+          mood_rating?: number | null
+          nature_exposure_minutes?: number | null
+          notes?: string | null
+          peak_focus_time?: string | null
+          productivity_rating?: number | null
+          readiness_score?: number | null
+          stress_level?: number | null
+          tasks_completed?: number | null
+          updated_at?: string
+        }
+        Update: {
+          anxiety_level?: number | null
+          assessment_id?: string | null
+          caffeine_intake?: number | null
+          client_id?: string
+          created_at?: string
+          deep_work_hours?: number | null
+          distractions_count?: number | null
+          entry_date?: string
+          exercise_completed?: boolean | null
+          factors_affecting_cognition?: string | null
+          focus_rating?: number | null
+          hrv_score?: number | null
+          id?: string
+          meditation_minutes?: number | null
+          memory_rating?: number | null
+          mental_clarity_rating?: number | null
+          mental_energy_rating?: number | null
+          mood_rating?: number | null
+          nature_exposure_minutes?: number | null
+          notes?: string | null
+          peak_focus_time?: string | null
+          productivity_rating?: number | null
+          readiness_score?: number | null
+          stress_level?: number | null
+          tasks_completed?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mental_performance_tracking_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "mental_performance_assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mental_performance_tracking_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1194,6 +1551,21 @@ export type Database = {
       marketing_status: "lead" | "prospect" | "customer" | "churned" | "vip"
       membership_status: "active" | "paused" | "cancelled" | "expired"
       membership_tier: "free" | "essential" | "premium" | "elite"
+      mental_performance_phenotype:
+        | "focus_deficit"
+        | "memory_challenged"
+        | "stress_reactive"
+        | "energy_depleted"
+        | "mood_fluctuating"
+      mental_performance_status:
+        | "pending"
+        | "in_progress"
+        | "completed"
+        | "reviewed"
+      mental_performance_tier:
+        | "cognitive_foundations"
+        | "performance_optimization"
+        | "elite_cognition"
       purchase_type:
         | "subscription"
         | "one_time"
@@ -1363,6 +1735,24 @@ export const Constants = {
       marketing_status: ["lead", "prospect", "customer", "churned", "vip"],
       membership_status: ["active", "paused", "cancelled", "expired"],
       membership_tier: ["free", "essential", "premium", "elite"],
+      mental_performance_phenotype: [
+        "focus_deficit",
+        "memory_challenged",
+        "stress_reactive",
+        "energy_depleted",
+        "mood_fluctuating",
+      ],
+      mental_performance_status: [
+        "pending",
+        "in_progress",
+        "completed",
+        "reviewed",
+      ],
+      mental_performance_tier: [
+        "cognitive_foundations",
+        "performance_optimization",
+        "elite_cognition",
+      ],
       purchase_type: [
         "subscription",
         "one_time",
