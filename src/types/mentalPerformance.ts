@@ -198,6 +198,9 @@ export function getCognitiveSeverity(score: number) {
     || cognitiveSeverityLevels[cognitiveSeverityLevels.length - 1];
 }
 
+// Alias for compatibility
+export const getCognitiveFunctionLevel = getCognitiveSeverity;
+
 export function determineMentalPhenotype(assessment: Partial<MentalPerformanceAssessment>): MentalPerformancePhenotype | null {
   const focusScore = (assessment.focus_difficulty ?? 0) + (assessment.brain_fog ?? 0);
   const memoryScore = assessment.memory_issues ?? 0;

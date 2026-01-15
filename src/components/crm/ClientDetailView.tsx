@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { 
   User, Mail, Phone, MapPin, Calendar, Target, 
   FileText, ShoppingCart, Crown, MessageSquare, 
-  Plus, Upload, Download, Trash2, Pin
+  Plus, Upload, Download, Trash2, Pin, Moon, Brain
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,6 +34,8 @@ import {
   useCRMClientNotes 
 } from '@/hooks/useCRM';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ClientSleepProfile } from '@/components/sleep/ClientSleepProfile';
+import { ClientMentalProfile } from '@/components/mental/ClientMentalProfile';
 
 interface ClientDetailViewProps {
   client: CRMClient;
@@ -187,7 +189,7 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
 
       {/* Tabs */}
       <Tabs defaultValue="memberships" className="w-full">
-        <TabsList className="grid grid-cols-4 w-full">
+        <TabsList className="flex flex-wrap w-full h-auto gap-1">
           <TabsTrigger value="memberships" className="gap-2">
             <Crown className="h-4 w-4" />
             Memberships
@@ -203,6 +205,14 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
           <TabsTrigger value="notes" className="gap-2">
             <MessageSquare className="h-4 w-4" />
             Notes
+          </TabsTrigger>
+          <TabsTrigger value="sleep" className="gap-2">
+            <Moon className="h-4 w-4" />
+            Sleep
+          </TabsTrigger>
+          <TabsTrigger value="mental" className="gap-2">
+            <Brain className="h-4 w-4" />
+            Mental
           </TabsTrigger>
         </TabsList>
 
@@ -552,6 +562,16 @@ export function ClientDetailView({ client }: ClientDetailViewProps) {
               ))}
             </div>
           )}
+        </TabsContent>
+
+        {/* Sleep Tab */}
+        <TabsContent value="sleep">
+          <ClientSleepProfile clientId={client.id} clientName={client.full_name} />
+        </TabsContent>
+
+        {/* Mental Performance Tab */}
+        <TabsContent value="mental">
+          <ClientMentalProfile clientId={client.id} clientName={client.full_name} />
         </TabsContent>
       </Tabs>
     </div>
