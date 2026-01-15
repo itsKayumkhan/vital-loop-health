@@ -222,6 +222,7 @@ const testCategories = [
       { name: 'Methylation Genetics', description: 'MTHFR and methylation pathway analysis', price: 299 },
       { name: 'Detoxification Genes', description: 'Liver detox pathway genetic variants', price: 249 },
       { name: 'Nutrigenomics Panel', description: 'How your genes respond to nutrients', price: 349 },
+      { name: 'Athletic Performance DNA', description: 'Muscle fiber, recovery, and endurance genetics', price: 399 },
     ],
   },
   {
@@ -229,10 +230,13 @@ const testCategories = [
     name: 'Precision Labs',
     icon: Microscope,
     tests: [
-      { name: 'Complete Precision Panel', description: 'All precision lab markers for total health insight', price: 899 },
-      { name: 'Core Metabolic & Energy', description: 'Metabolic health and cellular energy production', price: 199 },
+      { name: 'Complete Precision Panel', description: 'Comprehensive analysis combining all precision lab markers for total health insight', price: 899 },
+      { name: 'Core Metabolic & Energy', description: 'Foundational markers for metabolic health and cellular energy production', price: 199 },
       { name: 'Inflammation & Immunity', description: 'Key inflammatory and immune system biomarkers', price: 179 },
-      { name: 'Thyroid Signal', description: 'Complete thyroid function assessment', price: 169 },
+      { name: 'Micronutrient & Mineral', description: 'Essential vitamins and minerals for optimal function', price: 189 },
+      { name: 'Thyroid Signal', description: 'Complete thyroid function and signaling assessment', price: 169 },
+      { name: 'Lipids & Cardiovascular Baseline', description: 'Advanced lipid analysis and heart health markers', price: 199 },
+      { name: 'Hormonal Signal', description: 'Key hormone levels and endocrine function markers', price: 219 },
     ],
   },
   {
@@ -241,9 +245,21 @@ const testCategories = [
     icon: Activity,
     tests: [
       { name: 'Complete Hormone Panel', description: 'Full male/female hormone assessment', price: 399 },
+      { name: 'Thyroid Complete', description: 'TSH, T3, T4, antibodies, and reverse T3', price: 199 },
       { name: 'Adrenal Stress Panel', description: 'Cortisol rhythm and DHEA levels', price: 249 },
       { name: 'Testosterone Optimization', description: 'Free, total, and bioavailable testosterone', price: 179 },
       { name: 'Female Hormone Cycle', description: 'Estrogen, progesterone, and cycle mapping', price: 279 },
+    ],
+  },
+  {
+    id: 'metabolic',
+    name: 'Metabolic Testing',
+    icon: Zap,
+    tests: [
+      { name: 'Advanced Lipid Panel', description: 'Beyond basic cholesterol—particle size and more', price: 199 },
+      { name: 'Insulin Resistance Panel', description: 'Fasting insulin, glucose, and HOMA-IR', price: 149 },
+      { name: 'Metabolic Syndrome Screen', description: 'Complete metabolic health assessment', price: 249 },
+      { name: 'Organic Acids Test', description: 'Cellular energy and mitochondrial function', price: 349 },
     ],
   },
   {
@@ -255,6 +271,39 @@ const testCategories = [
       { name: 'Food Sensitivity Panel', description: 'IgG reactions to 150+ foods', price: 349 },
       { name: 'Leaky Gut Assessment', description: 'Zonulin and intestinal permeability', price: 199 },
       { name: 'SIBO Breath Test', description: 'Small intestinal bacterial overgrowth', price: 249 },
+      { name: 'Digestive Function Panel', description: 'Enzymes, absorption, and inflammation markers', price: 299 },
+    ],
+  },
+  {
+    id: 'vitamin',
+    name: 'Vitamin & Mineral',
+    icon: Droplets,
+    tests: [
+      { name: 'Complete Vitamin Panel', description: 'All essential vitamins including D, B12, folate', price: 199 },
+      { name: 'Mineral & Electrolyte Panel', description: 'Magnesium, zinc, copper, selenium, and more', price: 179 },
+      { name: 'Iron Studies Complete', description: 'Ferritin, TIBC, iron saturation', price: 129 },
+      { name: 'Omega Fatty Acid Test', description: 'Omega-3/6 ratio and inflammation index', price: 149 },
+      { name: 'Antioxidant Status', description: 'Glutathione, CoQ10, and vitamin E levels', price: 199 },
+    ],
+  },
+  {
+    id: 'cardiovascular',
+    name: 'Cardiovascular',
+    icon: Heart,
+    tests: [
+      { name: 'Advanced Cardiac Panel', description: 'CRP, homocysteine, Lp(a), and ApoB', price: 299 },
+      { name: 'Inflammation Markers', description: 'hs-CRP, fibrinogen, and cytokines', price: 199 },
+      { name: 'Vascular Health Screen', description: 'Endothelial function and arterial health', price: 349 },
+    ],
+  },
+  {
+    id: 'brain',
+    name: 'Brain & Cognitive',
+    icon: Brain,
+    tests: [
+      { name: 'Neurotransmitter Panel', description: 'Serotonin, dopamine, GABA, and more', price: 349 },
+      { name: 'Brain Health Markers', description: 'BDNF, inflammation, and cognitive biomarkers', price: 299 },
+      { name: 'Heavy Metal Toxicity', description: 'Lead, mercury, arsenic, and cadmium levels', price: 249 },
     ],
   },
 ];
