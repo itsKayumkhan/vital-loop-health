@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import TestCatalog from '@/components/TestCatalog';
+
 import JourneyPathway from '@/components/JourneyPathway';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -1512,10 +1512,6 @@ const Programs = () => {
 
         {/* Journey Pathway - Step 1 & 2 */}
         <JourneyPathway />
-
-        {/* A La Carte Test Catalog */}
-        <TestCatalog />
-
         {/* Program Tabs */}
         <section className="py-24 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
