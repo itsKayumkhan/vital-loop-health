@@ -351,6 +351,7 @@ const mentalProgramTiers = [
       'Mindfulness technique library',
       'Cognitive exercise program',
       'Nutrition for brain health guide',
+      'Community forum access',
       'Email support',
     ],
   },
@@ -369,6 +370,7 @@ const mentalProgramTiers = [
       'Stress resilience training',
       'Flow state optimization',
       'Work environment design consultation',
+      'Monthly performance reviews',
       'Priority support response',
     ],
   },
@@ -1129,7 +1131,7 @@ const ProgramSection = ({
               <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-4">
                 <tier.icon className="w-8 h-8 text-secondary" />
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold mb-1 min-h-[36px] flex items-center justify-center">{tier.name}</h3>
+              <h3 className="text-xl md:text-2xl font-bold mb-1 min-h-[56px] flex items-center justify-center">{tier.name}</h3>
               <p className="text-secondary text-sm font-medium mb-2 min-h-[20px]">{tier.tagline}</p>
               <p className="text-muted-foreground text-sm min-h-[60px]">{tier.description}</p>
             </div>
