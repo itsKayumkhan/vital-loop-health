@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback, useEffect } from 'react';
-import { Users, Crown, TrendingUp, UserPlus, DollarSign, ArrowUp, ArrowDown, Minus, RefreshCw, UserMinus, AlertTriangle } from 'lucide-react';
+import { Users, Crown, TrendingUp, UserPlus, DollarSign, ArrowUp, ArrowDown, Minus, RefreshCw, UserMinus, AlertTriangle, Clock, CheckCircle, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCRMClients, useCRMMemberships, useCRMPurchases } from '@/hooks/useCRM';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,7 +20,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, eachWeekOfInterval, eachDayOfInterval, parseISO, isWithinInterval, differenceInDays } from 'date-fns';
+import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, eachWeekOfInterval, eachDayOfInterval, parseISO, isWithinInterval, differenceInDays, differenceInMonths } from 'date-fns';
 import { DateRangeFilter, DateRange, ComparisonRange } from './DateRangeFilter';
 import { ChartDrillDown, DrillDownData, DrillDownType } from './ChartDrillDown';
 import { SavedViewsManager } from './SavedViewsManager';
@@ -243,6 +243,75 @@ export function CRMDashboard() {
       pausedMemberships: memberships.filter(m => m.status === 'paused').length,
     };
   }, [memberships]);
+
+  // Calculate retention metrics
+  const retentionStats = useMemo(() => {
+    const now = new Date();
+    const activeMemberships = memberships.filter(m => m.status === 'active');
+    
+    // Calculate average tenure in months
+    const tenures = activeMemberships.map(m => {
+      const startDate = parseISO(m.start_date);
+      return differenceInMonths(now, startDate);
+    });
+    const avgTenure = tenures.length > 0 ? tenures.reduce((a, b) => a + b, 0) / tenures.length : 0;
+    
+    // Tenure distribution buckets
+    const tenureBuckets = {
+      '0-3 months': 0,
+      '3-6 months': 0,
+      '6-12 months': 0,
+      '12+ months': 0,
+    };
+    
+    tenures.forEach(tenure => {
+      if (tenure < 3) tenureBuckets['0-3 months']++;
+      else if (tenure < 6) tenureBuckets['3-6 months']++;
+      else if (tenure < 12) tenureBuckets['6-12 months']++;
+      else tenureBuckets['12+ months']++;
+    });
+    
+    // Retention rate = 100% - churn rate
+    const totalEverActive = activeMemberships.length + memberships.filter(m => m.status === 'cancelled' || m.status === 'expired').length;
+    const retentionRate = totalEverActive > 0 ? (activeMemberships.length / totalEverActive) * 100 : 100;
+    
+    // Monthly retention rate
+    const monthlyRetentionRate = 100 - (churnStats.monthlyChurnRate || 0);
+    
+    // Members up for renewal in next 30 days
+    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+    const upForRenewal = activeMemberships.filter(m => {
+      if (!m.renewal_date) return false;
+      const renewalDate = parseISO(m.renewal_date);
+      return isWithinInterval(renewalDate, { start: now, end: thirtyDaysFromNow });
+    });
+    
+    // Longest tenured member
+    const longestTenure = tenures.length > 0 ? Math.max(...tenures) : 0;
+    
+    // Renewal success rate (estimate based on active vs total that had renewal dates in past 90 days)
+    const ninetyDaysAgo = subMonths(now, 3);
+    const recentRenewals = memberships.filter(m => {
+      if (!m.renewal_date) return false;
+      const renewalDate = parseISO(m.renewal_date);
+      return isWithinInterval(renewalDate, { start: ninetyDaysAgo, end: now });
+    });
+    const successfulRenewals = recentRenewals.filter(m => m.status === 'active').length;
+    const renewalSuccessRate = recentRenewals.length > 0 
+      ? (successfulRenewals / recentRenewals.length) * 100 
+      : 100;
+    
+    return {
+      avgTenure,
+      tenureBuckets,
+      retentionRate,
+      monthlyRetentionRate,
+      upForRenewal: upForRenewal.length,
+      upForRenewalMRR: upForRenewal.reduce((sum, m) => sum + Number(m.monthly_price || 0), 0),
+      longestTenure,
+      renewalSuccessRate,
+    };
+  }, [memberships, churnStats.monthlyChurnRate]);
 
 
   const stats = useMemo(() => ({
@@ -1161,6 +1230,117 @@ export function CRMDashboard() {
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Retention Metrics */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-green-500" />
+            Retention Metrics
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-green-500/20 bg-gradient-to-br from-green-500/5 to-transparent">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Retention Rate</p>
+                    <p className="text-3xl font-bold text-green-500">{retentionStats.retentionRate.toFixed(1)}%</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {retentionStats.monthlyRetentionRate.toFixed(1)}% monthly
+                    </p>
+                  </div>
+                  <div className="h-12 w-12 rounded-lg bg-green-500/10 flex items-center justify-center">
+                    <CheckCircle className="h-6 w-6 text-green-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Avg Member Tenure</p>
+                    <p className="text-3xl font-bold">{retentionStats.avgTenure.toFixed(1)}</p>
+                    <p className="text-xs text-muted-foreground mt-1">months</p>
+                  </div>
+                  <Clock className="h-10 w-10 text-blue-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Up for Renewal</p>
+                    <p className="text-3xl font-bold text-amber-500">{retentionStats.upForRenewal}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      ${retentionStats.upForRenewalMRR.toLocaleString()} MRR at risk
+                    </p>
+                  </div>
+                  <Calendar className="h-10 w-10 text-amber-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Renewal Success</p>
+                    <p className="text-3xl font-bold text-green-500">{retentionStats.renewalSuccessRate.toFixed(0)}%</p>
+                    <p className="text-xs text-muted-foreground mt-1">Last 90 days</p>
+                  </div>
+                  <TrendingUp className="h-10 w-10 text-green-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Tenure Distribution */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5 text-blue-500" />
+                Member Tenure Distribution
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">How long members have been subscribed</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {Object.entries(retentionStats.tenureBuckets).map(([bucket, count]) => {
+                  const total = Object.values(retentionStats.tenureBuckets).reduce((a, b) => a + b, 0);
+                  const percentage = total > 0 ? (count / total) * 100 : 0;
+                  const colors: Record<string, string> = {
+                    '0-3 months': 'bg-blue-500',
+                    '3-6 months': 'bg-cyan-500',
+                    '6-12 months': 'bg-purple-500',
+                    '12+ months': 'bg-green-500',
+                  };
+                  return (
+                    <div key={bucket} className="text-center p-4 rounded-lg bg-muted/30">
+                      <div className={`w-full h-2 rounded-full bg-muted mb-3 overflow-hidden`}>
+                        <div 
+                          className={`h-full ${colors[bucket]} transition-all`} 
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                      <p className="text-2xl font-bold">{count}</p>
+                      <p className="text-xs text-muted-foreground">{bucket}</p>
+                      <p className="text-xs font-medium text-muted-foreground mt-1">{percentage.toFixed(0)}%</p>
+                    </div>
+                  );
+                })}
+              </div>
+              {retentionStats.longestTenure > 0 && (
+                <div className="mt-4 pt-4 border-t flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Longest active member tenure:</span>
+                  <span className="font-medium">{retentionStats.longestTenure} months</span>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
