@@ -219,7 +219,7 @@ const Services = () => {
         </section>
 
         {/* Specialist Coaches Section */}
-        <section className="py-16 lg:py-24">
+        <section className="py-16 lg:py-24 bg-gradient-to-b from-transparent via-secondary/5 to-transparent">
           <div className="container mx-auto px-4 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -245,51 +245,62 @@ const Services = () => {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
-              className="space-y-8"
+              className="grid md:grid-cols-2 gap-8"
             >
-              {coaches.map((coach, index) => (
+              {coaches.map((coach) => (
                 <motion.div
                   key={coach.title}
                   variants={itemVariants}
-                  className="glass-card rounded-2xl p-6 lg:p-10 hover:border-secondary/50 transition-all duration-500"
+                  className="group relative"
                 >
-                  <div className={`flex flex-col ${index % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-8 lg:gap-12 items-start`}>
-                    {/* Icon & Meta */}
-                    <div className="flex-shrink-0 lg:w-64">
-                      <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-br ${coach.color} flex items-center justify-center mb-4`}>
-                        <coach.icon className="w-8 h-8 lg:w-10 lg:h-10 text-white" />
+                  {/* Card with gradient border effect */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${coach.color} rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl`} />
+                  <div className="relative glass-card rounded-3xl p-8 h-full border-2 border-transparent hover:border-secondary/30 transition-all duration-500 flex flex-col">
+                    {/* Header with icon */}
+                    <div className="flex items-start gap-5 mb-6">
+                      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${coach.color} flex items-center justify-center flex-shrink-0 shadow-lg`}>
+                        <coach.icon className="w-8 h-8 text-white" />
                       </div>
-                      <span className="text-secondary text-xs font-bold tracking-widest uppercase block mb-1">
-                        {coach.tagline}
-                      </span>
-                      <h3 className="text-2xl lg:text-3xl font-bold mb-2">
-                        {coach.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground font-medium">
+                      <div>
+                        <span className="text-secondary text-xs font-bold tracking-widest uppercase block mb-1">
+                          {coach.tagline}
+                        </span>
+                        <h3 className="text-2xl font-bold">
+                          {coach.title}
+                        </h3>
+                      </div>
+                    </div>
+
+                    {/* Scope badge */}
+                    <div className="mb-5">
+                      <span className="inline-block px-4 py-2 rounded-full bg-secondary/10 text-secondary text-sm font-medium">
                         {coach.scope}
-                      </p>
+                      </span>
                     </div>
 
-                    {/* Content */}
-                    <div className="flex-1">
-                      <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                        {coach.description}
-                      </p>
-                      
-                      <div className="grid sm:grid-cols-2 gap-3 mb-6">
-                        {coach.differentiators.map((diff, i) => (
-                          <div key={i} className="flex items-start gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0 mt-1" />
-                            <span className="text-sm text-foreground">{diff}</span>
-                          </div>
-                        ))}
-                      </div>
+                    {/* Description */}
+                    <p className="text-muted-foreground leading-relaxed mb-6 flex-grow">
+                      {coach.description}
+                    </p>
 
-                      <Button variant="heroOutline" size="lg" className="group">
-                        Schedule a Session
-                        <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </Button>
+                    {/* Divider */}
+                    <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-6" />
+                    
+                    {/* Differentiators */}
+                    <div className="space-y-3 mb-6">
+                      {coach.differentiators.map((diff, i) => (
+                        <div key={i} className="flex items-start gap-3">
+                          <div className={`w-1.5 h-1.5 rounded-full bg-gradient-to-br ${coach.color} mt-2 flex-shrink-0`} />
+                          <span className="text-sm text-foreground">{diff}</span>
+                        </div>
+                      ))}
                     </div>
+
+                    {/* CTA */}
+                    <Button variant="heroOutline" size="lg" className="w-full group/btn mt-auto">
+                      Schedule a Session
+                      <ArrowRight className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </Button>
                   </div>
                 </motion.div>
               ))}
