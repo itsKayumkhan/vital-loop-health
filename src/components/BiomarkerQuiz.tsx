@@ -500,7 +500,16 @@ const BiomarkerQuiz = () => {
             </div>
 
             <div className="text-center space-y-4">
-              <Button variant="hero" size="lg">
+              <Button 
+                variant="hero" 
+                size="lg"
+                onClick={() => {
+                  const catalogSection = document.getElementById('test-catalog');
+                  if (catalogSection) {
+                    catalogSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+              >
                 View Full Test Catalog
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>

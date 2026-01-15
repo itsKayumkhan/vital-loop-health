@@ -434,7 +434,7 @@ const Biomarkers = () => {
 
 
         {/* Individual Tests Accordion */}
-        <section className="py-16 md:py-24 bg-card/30">
+        <section id="test-catalog" className="py-16 md:py-24 bg-card/30 scroll-mt-24">
           <div className="container mx-auto px-4 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
