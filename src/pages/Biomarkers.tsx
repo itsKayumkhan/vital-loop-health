@@ -180,8 +180,8 @@ const testPackages = [
     popular: false,
   },
   {
-    name: 'Optimization Panel',
-    price: 599,
+    name: 'Genetic Blueprint',
+    price: 499,
     description: 'Comprehensive testing for performance and longevity',
     markers: 75,
     includes: [
