@@ -464,6 +464,76 @@ const CGMProtocolInfo = () => {
   );
 };
 
+const SleepProtocolInfo = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const sleepSteps = [
+    { icon: FileText, title: 'Sleep Study Coordination', desc: 'At-home sleep study kit shipped with easy setup instructions' },
+    { icon: Activity, title: 'Data Collection', desc: 'Multi-night monitoring of sleep stages, breathing patterns, and HRV' },
+    { icon: TrendingUp, title: 'Advanced Analysis', desc: 'AI-powered analysis of sleep architecture and recovery metrics' },
+    { icon: Brain, title: 'Personalized Protocol', desc: 'Custom chronotype optimization and sleep environment recommendations' },
+    { icon: MessageSquare, title: 'Expert Debrief', desc: 'Weekly coaching sessions to implement and refine your sleep protocol' },
+  ];
+
+  return (
+    <div className="mt-4 border-t border-secondary/20 pt-4">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center gap-2 text-secondary text-sm font-medium hover:text-secondary/80 transition-colors w-full justify-center"
+      >
+        <Moon className="w-4 h-4" />
+        Sleep Optimization Protocol
+        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+      </button>
+      
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-4 bg-secondary/5 rounded-xl p-4 space-y-3">
+              <h4 className="text-sm font-semibold text-foreground text-center">
+                Complete Sleep Mastery Program
+              </h4>
+              <p className="text-xs text-muted-foreground text-center mb-4">
+                Advanced diagnostics and personalized protocols for optimal sleep performance
+              </p>
+              
+              <div className="space-y-3">
+                {sleepSteps.map((step, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                      <step.icon className="w-3.5 h-3.5 text-secondary" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-foreground">{step.title}</p>
+                      <p className="text-xs text-muted-foreground">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-secondary/10 space-y-3">
+                <p className="text-xs text-muted-foreground text-center">
+                  <span className="text-secondary font-medium">What you receive:</span> At-home sleep study kit, wearable data integration, 
+                  personalized sleep report, travel protocols, and weekly 1:1 coaching sessions
+                </p>
+                <Link to="/sleep-intake" className="flex items-center justify-center gap-2 text-xs text-secondary hover:text-secondary/80 font-medium transition-colors">
+                  <FileText className="w-3.5 h-3.5" />
+                  Complete Sleep Intake Form
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 interface ProgramTier {
   name: string;
   tagline: string;
@@ -477,11 +547,15 @@ interface ProgramTier {
 const ProgramSection = ({ 
   tiers, 
   showCGM = false,
-  cgmTierName = ''
+  cgmTierName = '',
+  showSleepProtocol = false,
+  sleepProtocolTierName = ''
 }: { 
   tiers: ProgramTier[];
   showCGM?: boolean;
   cgmTierName?: string;
+  showSleepProtocol?: boolean;
+  sleepProtocolTierName?: string;
 }) => {
   const [isAnnual, setIsAnnual] = useState(false);
 
@@ -577,6 +651,7 @@ const ProgramSection = ({
             </ul>
 
             {showCGM && tier.name === cgmTierName && <CGMProtocolInfo />}
+            {showSleepProtocol && tier.name === sleepProtocolTierName && <SleepProtocolInfo />}
 
             <Button
               variant={tier.popular ? 'hero' : 'heroOutline'}
@@ -1045,7 +1120,7 @@ const Programs = () => {
               </TabsContent>
 
               <TabsContent value="sleep" className="mt-0">
-                <ProgramSection tiers={sleepProgramTiers} />
+                <ProgramSection tiers={sleepProgramTiers} showSleepProtocol sleepProtocolTierName="Elite" />
                 <TestimonialsSection testimonials={testimonials.sleep} />
               </TabsContent>
 
