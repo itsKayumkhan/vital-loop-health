@@ -289,7 +289,7 @@ const sleepProgramTiers = [
       'Comprehensive sleep assessment',
       'Sleep phenotype identification',
       'Personalized sleep hygiene protocol',
-      'Weekly check-ins via app',
+      'Weekly Coach check-ins',
       'Sleep environment optimization guide',
       'Relaxation technique library',
       'Progress tracking dashboard',
