@@ -1411,7 +1411,13 @@ const Programs = () => {
               </TabsContent>
 
               <TabsContent value="sleep" className="mt-0">
-                <ProgramSection tiers={sleepProgramTiers} showSleepProtocol sleepProtocolTierName="Advanced" />
+                <ProgramSection 
+                  tiers={sleepProgramTiers} 
+                  showSleepProtocol 
+                  sleepProtocolTierName="Advanced"
+                  showSleepPathway
+                  sleepPathwayTierName="Elite"
+                />
                 <TestimonialsSection testimonials={testimonials.sleep} />
               </TabsContent>
 
