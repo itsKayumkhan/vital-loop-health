@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback, useEffect } from 'react';
-import { Users, Crown, TrendingUp, UserPlus, DollarSign, ArrowUp, ArrowDown, Minus, RefreshCw } from 'lucide-react';
+import { Users, Crown, TrendingUp, UserPlus, DollarSign, ArrowUp, ArrowDown, Minus, RefreshCw, UserMinus, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCRMClients, useCRMMemberships, useCRMPurchases } from '@/hooks/useCRM';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -192,6 +192,59 @@ export function CRMDashboard() {
     };
   }, [memberships]);
 
+  // Calculate churn metrics
+  const churnStats = useMemo(() => {
+    const now = new Date();
+    const thirtyDaysAgo = subMonths(now, 1);
+    const sixtyDaysAgo = subMonths(now, 2);
+    
+    // Cancelled memberships in the last 30 days
+    const recentCancellations = memberships.filter(m => {
+      if (m.status !== 'cancelled') return false;
+      const endDate = m.end_date ? parseISO(m.end_date) : null;
+      return endDate && isWithinInterval(endDate, { start: thirtyDaysAgo, end: now });
+    });
+    
+    // Cancelled memberships in the previous 30 days (for comparison)
+    const previousCancellations = memberships.filter(m => {
+      if (m.status !== 'cancelled') return false;
+      const endDate = m.end_date ? parseISO(m.end_date) : null;
+      return endDate && isWithinInterval(endDate, { start: sixtyDaysAgo, end: thirtyDaysAgo });
+    });
+    
+    // Total cancelled and expired memberships
+    const totalChurned = memberships.filter(m => m.status === 'cancelled' || m.status === 'expired').length;
+    
+    // Active + churned to calculate total ever active
+    const activeMemberships = memberships.filter(m => m.status === 'active');
+    const totalEverActive = activeMemberships.length + totalChurned;
+    
+    // Churn rate = churned / (active + churned) * 100
+    const churnRate = totalEverActive > 0 ? (totalChurned / totalEverActive) * 100 : 0;
+    
+    // Monthly churn rate (based on last 30 days)
+    const activeAtStartOfMonth = activeMemberships.length + recentCancellations.length;
+    const monthlyChurnRate = activeAtStartOfMonth > 0 
+      ? (recentCancellations.length / activeAtStartOfMonth) * 100 
+      : 0;
+    
+    // Lost MRR from recent cancellations
+    const lostMRR = recentCancellations.reduce((sum, m) => sum + Number(m.monthly_price || 0), 0);
+    const previousLostMRR = previousCancellations.reduce((sum, m) => sum + Number(m.monthly_price || 0), 0);
+    
+    return {
+      recentCancellations: recentCancellations.length,
+      previousCancellations: previousCancellations.length,
+      totalChurned,
+      churnRate,
+      monthlyChurnRate,
+      lostMRR,
+      previousLostMRR,
+      pausedMemberships: memberships.filter(m => m.status === 'paused').length,
+    };
+  }, [memberships]);
+
+
   const stats = useMemo(() => ({
     totalClients: clients.length,
     activeMembers: memberships.filter(m => m.status === 'active').length,
@@ -265,6 +318,45 @@ export function CRMDashboard() {
         period: format(interval, formatStr),
         mrr,
         memberCount,
+      };
+    });
+  }, [memberships, getIntervalData]);
+
+  // Churn trend data by month
+  const churnTrendData = useMemo(() => {
+    const { intervals, formatStr } = getIntervalData;
+    
+    return intervals.map((interval) => {
+      const intervalStart = startOfMonth(new Date(interval));
+      const intervalEnd = endOfMonth(new Date(interval));
+      
+      // Count cancellations that occurred in this period
+      const cancellations = memberships.filter(m => {
+        if (m.status !== 'cancelled' && m.status !== 'expired') return false;
+        const endDate = m.end_date ? parseISO(m.end_date) : null;
+        return endDate && isWithinInterval(endDate, { start: intervalStart, end: intervalEnd });
+      });
+      
+      // Get memberships active at the start of the interval
+      const activeAtStart = memberships.filter(m => {
+        const startDate = parseISO(m.start_date);
+        const endDate = m.end_date ? parseISO(m.end_date) : null;
+        // Was active at interval start: started before and (no end or ended after interval start)
+        return startDate <= intervalStart && (!endDate || endDate >= intervalStart);
+      });
+      
+      const churnCount = cancellations.length;
+      const churnRateForPeriod = activeAtStart.length > 0 
+        ? (churnCount / activeAtStart.length) * 100 
+        : 0;
+      
+      const lostMRR = cancellations.reduce((sum, m) => sum + Number(m.monthly_price || 0), 0);
+      
+      return {
+        period: format(interval, formatStr),
+        churnCount,
+        churnRate: churnRateForPeriod,
+        lostMRR,
       };
     });
   }, [memberships, getIntervalData]);
@@ -909,6 +1001,169 @@ export function CRMDashboard() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Churn Rate Tracking */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-red-500" />
+            Churn Rate Tracking
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-red-500/20 bg-gradient-to-br from-red-500/5 to-transparent">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Monthly Churn Rate</p>
+                    <p className="text-3xl font-bold text-red-500">{churnStats.monthlyChurnRate.toFixed(1)}%</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {churnStats.recentCancellations} cancellation{churnStats.recentCancellations !== 1 ? 's' : ''} (30 days)
+                    </p>
+                  </div>
+                  <div className="h-12 w-12 rounded-lg bg-red-500/10 flex items-center justify-center">
+                    <UserMinus className="h-6 w-6 text-red-500" />
+                  </div>
+                </div>
+                {churnStats.previousCancellations > 0 && (
+                  <div className="mt-2">
+                    <ChangeIndicator 
+                      current={churnStats.recentCancellations} 
+                      previous={churnStats.previousCancellations}
+                    />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Lost MRR (30 days)</p>
+                    <p className="text-3xl font-bold text-red-500">${churnStats.lostMRR.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Revenue impact</p>
+                  </div>
+                  <DollarSign className="h-10 w-10 text-red-500 opacity-50" />
+                </div>
+                {churnStats.previousLostMRR > 0 && (
+                  <div className="mt-2">
+                    <ChangeIndicator 
+                      current={churnStats.lostMRR} 
+                      previous={churnStats.previousLostMRR}
+                      format="currency"
+                    />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Churned</p>
+                    <p className="text-3xl font-bold">{churnStats.totalChurned}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {churnStats.churnRate.toFixed(1)}% lifetime rate
+                    </p>
+                  </div>
+                  <UserMinus className="h-10 w-10 text-muted-foreground opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">At Risk (Paused)</p>
+                    <p className="text-3xl font-bold text-amber-500">{churnStats.pausedMemberships}</p>
+                    <p className="text-xs text-muted-foreground mt-1">May cancel soon</p>
+                  </div>
+                  <AlertTriangle className="h-10 w-10 text-amber-500 opacity-50" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Churn Trend Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <UserMinus className="h-5 w-5 text-red-500" />
+                Churn Trend
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">Membership cancellations and churn rate over time</p>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[250px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={churnTrendData}>
+                    <defs>
+                      <linearGradient id="colorChurn" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(0, 70%, 50%)" stopOpacity={0.4} />
+                        <stop offset="95%" stopColor="hsl(0, 70%, 50%)" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis dataKey="period" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis 
+                      yAxisId="left"
+                      className="text-xs" 
+                      tick={{ fill: 'hsl(var(--muted-foreground))' }} 
+                    />
+                    <YAxis 
+                      yAxisId="right"
+                      orientation="right"
+                      className="text-xs" 
+                      tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                      tickFormatter={(value) => `${value}%`}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px',
+                      }}
+                      labelStyle={{ color: 'hsl(var(--foreground))' }}
+                      formatter={(value: number, name: string) => {
+                        if (name === 'churnCount') return [value, 'Cancellations'];
+                        if (name === 'churnRate') return [`${value.toFixed(1)}%`, 'Churn Rate'];
+                        if (name === 'lostMRR') return [`$${value.toLocaleString()}`, 'Lost MRR'];
+                        return [value, name];
+                      }}
+                    />
+                    <Legend />
+                    <Area
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="churnCount"
+                      name="Cancellations"
+                      stroke="hsl(0, 70%, 50%)"
+                      fill="url(#colorChurn)"
+                      strokeWidth={2}
+                    />
+                    <Line
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="churnRate"
+                      name="Churn Rate %"
+                      stroke="hsl(45, 90%, 50%)"
+                      strokeWidth={2}
+                      dot={{ fill: 'hsl(45, 90%, 50%)' }}
+                    />
+                    <Bar
+                      yAxisId="left"
+                      dataKey="lostMRR"
+                      name="Lost MRR ($)"
+                      fill="hsl(0, 70%, 50%)"
+                      opacity={0.3}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Revenue by Category */}
