@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield, Quote, Star, Package, Percent, User, Settings, BarChart3, RefreshCw, Lightbulb, Dna, FlaskConical, Pill, Calendar, HeartPulse } from 'lucide-react';
+import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield, Quote, Star, Package, Percent, User, Settings, BarChart3, RefreshCw, Lightbulb, Dna, FlaskConical, Pill, Calendar, HeartPulse, Focus, Gauge, BatteryCharging, Waves } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -807,6 +807,157 @@ const LongevityProtocolInfo = () => {
     </div>
   );
 };
+
+const MentalPerformancePathway = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const pathwayPhases = [
+    { 
+      icon: BarChart3, 
+      title: 'Cognitive Assessment', 
+      desc: 'Comprehensive cognitive testing, mental performance questionnaires, HRV analysis, and lifestyle factor evaluation' 
+    },
+    { 
+      icon: User, 
+      title: 'Mental Phenotype Profile', 
+      desc: 'Classification: focus-deficit, memory-challenged, stress-reactive, energy-depleted, or mood-fluctuating type' 
+    },
+    { 
+      icon: Target, 
+      title: 'Peak Performance Mapping', 
+      desc: 'Identify your optimal cognitive windows, flow state triggers, and personalized productivity patterns' 
+    },
+    { 
+      icon: FlaskConical, 
+      title: 'Intervention Protocol', 
+      desc: 'Nootropic stacks, nutrition optimization, sleep-cognition integration, and stress resilience training' 
+    },
+    { 
+      icon: RefreshCw, 
+      title: 'Continuous Optimization', 
+      desc: 'Weekly coaching, real-time adjustments based on performance data, and executive function refinement' 
+    },
+  ];
+
+  const kpis = [
+    'Focus duration & quality',
+    'Memory retention scores',
+    'Stress resilience rating',
+    'Mental energy levels',
+    'Flow state frequency',
+    'Decision-making speed',
+  ];
+
+  const outcomes = [
+    { phase: 'Week 2-3', result: 'Improved focus consistency' },
+    { phase: 'Week 4-6', result: 'Enhanced mental endurance' },
+    { phase: 'Week 8-12', result: 'Sustainable peak performance' },
+  ];
+
+  return (
+    <div className="mt-4 border-t border-secondary/20 pt-4">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center gap-2 text-secondary text-sm font-medium hover:text-secondary/80 transition-colors w-full justify-center"
+      >
+        <Brain className="w-4 h-4" />
+        Mental Performance Pathway
+        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+      </button>
+      
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-4 bg-secondary/5 rounded-xl p-4 space-y-4">
+              {/* Header */}
+              <div className="text-center">
+                <h4 className="text-sm font-semibold text-foreground">
+                  Your Brain Is Not Underperforming—It's Under-Optimized
+                </h4>
+                <p className="text-xs text-muted-foreground mt-1">
+                  A systematic approach to unlock sustained focus, enhanced memory, and elite cognitive performance
+                </p>
+              </div>
+
+              {/* Why Mental Performance Matters */}
+              <div className="bg-secondary/10 rounded-lg p-3">
+                <p className="text-xs text-muted-foreground text-center">
+                  <span className="text-secondary font-medium">Cognitive performance impacts:</span> Decision quality, productivity, creativity, stress management, and leadership effectiveness
+                </p>
+              </div>
+              
+              {/* Pathway Phases */}
+              <div className="space-y-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">The 5-Phase Pathway</p>
+                {pathwayPhases.map((phase, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                      <phase.icon className="w-3.5 h-3.5 text-secondary" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-foreground">{phase.title}</p>
+                      <p className="text-xs text-muted-foreground">{phase.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* KPIs */}
+              <div className="border-t border-secondary/10 pt-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Performance Metrics</p>
+                <div className="grid grid-cols-2 gap-1">
+                  {kpis.map((kpi, idx) => (
+                    <div key={idx} className="flex items-center gap-1.5 text-xs text-foreground">
+                      <Check className="w-3 h-3 text-secondary" />
+                      <span>{kpi}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Timeline */}
+              <div className="border-t border-secondary/10 pt-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Expected Outcomes</p>
+                <div className="flex justify-between gap-2">
+                  {outcomes.map((item, idx) => (
+                    <div key={idx} className="text-center flex-1">
+                      <div className="text-secondary font-semibold text-xs">{item.phase}</div>
+                      <p className="text-xs text-muted-foreground mt-0.5">{item.result}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Approach */}
+              <div className="bg-muted/30 rounded-lg p-3">
+                <div className="flex items-start gap-2">
+                  <Lightbulb className="w-4 h-4 text-secondary flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-muted-foreground italic">
+                    Elite cognition isn't about working harder—it's about optimizing your brain's biological systems for sustainable high performance.
+                  </p>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="pt-2 border-t border-secondary/10">
+                <Link to="/mental-intake" className="flex items-center justify-center gap-2 text-xs text-secondary hover:text-secondary/80 font-medium transition-colors">
+                  <FileText className="w-3.5 h-3.5" />
+                  Start Your Cognitive Assessment
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 interface ProgramTier {
   name: string;
   tagline: string;
@@ -826,7 +977,9 @@ const ProgramSection = ({
   showSleepPathway = false,
   sleepPathwayTierName = '',
   showLongevity = false,
-  longevityTierName = ''
+  longevityTierName = '',
+  showMentalPathway = false,
+  mentalPathwayTierName = ''
 }: { 
   tiers: ProgramTier[];
   showCGM?: boolean;
@@ -837,6 +990,8 @@ const ProgramSection = ({
   sleepPathwayTierName?: string;
   showLongevity?: boolean;
   longevityTierName?: string;
+  showMentalPathway?: boolean;
+  mentalPathwayTierName?: string;
 }) => {
   const [isAnnual, setIsAnnual] = useState(false);
 
@@ -935,6 +1090,7 @@ const ProgramSection = ({
             {showSleepProtocol && tier.name === sleepProtocolTierName && <SleepProtocolInfo />}
             {showSleepPathway && tier.name === sleepPathwayTierName && <SleepOptimizationPathway />}
             {showLongevity && tier.name === longevityTierName && <LongevityProtocolInfo />}
+            {showMentalPathway && tier.name === mentalPathwayTierName && <MentalPerformancePathway />}
 
             <Button
               variant={tier.popular ? 'hero' : 'heroOutline'}
@@ -1422,7 +1578,11 @@ const Programs = () => {
               </TabsContent>
 
               <TabsContent value="mental" className="mt-0">
-                <ProgramSection tiers={mentalProgramTiers} />
+                <ProgramSection 
+                  tiers={mentalProgramTiers} 
+                  showMentalPathway 
+                  mentalPathwayTierName="Elite Cognition" 
+                />
                 <TestimonialsSection testimonials={testimonials.mental} />
               </TabsContent>
 
