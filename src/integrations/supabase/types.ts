@@ -285,48 +285,72 @@ export type Database = {
       crm_analytics_snapshots: {
         Row: {
           active_members: number | null
+          bundle_members: number | null
+          bundle_mrr: number | null
           churned_members: number | null
           created_at: string
           customers_count: number | null
           id: string
           leads_count: number | null
+          mental_performance_members: number | null
+          mental_performance_mrr: number | null
           mrr: number | null
           new_clients: number | null
           prospects_count: number | null
+          sleep_members: number | null
+          sleep_mrr: number | null
           snapshot_date: string
           total_clients: number | null
           total_revenue: number | null
           vip_count: number | null
+          wellness_members: number | null
+          wellness_mrr: number | null
         }
         Insert: {
           active_members?: number | null
+          bundle_members?: number | null
+          bundle_mrr?: number | null
           churned_members?: number | null
           created_at?: string
           customers_count?: number | null
           id?: string
           leads_count?: number | null
+          mental_performance_members?: number | null
+          mental_performance_mrr?: number | null
           mrr?: number | null
           new_clients?: number | null
           prospects_count?: number | null
+          sleep_members?: number | null
+          sleep_mrr?: number | null
           snapshot_date?: string
           total_clients?: number | null
           total_revenue?: number | null
           vip_count?: number | null
+          wellness_members?: number | null
+          wellness_mrr?: number | null
         }
         Update: {
           active_members?: number | null
+          bundle_members?: number | null
+          bundle_mrr?: number | null
           churned_members?: number | null
           created_at?: string
           customers_count?: number | null
           id?: string
           leads_count?: number | null
+          mental_performance_members?: number | null
+          mental_performance_mrr?: number | null
           mrr?: number | null
           new_clients?: number | null
           prospects_count?: number | null
+          sleep_members?: number | null
+          sleep_mrr?: number | null
           snapshot_date?: string
           total_clients?: number | null
           total_revenue?: number | null
           vip_count?: number | null
+          wellness_members?: number | null
+          wellness_mrr?: number | null
         }
         Relationships: []
       }
@@ -716,13 +740,23 @@ export type Database = {
       }
       crm_memberships: {
         Row: {
+          bundle_tier:
+            | Database["public"]["Enums"]["bundle_membership_tier"]
+            | null
           client_id: string
           created_at: string
           end_date: string | null
           id: string
+          mental_performance_tier:
+            | Database["public"]["Enums"]["mental_performance_membership_tier"]
+            | null
           monthly_price: number | null
           notes: string | null
+          program_type: Database["public"]["Enums"]["program_type"]
           renewal_date: string | null
+          sleep_tier:
+            | Database["public"]["Enums"]["sleep_membership_tier"]
+            | null
           start_date: string
           status: Database["public"]["Enums"]["membership_status"]
           stripe_subscription_id: string | null
@@ -730,13 +764,23 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          bundle_tier?:
+            | Database["public"]["Enums"]["bundle_membership_tier"]
+            | null
           client_id: string
           created_at?: string
           end_date?: string | null
           id?: string
+          mental_performance_tier?:
+            | Database["public"]["Enums"]["mental_performance_membership_tier"]
+            | null
           monthly_price?: number | null
           notes?: string | null
+          program_type?: Database["public"]["Enums"]["program_type"]
           renewal_date?: string | null
+          sleep_tier?:
+            | Database["public"]["Enums"]["sleep_membership_tier"]
+            | null
           start_date?: string
           status?: Database["public"]["Enums"]["membership_status"]
           stripe_subscription_id?: string | null
@@ -744,13 +788,23 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          bundle_tier?:
+            | Database["public"]["Enums"]["bundle_membership_tier"]
+            | null
           client_id?: string
           created_at?: string
           end_date?: string | null
           id?: string
+          mental_performance_tier?:
+            | Database["public"]["Enums"]["mental_performance_membership_tier"]
+            | null
           monthly_price?: number | null
           notes?: string | null
+          program_type?: Database["public"]["Enums"]["program_type"]
           renewal_date?: string | null
+          sleep_tier?:
+            | Database["public"]["Enums"]["sleep_membership_tier"]
+            | null
           start_date?: string
           status?: Database["public"]["Enums"]["membership_status"]
           stripe_subscription_id?: string | null
@@ -1531,6 +1585,10 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "health_architect" | "coach" | "client"
+      bundle_membership_tier:
+        | "essential_recovery"
+        | "performance_recovery"
+        | "elite_recovery"
       coach_specialty:
         | "nutrition"
         | "performance"
@@ -1551,6 +1609,10 @@ export type Database = {
       marketing_status: "lead" | "prospect" | "customer" | "churned" | "vip"
       membership_status: "active" | "paused" | "cancelled" | "expired"
       membership_tier: "free" | "essential" | "premium" | "elite"
+      mental_performance_membership_tier:
+        | "cognitive_foundations"
+        | "performance_optimization"
+        | "elite_cognition"
       mental_performance_phenotype:
         | "focus_deficit"
         | "memory_challenged"
@@ -1566,6 +1628,7 @@ export type Database = {
         | "cognitive_foundations"
         | "performance_optimization"
         | "elite_cognition"
+      program_type: "wellness" | "sleep" | "mental_performance" | "bundle"
       purchase_type:
         | "subscription"
         | "one_time"
@@ -1577,6 +1640,7 @@ export type Database = {
         | "in_progress"
         | "completed"
         | "reviewed"
+      sleep_membership_tier: "foundational" | "enhanced" | "premium"
       sleep_phenotype:
         | "stress_dominant"
         | "circadian_shifted"
@@ -1712,6 +1776,11 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "health_architect", "coach", "client"],
+      bundle_membership_tier: [
+        "essential_recovery",
+        "performance_recovery",
+        "elite_recovery",
+      ],
       coach_specialty: [
         "nutrition",
         "performance",
@@ -1735,6 +1804,11 @@ export const Constants = {
       marketing_status: ["lead", "prospect", "customer", "churned", "vip"],
       membership_status: ["active", "paused", "cancelled", "expired"],
       membership_tier: ["free", "essential", "premium", "elite"],
+      mental_performance_membership_tier: [
+        "cognitive_foundations",
+        "performance_optimization",
+        "elite_cognition",
+      ],
       mental_performance_phenotype: [
         "focus_deficit",
         "memory_challenged",
@@ -1753,6 +1827,7 @@ export const Constants = {
         "performance_optimization",
         "elite_cognition",
       ],
+      program_type: ["wellness", "sleep", "mental_performance", "bundle"],
       purchase_type: [
         "subscription",
         "one_time",
@@ -1766,6 +1841,7 @@ export const Constants = {
         "completed",
         "reviewed",
       ],
+      sleep_membership_tier: ["foundational", "enhanced", "premium"],
       sleep_phenotype: [
         "stress_dominant",
         "circadian_shifted",
