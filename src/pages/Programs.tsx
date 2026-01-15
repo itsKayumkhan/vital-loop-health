@@ -535,6 +535,77 @@ const SleepProtocolInfo = () => {
   );
 };
 
+const CognitiveAssessmentProtocol = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const assessmentSteps = [
+    { icon: FileText, title: 'Baseline Assessment', desc: 'Comprehensive cognitive testing battery measuring focus, memory, and processing speed' },
+    { icon: Activity, title: 'HRV & Readiness Tracking', desc: 'Daily readiness scores to identify your optimal cognitive performance windows' },
+    { icon: BarChart3, title: 'Performance Analysis', desc: 'AI-powered pattern recognition across attention, executive function, and mental endurance' },
+    { icon: FlaskConical, title: 'Nootropic Protocol', desc: 'Evidence-based supplement stack personalized to your cognitive profile' },
+    { icon: MessageSquare, title: 'Coach Debrief', desc: 'Bi-weekly sessions to review progress and optimize your mental performance plan' },
+  ];
+
+  return (
+    <div className="mt-4 border-t border-secondary/20 pt-4">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center gap-2 text-secondary text-sm font-medium hover:text-secondary/80 transition-colors w-full justify-center"
+      >
+        <Brain className="w-4 h-4" />
+        Cognitive Assessment Protocol
+        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+      </button>
+      
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-4 bg-secondary/5 rounded-xl p-4 space-y-3">
+              <h4 className="text-sm font-semibold text-foreground text-center">
+                Comprehensive Cognitive Testing Program
+              </h4>
+              <p className="text-xs text-muted-foreground text-center mb-4">
+                Data-driven assessment to unlock your peak mental performance potential
+              </p>
+              
+              <div className="space-y-3">
+                {assessmentSteps.map((step, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                      <step.icon className="w-3.5 h-3.5 text-secondary" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-foreground">{step.title}</p>
+                      <p className="text-xs text-muted-foreground">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-secondary/10 space-y-3">
+                <p className="text-xs text-muted-foreground text-center">
+                  <span className="text-secondary font-medium">What you receive:</span> Full cognitive assessment report, personalized nootropic protocol, 
+                  HRV tracking integration, flow state optimization guide, and bi-weekly coaching sessions
+                </p>
+                <Link to="/mental-intake" className="flex items-center justify-center gap-2 text-xs text-secondary hover:text-secondary/80 font-medium transition-colors">
+                  <FileText className="w-3.5 h-3.5" />
+                  Complete Mental Performance Intake
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const SleepOptimizationPathway = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -979,7 +1050,9 @@ const ProgramSection = ({
   showLongevity = false,
   longevityTierName = '',
   showMentalPathway = false,
-  mentalPathwayTierName = ''
+  mentalPathwayTierName = '',
+  showCognitiveProtocol = false,
+  cognitiveProtocolTierName = ''
 }: { 
   tiers: ProgramTier[];
   showCGM?: boolean;
@@ -992,6 +1065,8 @@ const ProgramSection = ({
   longevityTierName?: string;
   showMentalPathway?: boolean;
   mentalPathwayTierName?: string;
+  showCognitiveProtocol?: boolean;
+  cognitiveProtocolTierName?: string;
 }) => {
   const [isAnnual, setIsAnnual] = useState(false);
 
@@ -1091,6 +1166,7 @@ const ProgramSection = ({
             {showSleepPathway && tier.name === sleepPathwayTierName && <SleepOptimizationPathway />}
             {showLongevity && tier.name === longevityTierName && <LongevityProtocolInfo />}
             {showMentalPathway && tier.name === mentalPathwayTierName && <MentalPerformancePathway />}
+            {showCognitiveProtocol && tier.name === cognitiveProtocolTierName && <CognitiveAssessmentProtocol />}
 
             <Button
               variant={tier.popular ? 'hero' : 'heroOutline'}
@@ -1580,6 +1656,8 @@ const Programs = () => {
               <TabsContent value="mental" className="mt-0">
                 <ProgramSection 
                   tiers={mentalProgramTiers} 
+                  showCognitiveProtocol
+                  cognitiveProtocolTierName="Performance Optimization"
                   showMentalPathway 
                   mentalPathwayTierName="Elite Cognition" 
                 />
