@@ -944,34 +944,34 @@ const Programs = () => {
             </motion.div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-4 mb-8 bg-muted/50 p-1 rounded-xl">
+              <TabsList className="flex flex-wrap justify-center gap-2 w-full max-w-4xl mx-auto mb-8 bg-muted/50 p-2 rounded-xl sm:grid sm:grid-cols-4">
                 <TabsTrigger 
                   value="wellness" 
-                  className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3"
+                  className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3 px-4 text-sm"
                 >
-                  <Sparkles className="w-4 h-4" />
-                  <span className="hidden sm:inline">Wellness</span>
+                  <Sparkles className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden md:inline">Wellness</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="sleep"
-                  className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3"
+                  className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3 px-4 text-sm"
                 >
-                  <Moon className="w-4 h-4" />
-                  <span className="hidden sm:inline">Sleep</span>
+                  <Moon className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden md:inline">Sleep</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="mental"
-                  className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3"
+                  className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3 px-4 text-sm whitespace-nowrap"
                 >
-                  <Brain className="w-4 h-4" />
-                  <span className="hidden sm:inline">Mental Performance</span>
+                  <Brain className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden md:inline">Mental Performance</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="bundle"
-                  className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3 relative"
+                  className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-md rounded-lg py-3 px-4 relative text-sm"
                 >
-                  <Package className="w-4 h-4" />
-                  <span className="hidden sm:inline">Bundle</span>
+                  <Package className="w-4 h-4 flex-shrink-0" />
+                  <span className="hidden md:inline">Bundle</span>
                   <span className="absolute -top-2 -right-1 bg-secondary text-secondary-foreground text-[10px] px-1.5 py-0.5 rounded-full font-semibold">
                     Save
                   </span>
