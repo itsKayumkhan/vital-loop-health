@@ -17,6 +17,7 @@ import { ActivityLogList } from '@/components/crm/ActivityLogList';
 import { RoleManagement } from '@/components/crm/RoleManagement';
 import { LeadConversionWorkflow } from '@/components/crm/LeadConversionWorkflow';
 import { RevenueForecast } from '@/components/crm/RevenueForecast';
+import { ProgramAnalytics } from '@/components/crm/ProgramAnalytics';
 import { SleepProgramDashboard } from '@/components/sleep/SleepProgramDashboard';
 import { MentalPerformanceDashboard } from '@/components/mental/MentalPerformanceDashboard';
 import { CoachTrackingDashboard } from '@/components/crm/CoachTrackingDashboard';
@@ -53,6 +54,7 @@ export default function EmbedCRM() {
         documents: { action: 'view_documents', resourceType: 'document' },
         campaigns: { action: 'view_campaigns', resourceType: 'campaign' },
         'coach-performance': { action: 'view_dashboard', resourceType: 'dashboard' },
+        'program-analytics': { action: 'view_dashboard', resourceType: 'dashboard' },
         'revenue-forecast': { action: 'view_dashboard', resourceType: 'dashboard' },
         'sleep-program': { action: 'view_dashboard', resourceType: 'dashboard' },
         'mental-program': { action: 'view_dashboard', resourceType: 'dashboard' },
@@ -73,10 +75,10 @@ export default function EmbedCRM() {
   // Determine which tabs the user can access based on role
   const getAccessibleTabs = () => {
     if (role === 'admin') {
-      return ['dashboard', 'coach-view', 'coach-tracking', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'sleep-program', 'mental-program', 'revenue-forecast', 'coach-performance', 'satisfaction-surveys', 'activity-log', 'role-management'];
+      return ['dashboard', 'coach-view', 'coach-tracking', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'sleep-program', 'mental-program', 'program-analytics', 'revenue-forecast', 'coach-performance', 'satisfaction-surveys', 'activity-log', 'role-management'];
     }
     if (role === 'health_architect') {
-      return ['dashboard', 'coach-tracking', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'sleep-program', 'mental-program', 'revenue-forecast', 'satisfaction-surveys'];
+      return ['dashboard', 'coach-tracking', 'clients', 'clients-active', 'clients-leads', 'clients-cancelled', 'lead-conversion', 'intake-forms', 'memberships', 'purchases', 'documents', 'campaigns', 'sleep-program', 'mental-program', 'program-analytics', 'revenue-forecast', 'satisfaction-surveys'];
     }
     if (role === 'coach') {
       return ['dashboard', 'coach-tracking', 'clients', 'clients-active', 'intake-forms', 'documents', 'sleep-program', 'mental-program'];
@@ -225,6 +227,8 @@ export default function EmbedCRM() {
         return <CampaignsList />;
       case 'coach-performance':
         return <CoachPerformance />;
+      case 'program-analytics':
+        return <ProgramAnalytics />;
       case 'revenue-forecast':
         return <RevenueForecast />;
       case 'sleep-program':
