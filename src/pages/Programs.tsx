@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield, Quote, Star, Package, Percent } from 'lucide-react';
+import { Check, Brain, Sparkles, ArrowRight, Activity, ChevronDown, Smartphone, Utensils, TrendingUp, MessageSquare, FileText, Moon, Zap, Target, Heart, Clock, Shield, Quote, Star, Package, Percent, User, Settings, BarChart3, RefreshCw, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -534,6 +534,157 @@ const SleepProtocolInfo = () => {
     </div>
   );
 };
+
+const SleepOptimizationPathway = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const pathwayPhases = [
+    { 
+      icon: BarChart3, 
+      title: 'Assessment Layer', 
+      desc: 'Comprehensive sleep questionnaires (ISI, PSQI), wearable data integration, lifestyle analysis, and lab markers to identify your primary disruptors' 
+    },
+    { 
+      icon: User, 
+      title: 'Sleep Phenotype Profile', 
+      desc: 'Personalized classification: stress-dominant, circadian-shifted, fragmented, short-duration, or recovery-deficient sleeper' 
+    },
+    { 
+      icon: Settings, 
+      title: 'Targeted Intervention Stack', 
+      desc: 'Layered protocols: behavioral timing, nutrition support, supplements, nervous system regulation, and environmental optimization' 
+    },
+    { 
+      icon: MessageSquare, 
+      title: 'Coaching & Accountability', 
+      desc: 'Sleep-trained health coach with weekly check-ins and adaptive plan changes based on your feedback' 
+    },
+    { 
+      icon: RefreshCw, 
+      title: 'Continuous Optimization Loop', 
+      desc: 'Real-time adjustments using subjective quality, energy metrics, wearable trends, and performance outputs' 
+    },
+  ];
+
+  const kpis = [
+    'Sleep duration consistency',
+    'Sleep onset latency',
+    'Night awakenings',
+    'Morning energy rating',
+    'Daytime focus & cognition',
+    'Training recovery score',
+  ];
+
+  const timeline = [
+    { days: '14-21', milestone: 'Sleep consistency improves' },
+    { days: '30-45', milestone: 'Energy & recovery normalize' },
+    { days: '60-90', milestone: 'Sleep becomes self-sustaining' },
+  ];
+
+  return (
+    <div className="mt-4 border-t border-secondary/20 pt-4">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center gap-2 text-secondary text-sm font-medium hover:text-secondary/80 transition-colors w-full justify-center"
+      >
+        <Moon className="w-4 h-4" />
+        Sleep Optimization Pathway
+        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+      </button>
+      
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-4 bg-secondary/5 rounded-xl p-4 space-y-4">
+              {/* Header */}
+              <div className="text-center">
+                <h4 className="text-sm font-semibold text-foreground">
+                  Your Sleep Is Not Broken—It's Misaligned
+                </h4>
+                <p className="text-xs text-muted-foreground mt-1">
+                  A personalized, closed-loop process that evaluates sleep biology, identifies disruption drivers, and continuously refines your sleep quality
+                </p>
+              </div>
+
+              {/* Why Sleep Matters */}
+              <div className="bg-secondary/10 rounded-lg p-3">
+                <p className="text-xs text-muted-foreground text-center">
+                  <span className="text-secondary font-medium">Sleep directly impacts:</span> Hormone regulation, metabolic health, cognitive performance, mental health, recovery & longevity
+                </p>
+              </div>
+              
+              {/* Pathway Phases */}
+              <div className="space-y-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">The 5-Phase Pathway</p>
+                {pathwayPhases.map((phase, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                      <phase.icon className="w-3.5 h-3.5 text-secondary" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-foreground">{phase.title}</p>
+                      <p className="text-xs text-muted-foreground">{phase.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* KPIs */}
+              <div className="border-t border-secondary/10 pt-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Key Performance Indicators</p>
+                <div className="grid grid-cols-2 gap-1">
+                  {kpis.map((kpi, idx) => (
+                    <div key={idx} className="flex items-center gap-1.5 text-xs text-foreground">
+                      <Check className="w-3 h-3 text-secondary" />
+                      <span>{kpi}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Timeline */}
+              <div className="border-t border-secondary/10 pt-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Success Timeline</p>
+                <div className="flex justify-between gap-2">
+                  {timeline.map((item, idx) => (
+                    <div key={idx} className="text-center flex-1">
+                      <div className="text-secondary font-semibold text-xs">{item.days} days</div>
+                      <p className="text-xs text-muted-foreground mt-0.5">{item.milestone}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Expectation Setting */}
+              <div className="bg-muted/30 rounded-lg p-3 mt-3">
+                <div className="flex items-start gap-2">
+                  <Lightbulb className="w-4 h-4 text-secondary flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-muted-foreground italic">
+                    This is not a quick fix. Sleep optimization is a process. As your nervous system, hormones, and habits adapt, your plan evolves with you.
+                  </p>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="pt-2 border-t border-secondary/10">
+                <Link to="/sleep-intake" className="flex items-center justify-center gap-2 text-xs text-secondary hover:text-secondary/80 font-medium transition-colors">
+                  <FileText className="w-3.5 h-3.5" />
+                  Start Your Sleep Assessment
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 interface ProgramTier {
   name: string;
   tagline: string;
@@ -549,13 +700,17 @@ const ProgramSection = ({
   showCGM = false,
   cgmTierName = '',
   showSleepProtocol = false,
-  sleepProtocolTierName = ''
+  sleepProtocolTierName = '',
+  showSleepPathway = false,
+  sleepPathwayTierName = ''
 }: { 
   tiers: ProgramTier[];
   showCGM?: boolean;
   cgmTierName?: string;
   showSleepProtocol?: boolean;
   sleepProtocolTierName?: string;
+  showSleepPathway?: boolean;
+  sleepPathwayTierName?: string;
 }) => {
   const [isAnnual, setIsAnnual] = useState(false);
 
@@ -652,6 +807,7 @@ const ProgramSection = ({
 
             {showCGM && tier.name === cgmTierName && <CGMProtocolInfo />}
             {showSleepProtocol && tier.name === sleepProtocolTierName && <SleepProtocolInfo />}
+            {showSleepPathway && tier.name === sleepPathwayTierName && <SleepOptimizationPathway />}
 
             <Button
               variant={tier.popular ? 'hero' : 'heroOutline'}
@@ -1115,7 +1271,13 @@ const Programs = () => {
               </motion.div>
 
               <TabsContent value="wellness" className="mt-0">
-                <ProgramSection tiers={membershipTiers} showCGM cgmTierName="Elevate" />
+                <ProgramSection 
+                  tiers={membershipTiers} 
+                  showCGM 
+                  cgmTierName="Elevate" 
+                  showSleepPathway 
+                  sleepPathwayTierName="Transcend" 
+                />
                 <TestimonialsSection testimonials={testimonials.wellness} />
               </TabsContent>
 
