@@ -306,6 +306,7 @@ const sleepProgramTiers = [
     features: [
       'Everything in Foundational, plus:',
       'Bi-weekly 1:1 coaching sessions',
+      'At-home sleep study coordination',
       'Wearable data analysis (Oura, Whoop, Apple)',
       'Circadian rhythm optimization',
       'Sleep supplement protocol',
@@ -324,7 +325,6 @@ const sleepProgramTiers = [
     features: [
       'Everything in Advanced, plus:',
       'Weekly 1:1 coaching sessions',
-      'At-home sleep study coordination',
       'Advanced HRV & recovery analysis',
       'Personalized chronotype optimization',
       'Travel & jet lag protocols',
@@ -482,7 +482,7 @@ const SleepProtocolInfo = () => {
         className="flex items-center gap-2 text-secondary text-sm font-medium hover:text-secondary/80 transition-colors w-full justify-center"
       >
         <Moon className="w-4 h-4" />
-        Sleep Optimization Protocol
+        Sleep Study Protocol
         <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
       </button>
       
@@ -497,10 +497,10 @@ const SleepProtocolInfo = () => {
           >
             <div className="mt-4 bg-secondary/5 rounded-xl p-4 space-y-3">
               <h4 className="text-sm font-semibold text-foreground text-center">
-                Complete Sleep Mastery Program
+                At-Home Sleep Study Program
               </h4>
               <p className="text-xs text-muted-foreground text-center mb-4">
-                Advanced diagnostics and personalized protocols for optimal sleep performance
+                Clinical-grade sleep diagnostics delivered to your door for comprehensive analysis
               </p>
               
               <div className="space-y-3">
@@ -1411,7 +1411,7 @@ const Programs = () => {
               </TabsContent>
 
               <TabsContent value="sleep" className="mt-0">
-                <ProgramSection tiers={sleepProgramTiers} showSleepProtocol sleepProtocolTierName="Elite" />
+                <ProgramSection tiers={sleepProgramTiers} showSleepProtocol sleepProtocolTierName="Advanced" />
                 <TestimonialsSection testimonials={testimonials.sleep} />
               </TabsContent>
 
