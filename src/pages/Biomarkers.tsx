@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
@@ -34,6 +35,18 @@ import { Badge } from '@/components/ui/badge';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BiomarkerQuiz from '@/components/BiomarkerQuiz';
+
+// Map recommendation categories to test catalog category IDs
+const categoryMapping: Record<string, string> = {
+  'Precision Labs': 'precision-labs',
+  'Hormone Panels': 'hormone',
+  'Brain & Cognitive': 'brain',
+  'Vitamin & Mineral': 'vitamin',
+  'Cardiovascular': 'cardiovascular',
+  'Genetic Testing': 'genetic',
+  'Gut Health': 'gut',
+  'Metabolic Testing': 'metabolic',
+};
 
 // Educational content about biomarkers
 const biomarkerEducation = [
@@ -270,6 +283,30 @@ const membershipBenefits = [
 ];
 
 const Biomarkers = () => {
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const [highlightedCategories, setHighlightedCategories] = useState<string[]>([]);
+
+  const handleQuizRecommendations = (recommendedCategories: string[]) => {
+    // Map category names to IDs
+    const categoryIds = recommendedCategories
+      .map(cat => categoryMapping[cat])
+      .filter(Boolean);
+    
+    // Remove duplicates
+    const uniqueIds = [...new Set(categoryIds)];
+    
+    setExpandedCategories(uniqueIds);
+    setHighlightedCategories(uniqueIds);
+    
+    // Scroll to catalog
+    setTimeout(() => {
+      const catalogSection = document.getElementById('test-catalog');
+      if (catalogSection) {
+        catalogSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   return (
     <>
       <Helmet>
@@ -366,7 +403,7 @@ const Biomarkers = () => {
         </section>
 
         {/* Personalized Quiz */}
-        <BiomarkerQuiz />
+        <BiomarkerQuiz onRecommendations={handleQuizRecommendations} />
 
         {/* Biomarker Categories - What Each Reveals */}
         <section className="py-16 md:py-24 bg-card/30">
@@ -457,26 +494,47 @@ const Biomarkers = () => {
               viewport={{ once: true }}
               className="max-w-4xl mx-auto"
             >
-              <Accordion type="multiple" className="space-y-4">
-                {testCategories.map((category) => (
-                  <AccordionItem
-                    key={category.id}
-                    value={category.id}
-                    className="glass-card rounded-xl border-border/50 px-6 overflow-hidden"
-                  >
-                    <AccordionTrigger className="hover:no-underline py-5">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
-                          <category.icon className="w-6 h-6 text-secondary" />
+              <Accordion 
+                type="multiple" 
+                className="space-y-4"
+                value={expandedCategories}
+                onValueChange={setExpandedCategories}
+              >
+                {testCategories.map((category) => {
+                  const isHighlighted = highlightedCategories.includes(category.id);
+                  return (
+                    <AccordionItem
+                      key={category.id}
+                      value={category.id}
+                      className={`glass-card rounded-xl px-6 overflow-hidden transition-all duration-300 ${
+                        isHighlighted 
+                          ? 'border-secondary/50 ring-2 ring-secondary/20 shadow-lg shadow-secondary/10' 
+                          : 'border-border/50'
+                      }`}
+                    >
+                      <AccordionTrigger className="hover:no-underline py-5">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
+                            isHighlighted ? 'bg-secondary/20' : 'bg-secondary/10'
+                          }`}>
+                            <category.icon className="w-6 h-6 text-secondary" />
+                          </div>
+                          <div className="text-left">
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-xl font-semibold">{category.name}</h3>
+                              {isHighlighted && (
+                                <Badge variant="secondary" className="bg-secondary/20 text-secondary border-0 text-xs">
+                                  <Sparkles className="w-3 h-3 mr-1" />
+                                  Recommended
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {category.tests.length} tests available
+                            </p>
+                          </div>
                         </div>
-                        <div className="text-left">
-                          <h3 className="text-xl font-semibold">{category.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {category.tests.length} tests available
-                          </p>
-                        </div>
-                      </div>
-                    </AccordionTrigger>
+                      </AccordionTrigger>
                     <AccordionContent className="pb-6">
                       <div className="space-y-3 pt-2">
                         {category.tests.map((test, index) => (
@@ -500,8 +558,9 @@ const Biomarkers = () => {
                         ))}
                       </div>
                     </AccordionContent>
-                  </AccordionItem>
-                ))}
+                    </AccordionItem>
+                  );
+                })}
               </Accordion>
             </motion.div>
           </div>
