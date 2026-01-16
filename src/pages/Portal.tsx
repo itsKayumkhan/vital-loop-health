@@ -415,8 +415,8 @@ const Portal = () => {
                           <Crown className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                           <p className="text-muted-foreground mb-4">You don't have an active membership</p>
                           <Button variant="hero" asChild>
-                            <Link to="/pricing">
-                              View Plans
+                            <Link to="/programs">
+                              View Programs
                               <ArrowRight className="ml-2 w-4 h-4" />
                             </Link>
                           </Button>

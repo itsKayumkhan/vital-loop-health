@@ -162,7 +162,7 @@ const WhyUs = () => {
                 you unique. Your DNA holds the answers—we just help you read them.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/pricing">
+                <Link to="/programs">
                   <Button variant="hero" size="lg" className="group">
                     See Our Programs
                     <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />

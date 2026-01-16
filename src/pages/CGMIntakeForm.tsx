@@ -72,9 +72,9 @@ const CGMIntakeForm = () => {
         {/* Navigation - hidden on print */}
         <div className="no-print fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Link to="/pricing" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/programs" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft className="w-4 h-4" />
-              Back to Pricing
+              Back to Programs
             </Link>
             <div className="flex items-center gap-3">
               <Button onClick={handlePrint} variant="hero" className="gap-2">
