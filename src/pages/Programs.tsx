@@ -1249,7 +1249,7 @@ const BundleSection = ({ tiers }: { tiers: BundleTier[] }) => {
       >
         <div className="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-semibold mb-4">
           <Percent className="w-4 h-4" />
-          Bundle & Save up to 17%
+          Bundle & Save up to 33%
         </div>
         <p className="text-muted-foreground">
           Sleep and mental performance are deeply connected. When you optimize both together, 
@@ -1634,7 +1634,7 @@ const Programs = () => {
                       <Package className="w-6 h-6 text-secondary" />
                       Recovery Bundle
                       <span className="bg-secondary/20 text-secondary text-sm px-3 py-1 rounded-full font-semibold">
-                        Save up to $149/mo
+                        Save up to $249/mo
                       </span>
                     </h3>
                     <p className="text-muted-foreground">
