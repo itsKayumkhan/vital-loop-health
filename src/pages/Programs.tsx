@@ -17,7 +17,7 @@ const recoveryBundleTiers = [
     name: 'Essential Recovery',
     tagline: 'Foundation Bundle',
     description: 'Combine sleep foundations and cognitive essentials at a discounted rate for complete mind-body recovery.',
-    monthlyPrice: 249, // $149 + $149 = $298, save $49
+    monthlyPrice: 199, // $149 + $149 = $298, save $99
     originalPrice: 298,
     icon: Package,
     popular: false,
@@ -43,7 +43,7 @@ const recoveryBundleTiers = [
     name: 'Performance Recovery',
     tagline: 'Optimization Bundle',
     description: 'Advanced sleep and mental performance protocols with integrated coaching for peak daily performance.',
-    monthlyPrice: 449, // $279 + $279 = $558, save $109
+    monthlyPrice: 399, // $279 + $279 = $558, save $159
     originalPrice: 558,
     icon: Zap,
     popular: true,
@@ -71,7 +71,7 @@ const recoveryBundleTiers = [
     name: 'Elite Recovery',
     tagline: 'Total Mastery Bundle',
     description: 'White-glove sleep and cognitive optimization with weekly expert sessions and advanced diagnostics.',
-    monthlyPrice: 749, // $449 + $449 = $898, save $149
+    monthlyPrice: 649, // $449 + $449 = $898, save $249
     originalPrice: 898,
     icon: Shield,
     popular: false,
