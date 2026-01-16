@@ -149,20 +149,11 @@ const Navbar = () => {
           {/* CTA Button */}
           <div className="hidden md:flex items-center gap-4">
             <CartDrawer />
-            {user && (
-              <Link to="/portal">
-                <Button variant="heroOutline" size="sm">
-                  My VitalityX
-                </Button>
-              </Link>
-            )}
-            {!user && (
-              <Link to="/auth">
-                <Button variant="heroOutline" size="sm">
-                  Sign In
-                </Button>
-              </Link>
-            )}
+            <Link to={user ? "/portal" : "/auth"}>
+              <Button variant="heroOutline" size="sm">
+                My VitalityX
+              </Button>
+            </Link>
             <Button variant="hero" size="sm">
               Get Started
             </Button>
@@ -236,20 +227,11 @@ const Navbar = () => {
                 <div className="flex justify-center">
                   <CartDrawer />
                 </div>
-                {user && (
-                  <Link to="/portal" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="heroOutline" size="lg" className="w-full">
-                      My VitalityX
-                    </Button>
-                  </Link>
-                )}
-                {!user && (
-                  <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="heroOutline" size="lg" className="w-full">
-                      Sign In
-                    </Button>
-                  </Link>
-                )}
+                <Link to={user ? "/portal" : "/auth"} onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="heroOutline" size="lg" className="w-full">
+                    My VitalityX
+                  </Button>
+                </Link>
                 <Button variant="hero" size="lg" className="w-full">
                   Get Started
                 </Button>
