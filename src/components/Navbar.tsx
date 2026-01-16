@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/navigation-menu';
 
 const navItems = [
+  { name: 'Services', href: '/services', isPage: true },
   { name: 'Why Us', href: '/why-us', isPage: true },
   { name: 'Biomarkers', href: '/biomarkers', isPage: true },
   { name: 'Supplements', href: '/supplements', isPage: true },
