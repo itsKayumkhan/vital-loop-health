@@ -26,6 +26,7 @@ import Affiliate from "./pages/Affiliate";
 import CRM from "./pages/CRM";
 import EmbedPortal from "./pages/EmbedPortal";
 import EmbedCRM from "./pages/EmbedCRM";
+import BrandStyleGuide from "./pages/BrandStyleGuide";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,6 +62,7 @@ const App = () => (
               {/* Embed routes for Webflow integration - no navbar/footer */}
               <Route path="/embed/portal" element={<EmbedPortal />} />
               <Route path="/embed/crm" element={<EmbedCRM />} />
+              <Route path="/brand-guide" element={<BrandStyleGuide />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
