@@ -266,7 +266,7 @@ const membershipTiers = [
       'Weekly virtual personal training session',
       'Quarterly lab monitoring (4x per year)',
       'Advanced supplementation protocols',
-      'Sleep optimization pathway',
+      'Sleep Optimization Pathway',
       'Wearable-based sleep diagnostics',
       'Quarterly deep-dive strategy session',
       'VIP priority scheduling',
