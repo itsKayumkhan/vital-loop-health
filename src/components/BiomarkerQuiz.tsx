@@ -341,7 +341,11 @@ const getRecommendations = (answers: Record<string, string[]>): TestRecommendati
   }).slice(0, 6);
 };
 
-const BiomarkerQuiz = () => {
+interface BiomarkerQuizProps {
+  onRecommendations?: (categories: string[]) => void;
+}
+
+const BiomarkerQuiz = ({ onRecommendations }: BiomarkerQuizProps) => {
   const [isStarted, setIsStarted] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
@@ -504,13 +508,20 @@ const BiomarkerQuiz = () => {
                 variant="hero" 
                 size="lg"
                 onClick={() => {
-                  const catalogSection = document.getElementById('test-catalog');
-                  if (catalogSection) {
-                    catalogSection.scrollIntoView({ behavior: 'smooth' });
+                  // Extract unique categories from recommendations
+                  const categories = [...new Set(recommendations.map(r => r.category))];
+                  if (onRecommendations) {
+                    onRecommendations(categories);
+                  } else {
+                    // Fallback if no callback provided
+                    const catalogSection = document.getElementById('test-catalog');
+                    if (catalogSection) {
+                      catalogSection.scrollIntoView({ behavior: 'smooth' });
+                    }
                   }
                 }}
               >
-                View Full Test Catalog
+                View Recommended Tests
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
               <div>
