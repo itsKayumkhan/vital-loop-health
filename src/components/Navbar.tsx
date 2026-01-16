@@ -81,12 +81,12 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            {/* Why Us - simple link */}
+            {/* Services - simple link */}
             <Link
-              to="/why-us"
+              to="/services"
               className="text-muted-foreground hover:text-foreground transition-colors duration-300 font-medium text-sm tracking-wide"
             >
-              Why Us
+              Services
             </Link>
 
             {/* Programs Dropdown */}
@@ -179,13 +179,13 @@ const Navbar = () => {
             className="md:hidden bg-background/95 backdrop-blur-xl border-b border-border"
           >
             <div className="container mx-auto px-4 py-6 flex flex-col gap-4">
-              {/* Why Us */}
+              {/* Services */}
               <Link
-                to="/why-us"
+                to="/services"
                 className="text-muted-foreground hover:text-foreground transition-colors py-2 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Why Us
+                Services
               </Link>
 
               {/* Programs with sub-items */}
