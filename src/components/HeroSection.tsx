@@ -56,7 +56,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Link to="/pricing">
+            <Link to="/programs">
               <Button variant="hero" size="xl" className="group">
                 Start Your VitalityX Journey
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />

@@ -286,7 +286,7 @@ const Supplements = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg">
-                <Link to="/pricing">View Testing Packages</Link>
+                <Link to="/programs">View Our Programs</Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
                 <Link to="/#contact">Book a Consultation</Link>
