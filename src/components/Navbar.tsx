@@ -16,8 +16,8 @@ import {
 } from '@/components/ui/navigation-menu';
 
 const navItems = [
-  { name: 'Services', href: '/services', isPage: true },
   { name: 'Why Us', href: '/why-us', isPage: true },
+  { name: 'Services', href: '/services', isPage: true },
   { name: 'Biomarkers', href: '/biomarkers', isPage: true },
   { name: 'Supplements', href: '/supplements', isPage: true },
   { name: 'Contact', href: '/contact', isPage: true },
@@ -81,12 +81,12 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            {/* Services - simple link */}
+            {/* Why Us - simple link */}
             <Link
-              to="/services"
+              to="/why-us"
               className="text-muted-foreground hover:text-foreground transition-colors duration-300 font-medium text-sm tracking-wide"
             >
-              Services
+              Why Us
             </Link>
 
             {/* Programs Dropdown */}
@@ -179,13 +179,13 @@ const Navbar = () => {
             className="md:hidden bg-background/95 backdrop-blur-xl border-b border-border"
           >
             <div className="container mx-auto px-4 py-6 flex flex-col gap-4">
-              {/* Services */}
+              {/* Why Us */}
               <Link
-                to="/services"
+                to="/why-us"
                 className="text-muted-foreground hover:text-foreground transition-colors py-2 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Services
+                Why Us
               </Link>
 
               {/* Programs with sub-items */}
