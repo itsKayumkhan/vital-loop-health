@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown, Moon, Brain, Package } from 'lucide-react';
+import { Menu, X, ChevronDown, Moon, Brain, Package, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { CartDrawer } from '@/components/CartDrawer';
@@ -24,6 +24,12 @@ const navItems = [
 ];
 
 const programItems = [
+  { 
+    name: 'Wellness', 
+    href: '/programs#wellness', 
+    description: 'Foundational health optimization program',
+    icon: Heart
+  },
   { 
     name: 'Sleep Optimization', 
     href: '/programs#sleep', 
