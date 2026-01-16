@@ -31,6 +31,8 @@ const recoveryBundleTiers = [
       'Combined weekly check-ins',
       'Sleep-cognition optimization tips',
       'Email support for both programs',
+      '10% discount on supplements',
+      '5% off additional lab panels',
     ],
     crossBenefits: [
       'See how sleep quality impacts next-day focus',
@@ -56,6 +58,8 @@ const recoveryBundleTiers = [
       'Sleep + nootropic supplement stack',
       'Stress resilience training',
       'Priority support for both programs',
+      '10% discount on supplements',
+      '10% off additional lab panels',
     ],
     crossBenefits: [
       'Optimize deep sleep for memory consolidation',
@@ -83,6 +87,8 @@ const recoveryBundleTiers = [
       'Travel & high-stress optimization',
       'VIP priority scheduling',
       'Exclusive recovery masterclasses',
+      '15% discount on supplements',
+      '15% off additional lab panels',
     ],
     crossBenefits: [
       'Complete sleep-to-performance pipeline',
@@ -294,6 +300,8 @@ const sleepProgramTiers = [
       'Relaxation technique library',
       'Progress tracking dashboard',
       'Email support',
+      '10% discount on supplements',
+      '5% off additional lab panels',
     ],
   },
   {
@@ -313,6 +321,8 @@ const sleepProgramTiers = [
       'Stress & anxiety management toolkit',
       'CBT-I techniques for insomnia',
       'Priority support response',
+      '10% discount on supplements',
+      '10% off additional lab panels',
     ],
   },
   {
@@ -331,6 +341,8 @@ const sleepProgramTiers = [
       'Sleep disorder screening & referral',
       'VIP priority scheduling',
       'Exclusive sleep masterclasses',
+      '15% discount on supplements',
+      '15% off additional lab panels',
     ],
   },
 ];
@@ -353,6 +365,8 @@ const mentalProgramTiers = [
       'Nutrition for brain health guide',
       'Community forum access',
       'Email support',
+      '10% discount on supplements',
+      '5% off additional lab panels',
     ],
   },
   {
@@ -372,6 +386,8 @@ const mentalProgramTiers = [
       'Work environment design consultation',
       'Monthly performance reviews',
       'Priority support response',
+      '10% discount on supplements',
+      '10% off additional lab panels',
     ],
   },
   {
@@ -391,6 +407,8 @@ const mentalProgramTiers = [
       'High-performance sleep integration',
       'VIP priority scheduling',
       'Exclusive performance workshops',
+      '15% discount on supplements',
+      '15% off additional lab panels',
     ],
   },
 ];
