@@ -83,6 +83,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const abortControllerRef = React.useRef<AbortController | null>(null);
 
+    // Track mounted state
+    useEffect(() => {
+        mounted.current = true;
+        return () => {
+            mounted.current = false;
+        };
+    }, []);
+
     const fetchData = useCallback(async (force = false) => {
         // Cancel any pending request
         if (abortControllerRef.current) {
@@ -90,12 +98,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         if (!user) {
-            setProfile(null);
-            setMembership(null);
-            setPurchases([]);
-            setSubmissions([]);
-            setDocuments([]);
-            setOrders([]);
+            if (mounted.current) {
+                setProfile(null);
+                setMembership(null);
+                setPurchases([]);
+                setSubmissions([]);
+                setDocuments([]);
+                setOrders([]);
+                setLoading(false);
+            }
             return;
         }
 
@@ -103,20 +114,27 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const controller = new AbortController();
         abortControllerRef.current = controller;
 
-        setLoading(true);
+        // Auto-abort after 15 seconds to prevent hanging
+        const timeoutId = setTimeout(() => {
+            console.warn('UserContext fetch timed out, aborting...');
+            controller.abort();
+        }, 15000);
+
+        if (mounted.current) setLoading(true);
+
         try {
+            // Group 1: Core User Data and Client ID (Parallelized)
             const [
                 profileData,
                 submissionsData,
-                ordersData
+                ordersData,
+                clientResult
             ] = await Promise.all([
                 api.getUserProfile(user.id, controller.signal),
                 api.getSubmissions(user.id, controller.signal),
-                api.getOrders(user.id, controller.signal)
+                api.getOrders(user.id, controller.signal),
+                api.getCRMClient(user.id, controller.signal)
             ]);
-
-            // CRM Data depends on finding the client ID first
-            const clientResult = await api.getCRMClient(user.id, controller.signal);
 
             let membershipData = null;
             let crmPurchasesData = null;
@@ -152,9 +170,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 console.error('Error fetching context user data:', error);
             }
         } finally {
+            clearTimeout(timeoutId);
             if (mounted.current && abortControllerRef.current === controller) {
                 setLoading(false);
-                abortControllerRef.current = null;
+                setIsInitialized(true);
+                // Don't nullify ref here immediately if we want to keep specific controller logic,
+                // but clearing it is safe if we are done.
+                if (abortControllerRef.current === controller) {
+                    abortControllerRef.current = null;
+                }
             }
         }
     }, [user]);

@@ -9,6 +9,7 @@ interface AuthContextType {
     session: Session | null;
     role: UserRole | null;
     loading: boolean;
+    roleLoading: boolean;
     signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
     signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
     signOut: () => Promise<void>;
@@ -22,6 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [session, setSession] = useState<Session | null>(null);
     const [role, setRole] = useState<UserRole | null>(null);
     const [loading, setLoading] = useState(true);
+    const [roleLoading, setRoleLoading] = useState(false);
 
     // Refs to track state inside useEffect without dependencies issues
     const userIdRef = useRef<string | undefined>(undefined);
@@ -40,18 +42,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         let mounted = true;
 
         const fetchRole = async (userId: string) => {
+            if (mounted) setRoleLoading(true);
+
+            // Safety timeout
+            let timeoutId: NodeJS.Timeout;
+            const timeoutPromise = new Promise((_, reject) => {
+                timeoutId = setTimeout(() => reject(new Error('Role fetch timeout')), 10000);
+            });
+
             try {
-                const { data } = await supabase.rpc('get_user_role', {
+                const rpcPromise = supabase.rpc('get_user_role', {
                     _user_id: userId
                 });
+
+                const { data } = await Promise.race([rpcPromise, timeoutPromise]) as any;
+
                 if (mounted) {
                     setRole(data as UserRole);
                 }
             } catch (err) {
                 console.error("Error fetching role:", err);
-            } finally {
                 if (mounted) {
-                    setLoading(false);
+                    // Start safe default if role fetch fails
+                    setRole('client');
+                }
+            } finally {
+                clearTimeout(timeoutId!);
+                if (mounted) {
+                    setRoleLoading(false);
                 }
             }
         };
@@ -63,10 +81,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 if (mounted) {
                     setSession(session);
                     setUser(session?.user ?? null);
+
+                    // Immediately stop global loading once we have the user
+                    setLoading(false);
+
                     if (session?.user) {
-                        await fetchRole(session.user.id);
-                    } else {
-                        setLoading(false);
+                        // Fetch role in background
+                        fetchRole(session.user.id);
                     }
                 }
             } catch (error) {
@@ -81,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             async (event, session) => {
                 if (!mounted) return;
 
-                // Handle token refresh specifically - just update session/user without triggering loading state (which unmounts app)
+                // Handle token refresh specifically - just update session/user
                 if (event === 'TOKEN_REFRESHED') {
                     setSession(session);
                     setUser(session?.user ?? null);
@@ -91,12 +112,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setSession(session);
                 const newUser = session?.user ?? null;
 
-                // Use refs to get the CURRENT state, not the state at closure creation time
+                // Use refs to get the CURRENT state
                 const previousUserId = userIdRef.current;
                 const currentRole = roleRef.current;
 
-                // Prevent unnecessary updates if user ID and basic fields haven't changed
-                // This prevents context thrashing which aborts API calls
                 const userChanged =
                     (newUser?.id !== previousUserId) ||
                     (newUser === null && previousUserId !== undefined) ||
@@ -107,18 +126,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 }
 
                 if (newUser) {
-                    // Only set loading and fetch role if:
-                    // 1. It's a new user (different ID than before)
-                    // 2. OR we don't have a role yet
-                    // 3. OR it's a SIGNED_IN event (explicit login)
+                    // Only fetch role if needed
                     const shouldFetchRole = !currentRole || newUser.id !== previousUserId || event === 'SIGNED_IN';
 
                     if (shouldFetchRole) {
-                        setLoading(true);
-                        await fetchRole(newUser.id);
+                        // Triggers role loading but NOT global loading
+                        fetchRole(newUser.id);
                     }
                 } else {
                     setRole(null);
+                    setRoleLoading(false);
+                    // Ensure loading is false if signed out
                     setLoading(false);
                 }
             }
@@ -147,6 +165,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const { error } = await supabase.auth.signInWithPassword({
             email,
             password,
+            options: {
+                skipBrowserRedirect: true
+            }
         });
         return { error };
     };
@@ -163,6 +184,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             session,
             role,
             loading,
+            roleLoading,
             signUp,
             signIn,
             signOut,

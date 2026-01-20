@@ -10,9 +10,10 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requireRole, requireStaff }: ProtectedRouteProps) => {
-    const { user, role, loading, isStaff } = useAuth();
+    const { user, role, loading, roleLoading, isStaff } = useAuth();
     const location = useLocation();
 
+    // 1. Initial Auth Check
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -21,8 +22,19 @@ const ProtectedRoute = ({ children, requireRole, requireStaff }: ProtectedRouteP
         );
     }
 
+    // 2. Not authenticated
     if (!user) {
         return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
+    }
+
+    // 3. Role verification (only if specific role/staff required)
+    if ((requireStaff || requireRole) && roleLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-secondary" />
+                <span className="ml-2 text-muted-foreground">Verifying permissions...</span>
+            </div>
+        );
     }
 
     // Role-based access checks

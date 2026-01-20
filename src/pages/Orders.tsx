@@ -47,6 +47,7 @@ export default function Orders() {
         const sessionId = searchParams.get('session_id');
         const orderId = searchParams.get('order_id');
 
+        // Only verify if we have parameters and haven't started verification yet
         if (sessionId && !isVerifying.current) {
             isVerifying.current = true;
 
@@ -58,18 +59,17 @@ export default function Orders() {
                     });
 
                     if (error) {
-                        // If it's a 400/500 from Supabase invoke (not the function logic itself returning 200 with success: false)
+                        console.error('Verify payment invoke error:', error);
                         throw error;
                     }
 
                     if (data?.success) {
                         toast.success('Payment successful!', { id: toastId });
                         clearCart();
-                        // Refresh orders
-                        refreshData();
+                        // Wait for data refresh to ensure UI is up to date
+                        await refreshData();
                     } else {
-                        // Even if failed logic-wise (e.g. not paid yet), we should probably clear the param to stop the loop
-                        // or at least stop retrying.
+                        console.warn('Verify payment failed logic:', data);
                         toast.error(data?.message || 'Payment verification failed check your bank', { id: toastId });
                     }
                 } catch (error) {
@@ -77,14 +77,17 @@ export default function Orders() {
                     toast.error('Payment verification encountered an error', { id: toastId });
                 } finally {
                     // Always clear the params to prevent infinite loop on refresh or re-render
-                    // We effectively "consume" the session_id here.
                     setSearchParams(params => {
                         const newParams = new URLSearchParams(params);
                         newParams.delete('session_id');
                         newParams.delete('order_id');
                         return newParams;
-                    });
-                    isVerifying.current = false; // Reset if we want to allow future verifications (though the params are gone now)
+                    }, { replace: true });
+
+                    // Small delay before allowing another verification attempt (though params are gone)
+                    setTimeout(() => {
+                        isVerifying.current = false;
+                    }, 1000);
                 }
             };
 
