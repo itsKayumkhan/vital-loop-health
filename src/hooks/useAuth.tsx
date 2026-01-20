@@ -173,7 +173,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const signOut = async () => {
-        await supabase.auth.signOut();
+        try {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                console.warn("Server logout failed, forcing local logout:", error.message);
+                const { error: localError } = await supabase.auth.signOut({ scope: 'local' });
+                if (localError) throw localError;
+            }
+        } catch (err) {
+            console.error("Logout error, forcing manual cleanup:", err);
+
+            // Nuclear option: Manually clear Supabase tokens from localStorage
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
+                    localStorage.removeItem(key);
+                }
+            });
+
+            // Force state update since onAuthStateChange might not fire
+            setUser(null);
+            setSession(null);
+            setRole(null);
+            setLoading(false);
+
+            // Optionally force a reload or redirect if needed, but state update should trigger ProtectedRoute
+            // window.location.href = '/auth';
+        }
     };
 
     const isStaff = role === 'admin' || role === 'health_architect' || role === 'coach';

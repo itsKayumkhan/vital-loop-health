@@ -88,6 +88,14 @@ export const InventoryManager = () => {
     }, []);
 
     const handleStockChange = async (product: Product, amount: number) => {
+        // Optimistic UI Update: Update local state immediately
+        const oldStock = product.stock_quantity;
+        setProducts(prev => prev.map(p =>
+            p.id === product.id
+                ? { ...p, stock_quantity: Math.max(0, p.stock_quantity + amount) }
+                : p
+        ));
+
         try {
             const { error } = await supabase.rpc('manage_inventory', {
                 p_product_id: product.id,
@@ -98,6 +106,12 @@ export const InventoryManager = () => {
             if (error) throw error;
             toast.success('Stock updated');
         } catch (error: any) {
+            // Revert on error
+            setProducts(prev => prev.map(p =>
+                p.id === product.id
+                    ? { ...p, stock_quantity: oldStock }
+                    : p
+            ));
             toast.error(error.message || 'Failed to update stock');
         }
     };
