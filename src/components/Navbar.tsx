@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { CartDrawer } from '@/components/CartDrawer';
 import { useAuth } from '@/hooks/useAuth';
-import logo from '@/assets/vitalityx-logo.jpg';
+import logo from '@/assets/vitalityx-logo.png';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -24,27 +24,27 @@ const navItems = [
 ];
 
 const programItems = [
-  { 
-    name: 'Wellness', 
-    href: '/programs#wellness', 
+  {
+    name: 'Wellness',
+    href: '/programs#wellness',
     description: 'Foundational health optimization program',
     icon: Heart
   },
-  { 
-    name: 'Sleep Optimization', 
-    href: '/programs#sleep', 
+  {
+    name: 'Sleep Optimization',
+    href: '/programs#sleep',
     description: 'Transform your sleep quality and recovery',
     icon: Moon
   },
-  { 
-    name: 'Mental Performance', 
-    href: '/programs#mental', 
+  {
+    name: 'Mental Performance',
+    href: '/programs#mental',
     description: 'Enhance focus, memory, and cognitive function',
     icon: Brain
   },
-  { 
-    name: 'Recovery Bundle', 
-    href: '/programs#bundle', 
+  {
+    name: 'Recovery Bundle',
+    href: '/programs#bundle',
     description: 'Complete sleep + mental performance package',
     icon: Package
   },
@@ -75,7 +75,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <a href="#" className="flex items-center">
+          <a href="/" className="flex items-center">
             <img src={logo} alt="VitalityX Health" className="h-10 w-auto" />
           </a>
 
